@@ -36,11 +36,11 @@ public class InicioDeSesionServlet extends HttpServlet {
         try {
             DTUsuario usuario = ICS.login(nickname, password);
             if (usuario != null) {
-                HttpSession old = request.getSession(false);
-                if (old != null) old.invalidate();
+                HttpSession anterior = request.getSession(false);
+                if (anterior != null) anterior.invalidate();
 
-                HttpSession session = request.getSession(true);
-                session.setAttribute("usuarioLogueado", usuario);
+                HttpSession sesion = request.getSession(true);
+                sesion.setAttribute("usuarioLogueado", usuario);
 
                 response.sendRedirect(request.getContextPath() + "/inicio");
             } else {

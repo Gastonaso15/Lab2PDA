@@ -1,5 +1,4 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html>
 <head><title>Login Culturarte</title></head>
 <body>
@@ -15,9 +14,9 @@
     <input type="submit" value="Entrar">
 </form>
 
-<c:if test="${not empty error}">
-    <p style="color:red">${error}</p>
-</c:if>
+<% if (request.getAttribute("error") != null) { %>
+    <p style="color:red"><%= request.getAttribute("error") %></p>
+<% } %>
 
 </body>
 </html>
