@@ -30,17 +30,17 @@ public class InicioDeSesionServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        String nickname = request.getParameter("usuario");
+        String usuario = request.getParameter("usuario");
         String password = request.getParameter("password");
 
         try {
-            DTUsuario usuario = ICS.login(nickname, password);
-            if (usuario != null) {
+            DTUsuario usu = ICS.login(usuario, password);
+            if (usu != null) {
                 HttpSession anterior = request.getSession(false);
                 if (anterior != null) anterior.invalidate();
 
                 HttpSession sesion = request.getSession(true);
-                sesion.setAttribute("usuarioLogueado", usuario);
+                sesion.setAttribute("usuarioLogueado", usu);
 
                 response.sendRedirect(request.getContextPath());
             } else {
