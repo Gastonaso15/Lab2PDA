@@ -1,6 +1,7 @@
+<!DOCTYPE html>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
-<head><title>Login Culturarte</title></head>
+<head><title>Inicio de Sesion</title></head>
 <body>
 <h2>Iniciar sesión</h2>
 

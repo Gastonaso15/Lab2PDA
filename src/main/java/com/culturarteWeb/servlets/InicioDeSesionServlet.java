@@ -42,7 +42,7 @@ public class InicioDeSesionServlet extends HttpServlet {
                 HttpSession sesion = request.getSession(true);
                 sesion.setAttribute("usuarioLogueado", usuario);
 
-                response.sendRedirect(request.getContextPath() + "/inicio");
+                response.sendRedirect(request.getContextPath());
             } else {
                 request.setAttribute("error", "Usuario o contraseña incorrectos");
                 request.getRequestDispatcher("/inicioDeSesion.jsp").forward(request, response);

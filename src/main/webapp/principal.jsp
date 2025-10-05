@@ -1,7 +1,8 @@
+<!DOCTYPE html>
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Culturarte Web</title>
+    <title>Culturarte</title>
 </head>
 <body>
     <h1>Bienvenido a Culturarte</h1>
