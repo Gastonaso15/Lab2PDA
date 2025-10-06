@@ -209,7 +209,7 @@
                             </div>
                         </div>
                     <%}else{%>
-                        <a href="#">REGISTRARSE</a> | <a href="inicioDeSesion">ENTRAR</a>
+                        <a href="altaPerfil">REGISTRARSE</a> | <a href="inicioDeSesion">ENTRAR</a>
                     <%}%>
                 </div>
             </header>
