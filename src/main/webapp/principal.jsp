@@ -1,122 +1,267 @@
 <!DOCTYPE html>
-<%@ page contentType="text/html; charset=UTF-8" language="java" %>
-<html>
-<head>
-    <title>Culturarte</title>
-</head>
-<body>
-    <h1>Bienvenido a Culturarte</h1>
-    <p>Aplicación web en desarrollo</p>
-
-    <p><a href="inicioDeSesion">Iniciar Sesión</a></p>
-</body>
-</html>
-
-<!-- POSIBLE PLANTILLA
-
-<!DOCTYPE html>
+<%@ page import="java.util.*, culturarte.logica.DTs.DTPropuesta, culturarte.logica.DTs.DTCategoria" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html lang="es">
 <head>
-  <title>Bootstrap Example</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-  <style>
-    /* Remove the navbar's default margin-bottom and rounded borders */
-    .navbar {
-      margin-bottom: 0;
-      border-radius: 0;
-    }
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Culturarte</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
 
-    /* Add a gray background color and some padding to the footer */
-    footer {
-      background-color: #f2f2f2;
-      padding: 25px;
-    }
-  </style>
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .auth-buttons a {
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .search-bar {
+            margin: 20px 0;
+            display: flex;
+            gap: 10px;
+        }
+
+        .search-bar input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .search-bar button {
+            padding: 10px 20px;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-tabs span {
+            font-weight: bold;
+            cursor: pointer;
+            padding: 5px 0;
+            border-bottom: 2px solid transparent;
+        }
+
+        .filter-tabs span.active {
+            border-bottom: 2px solid #333;
+        }
+
+        .gridPropuesta {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .cartaPropuesta {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .imagenPropuesta {
+            height: 180px;
+            background-color: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .contenidoPropuesta {
+            padding: 15px;
+        }
+
+        .tituloPropuesta {
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .descripcionPropuesta {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 15px;
+            height: 60px;
+            overflow: hidden;
+        }
+
+        .montoPropuesta {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .datosPropuesta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .categorias {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+
+        .categorias h3 {
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .listaCategorias {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+        }
+
+        .itemCategoria {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .itemCategoria input {
+            margin-right: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .gridPropuesta {
+                grid-template-columns: 1fr;
+            }
+
+            .listaCategorias {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+    </style>
 </head>
 <body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <img src="culturarte.png" alt="Logo Culturarte" style="width:150px; height:auto;">
+            </div>
+            <div class="auth-buttons">
+                <a href="#">Tengo una Propuesta</a> | <a href="#"> Quiero ver Propuestas</a>
+            </div>
+            <div class="search-bar">
+                <input type="text" placeholder="Título, descripción, lugar">
+                <button>Buscar</button>
+            </div>
+            <div class="auth-buttons">
+                <a href="#">REGISTRARSE</a> | <a href="inicioDeSesion">ENTRAR</a>
+            </div>
+        </header>
 
-<nav class="navbar navbar-inverse">
-  <div class="container-fluid">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand" href="#">Portfolio</a>
-    </div>
-    <div class="collapse navbar-collapse" id="myNavbar">
-      <ul class="nav navbar-nav">
-        <li class="active"><a href="#">Home</a></li>
-        <li><a href="#">About</a></li>
-        <li><a href="#">Gallery</a></li>
-        <li><a href="#">Contact</a></li>
-      </ul>
-      <ul class="nav navbar-nav navbar-right">
-        <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
-      </ul>
-    </div>
-  </div>
-</nav>
+        <div class="filter-tabs">
+            <span class="active">Propuestas Creadas</span>
+            <span>Propuestas en Financiación</span>
+            <span>Propuestas Financiadas</span>
+            <span>Propuestas NO Financiadas</span>
+            <span>Propuestas Canceladas</span>
+        </div>
 
-<div class="jumbotron">
-  <div class="container text-center">
-    <h1>My Portfolio</h1>
-    <p>Some text that represents "Me"...</p>
-  </div>
-</div>
+        <div class="gridPropuesta">
+        <%
+            List<DTPropuesta> propuestas = (List<DTPropuesta>) request.getAttribute("propuestas");
+            if (propuestas != null) {
+                for (DTPropuesta p : propuestas) {
+                    String imagen = (p.getImagen() != null && !p.getImagen().isEmpty()) ? p.getImagen() : "propuestaDefault.png";
+                   %>
+            <div class="cartaPropuesta">
+            <div class="imagenPropuesta">
+                <img src="<%= imagen %>" alt="Imagen de <%= p.getTitulo() %>" style="width:100%; height:180px; object-fit:cover;"></div>
+                <div class="contenidoPropuesta">
+            <div class="tituloPropuesta"><%= p.getTitulo() %></div>
+            <div class="descripcionPropuesta"><%= p.getDescripcion() %></div>
+            <div class="montoPropuesta"><%= p.getMontoNecesario() %> UYU</div>
+            <div class="datosPropuesta">
+                <div><%= p.getEstadoActual() %></div>
+                <div><%= p.getFechaPublicacion() %></div>
+            </div>
+            </div>
+            </div>
+            <%
+                }
+            }
+            %>
+            </div>
 
-<div class="container-fluid bg-3 text-center">
-  <h3>Some of my Work</h3><br>
-  <div class="row">
-    <div class="col-sm-3">
-      <p>Some text..</p>
-      <img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive" style="width:100%" alt="Image">
-    </div>
-    <div class="col-sm-3">
-      <p>Some text..</p>
-      <img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive" style="width:100%" alt="Image">
-    </div>
-    <div class="col-sm-3">
-      <p>Some text..</p>
-      <img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive" style="width:100%" alt="Image">
-    </div>
-    <div class="col-sm-3">
-      <p>Some text..</p>
-      <img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive" style="width:100%" alt="Image">
-    </div>
-  </div>
-</div><br>
+            <div class="categorias">
+                <h3>CATEGORÍAS</h3>
+                   <div class="listaCategorias">
+                       <%
+                           List<DTCategoria> categorias = (List<DTCategoria>) request.getAttribute("categorias");
+                           if (categorias != null) {
+                               for (DTCategoria categ : categorias) {
+                       %>
+                           <div class="itemCategoria">
+                               <input type="checkbox" id="<%= categ.getNombre() %>" name="categoria" value="<%= categ.getNombre() %>">
+                               <label for="<%= categ.getNombre() %>"><%= categ.getNombre() %></label>
+                           </div>
+                       <%
+                               }
+                           }
+                       %>
+                   </div>
+               </div>
+           </div>
 
-<div class="container-fluid bg-3 text-center">
-  <div class="row">
-    <div class="col-sm-3">
-      <p>Some text..</p>
-      <img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive" style="width:100%" alt="Image">
-    </div>
-    <div class="col-sm-3">
-      <p>Some text..</p>
-      <img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive" style="width:100%" alt="Image">
-    </div>
-    <div class="col-sm-3">
-      <p>Some text..</p>
-      <img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive" style="width:100%" alt="Image">
-    </div>
-    <div class="col-sm-3">
-      <p>Some text..</p>
-      <img src="https://placehold.it/150x80?text=IMAGE" class="img-responsive" style="width:100%" alt="Image">
-    </div>
-  </div>
-</div><br><br>
-
-<footer class="container-fluid text-center">
-  <p>Footer Text</p>
-</footer>
-
+    <script>
+        document.querySelectorAll('.filter-tabs span').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.filter-tabs span').forEach(t => {
+                    t.classList.remove('active');
+                });
+                this.classList.add('active');
+            });
+        });
+    </script>
 </body>
 </html>
--->
