@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<%@ page import="java.util.*, culturarte.logica.DTs.DTPropuesta, culturarte.logica.DTs.DTCategoria" %>
+<%@ page import="java.util.*, culturarte.logica.DTs.DTPropuesta, culturarte.logica.DTs.DTCategoria, culturarte.logica.DTs.DTUsuario" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html lang="es">
 <head>
@@ -185,7 +185,7 @@
     <div class="container">
         <header>
             <div class="logo">
-                <img src="culturarte.png" alt="Logo Culturarte" style="width:150px; height:auto;">
+                <img src="imagenes/culturarte.png" alt="Logo Culturarte" style="width:150px; height:auto;">
             </div>
             <div class="auth-buttons">
                 <a href="#">Tengo una Propuesta</a> | <a href="#"> Quiero ver Propuestas</a>
@@ -194,10 +194,25 @@
                 <input type="text" placeholder="Título, descripción, lugar">
                 <button>Buscar</button>
             </div>
-            <div class="auth-buttons">
-                <a href="#">REGISTRARSE</a> | <a href="inicioDeSesion">ENTRAR</a>
-            </div>
-        </header>
+             <div class="auth-buttons">
+                    <%Object usuarioObj = session.getAttribute("usuarioLogueado");
+                    if(usuarioObj != null) {
+                        DTUsuario usuario = (DTUsuario) usuarioObj;%>
+                        <div style="display:flex; align-items:center; gap:10px;">
+                           <img src="<%= request.getContextPath() %>/imagenes/usuarioDefault.png" alt="Imagen de Usuario" style="width:40px; height:40px; border-radius:50%;">
+                           <div style="display:flex; flex-direction:column;">
+                                <span><%= usuario.getNombre() %> <%= usuario.getApellido() %></span>
+                                <span style="font-size:13px;">
+                                    <a href="#" style="text-decoration:none; color:#333;">Perfil</a> |
+                                    <a href="#" style="text-decoration:none; color:#333;">Salir</a>
+                                </span>
+                            </div>
+                        </div>
+                    <%}else{%>
+                        <a href="#">REGISTRARSE</a> | <a href="inicioDeSesion">ENTRAR</a>
+                    <%}%>
+                </div>
+            </header>
 
         <div class="filter-tabs">
             <span class="active">Propuestas Creadas</span>
@@ -208,47 +223,37 @@
         </div>
 
         <div class="gridPropuesta">
-        <%
-            List<DTPropuesta> propuestas = (List<DTPropuesta>) request.getAttribute("propuestas");
+        <%List<DTPropuesta> propuestas = (List<DTPropuesta>) request.getAttribute("propuestas");
             if (propuestas != null) {
                 for (DTPropuesta p : propuestas) {
-                    String imagen = (p.getImagen() != null && !p.getImagen().isEmpty()) ? p.getImagen() : "propuestaDefault.png";
-                   %>
+                    String imagen = (p.getImagen() != null && !p.getImagen().isEmpty()) ? p.getImagen() : "imagenes/propuestaDefault.png";%>
             <div class="cartaPropuesta">
-            <div class="imagenPropuesta">
-                <img src="<%= imagen %>" alt="Imagen de <%= p.getTitulo() %>" style="width:100%; height:180px; object-fit:cover;"></div>
-                <div class="contenidoPropuesta">
-            <div class="tituloPropuesta"><%= p.getTitulo() %></div>
-            <div class="descripcionPropuesta"><%= p.getDescripcion() %></div>
-            <div class="montoPropuesta"><%= p.getMontoNecesario() %> UYU</div>
-            <div class="datosPropuesta">
-                <div><%= p.getEstadoActual() %></div>
-                <div><%= p.getFechaPublicacion() %></div>
-            </div>
-            </div>
-            </div>
-            <%
-                }
-            }
-            %>
-            </div>
+                <div class="imagenPropuesta">
+                    <img src="<%= imagen %>" alt="Imagen de <%= p.getTitulo() %>" style="width:100%; height:180px; object-fit:cover;"></div>
+                    <div class="contenidoPropuesta">
+                        <div class="tituloPropuesta"><%= p.getTitulo() %></div>
+                            <div class="descripcionPropuesta"><%= p.getDescripcion() %></div>
+                                <div class="montoPropuesta"><%= p.getMontoNecesario() %> UYU</div>
+                                    <div class="datosPropuesta">
+                                        <div><%= p.getEstadoActual() %></div>
+                                        <div><%= p.getFechaPublicacion() %></div>
+                                    </div>
+                                </div>
+                            </div>
+                        <%}}%>
+                    </div>
 
             <div class="categorias">
                 <h3>CATEGORÍAS</h3>
                    <div class="listaCategorias">
-                       <%
-                           List<DTCategoria> categorias = (List<DTCategoria>) request.getAttribute("categorias");
-                           if (categorias != null) {
-                               for (DTCategoria categ : categorias) {
-                       %>
+                        <%List<DTCategoria> categorias = (List<DTCategoria>) request.getAttribute("categorias");
+                        if (categorias != null) {
+                            for (DTCategoria categ : categorias) {%>
                            <div class="itemCategoria">
                                <input type="checkbox" id="<%= categ.getNombre() %>" name="categoria" value="<%= categ.getNombre() %>">
                                <label for="<%= categ.getNombre() %>"><%= categ.getNombre() %></label>
                            </div>
-                       <%
-                               }
-                           }
-                       %>
+                       <%}}%>
                    </div>
                </div>
            </div>
