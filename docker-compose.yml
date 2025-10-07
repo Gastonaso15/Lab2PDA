@@ -1,0 +1,6 @@
+version: '3.9'
+services:
+  tomcat:
+    build: .
+    ports:
+      - "9000:8080" #el puerto 80 es el tipico para https, uso 8080 como alternativo para docker, el de la izquierda es el de la pc y el de la derecha docker
