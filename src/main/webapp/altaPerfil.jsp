@@ -82,6 +82,9 @@
             </div>
 
             <button type="submit" class="btn btn-primary w-100">Crear Usuario</button>
+             <a href="<%= request.getContextPath() %>/principal.jsp" class="btn btn-outline-secondary">
+                                        Ir al Inicio
+                                    </a>
         </form>
 
         <%String error = (String) request.getAttribute("error");

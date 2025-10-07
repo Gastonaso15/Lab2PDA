@@ -67,8 +67,31 @@ public class AltaPerfilServlet extends HttpServlet {
 
         if (imagenPart != null && imagenPart.getSize() > 0) {
             try {
-                byte[] imagenBytes = imagenPart.getInputStream().readAllBytes();
-                imagenBase64 = Base64.getEncoder().encodeToString(imagenBytes);
+                String contentType = imagenPart.getContentType();
+                if (contentType != null && contentType.startsWith("image/")) {
+                    String extension = "";
+                    if (contentType.contains("jpeg") || contentType.contains("jpg")) {
+                        extension = ".jpg";
+                    } else if (contentType.contains("png")) {
+                        extension = ".png";
+                    } else if (contentType.contains("gif")) {
+                        extension = ".gif";
+                    } else {
+                        extension = ".jpg";
+                    }
+                    
+                    String nombreArchivo = "ImagenUP" + System.currentTimeMillis() + extension;
+                    String rutaRelativa = "uploads/usuarios/" + nombreArchivo;
+
+                    String rutaCompleta = getServletContext().getRealPath("/") + rutaRelativa;
+                    imagenPart.write(rutaCompleta);
+                    
+                    imagenBase64 = rutaRelativa; // Ahora guardamos la ruta, no Base64
+                } else {
+                    request.setAttribute("error", "El archivo seleccionado no es una imagen válida");
+                    request.getRequestDispatcher("/altaPerfil.jsp").forward(request, response);
+                    return;
+                }
             } catch (Exception e) {
                 request.setAttribute("error", "Error al procesar la imagen: " + e.getMessage());
                 request.getRequestDispatcher("/altaPerfil.jsp").forward(request, response);
