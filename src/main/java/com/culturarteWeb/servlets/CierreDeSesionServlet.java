@@ -18,8 +18,9 @@ public class CierreDeSesionServlet extends HttpServlet {
 
         request.setAttribute("mensaje", "Has cerrado sesión correctamente.");
 
-        // Redirigimos al JSP de cierre de sesión
-        request.getRequestDispatcher("/cierreSesion.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/cierreDeSesion.jsp").forward(request, response);
+
+
     }
 
     @Override
