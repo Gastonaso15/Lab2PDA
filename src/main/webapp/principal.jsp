@@ -1,6 +1,6 @@
-<!DOCTYPE html>
 <%@ page import="java.util.*, culturarte.logica.DTs.DTPropuesta, culturarte.logica.DTs.DTCategoria, culturarte.logica.DTs.DTUsuario" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -199,7 +199,15 @@
                     if(usuarioObj != null) {
                         DTUsuario usuario = (DTUsuario) usuarioObj;%>
                         <div style="display:flex; align-items:center; gap:10px;">
-                           <img src="<%= request.getContextPath() %>/imagenes/usuarioDefault.png" alt="Imagen de Usuario" style="width:40px; height:40px; border-radius:50%;">
+                           <%
+                               String rutaImagen = usuario.getImagen();
+                               if (rutaImagen == null || rutaImagen.isEmpty()) {
+                                   rutaImagen = request.getContextPath() + "/imagenes/usuarioDefault.png";
+                               } else {
+                                   rutaImagen = request.getContextPath() + "/" + rutaImagen;
+                               }
+                           %>
+                           <img src="<%= rutaImagen %>" alt="Imagen de Usuario" style="width:40px; height:40px; border-radius:50%;">
                            <div style="display:flex; flex-direction:column;">
                                 <span><%= usuario.getNombre() %> <%= usuario.getApellido() %></span>
                                 <span style="font-size:13px;">

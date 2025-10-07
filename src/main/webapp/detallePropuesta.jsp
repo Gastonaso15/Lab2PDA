@@ -42,20 +42,18 @@
                                      class="img-fluid rounded" style="max-height: 300px;" 
                                      alt="Imagen de <%= propuesta.getTitulo() %>"
                                      onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                                <!-- Siempre aparece error al cargar imagen con esto
                                 <div class="bg-light d-flex align-items-center justify-content-center rounded" 
                                      style="height: 200px; display: none;">
                                     <span class="text-muted">Error al cargar imagen</span>
                                 </div>
+                                -->
                             </div>
                         <% } else { %>
-                            <div class="text-center mb-4">
-                                <div class="bg-light d-flex align-items-center justify-content-center rounded" 
-                                     style="height: 200px;">
-                                    <span class="text-muted">Sin imagen</span>
-                                </div>
-                            </div>
+                            <img src="<%= request.getContextPath() %>/imagenes/propuestaDefault.png"
+                                class="card-img-top" style="height: 200px; object-fit: cover;"
+                                alt="Imagen por defecto">
                         <% } %>
-                        
                         <!-- Información básica -->
                         <div class="row mb-4">
                             <div class="col-md-6">
