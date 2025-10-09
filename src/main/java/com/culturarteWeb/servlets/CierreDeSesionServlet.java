@@ -11,16 +11,27 @@ public class CierreDeSesionServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession session = request.getSession(false); // false: no crear si no existe
+
+        // 1. Obtener la sesión sin crear una nueva si no existe
+        HttpSession session = request.getSession(false);
+
         if (session != null) {
+            System.out.println(">> Cerrando sesión del usuario: " + session.getAttribute("usuario"));
+            // 2. Invalida la sesión actual: ¡Este es el paso clave!
             session.invalidate();
+        } else {
+            System.out.println(">> No había sesión activa al intentar cerrar sesión.");
         }
 
-        request.setAttribute("mensaje", "Has cerrado sesión correctamente.");
+        // 3. Configurar encabezados para prevenir el caché del navegador
+        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        response.setHeader("Pragma", "no-cache");
+        response.setHeader("Expires", "0");
 
-        request.getRequestDispatcher("/WEB-INF/cierreDeSesion.jsp").forward(request, response);
-
-
+        // 4. Redirigir al JSP de confirmación
+        // Se usa sendRedirect para forzar una nueva petición al JSP,
+        // asumiendo que está en la raíz del contexto de la aplicación (/webapp).
+        response.sendRedirect(request.getContextPath() + "/cierreDeSesion.jsp");
     }
 
     @Override

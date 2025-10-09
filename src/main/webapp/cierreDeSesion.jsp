@@ -11,21 +11,25 @@
     <div class="card shadow-sm p-4" style="width: 450px;">
         <h3 class="text-center mb-3">Cierre de Sesión</h3>
 
-        <% String mensaje = (String) request.getAttribute("mensaje");
-           if (mensaje == null || mensaje.isEmpty()) {
-               mensaje = "Has cerrado sesión correctamente.";
-           }
+        <%--
+        *** ESTE CÓDIGO SE HA ELIMINADO ***
+        <%
+            String mensaje = (String) request.getAttribute("mensaje");
+            if (mensaje == null || mensaje.isEmpty()) {
+                mensaje = "Has cerrado sesión correctamente.";
+            }
         %>
+        --%>
 
         <div class="alert alert-success text-center" role="alert">
-            <%= mensaje %>
+            Has cerrado sesión correctamente.
         </div>
 
         <div class="d-grid gap-2 mt-3">
             <a href="<%= request.getContextPath() %>/principal.jsp" class="btn btn-primary">
                 Volver al Inicio
             </a>
-            <a href="<%= request.getContextPath() %>/login.jsp" class="btn btn-outline-secondary">
+            <a href="<%= request.getContextPath() %>/inicioDeSesion.jsp" class="btn btn-outline-secondary">
                 Iniciar Sesión
             </a>
         </div>
