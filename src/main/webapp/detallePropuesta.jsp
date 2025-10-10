@@ -151,12 +151,14 @@
                                 <% } else if (haColaborado) { %>
                                     <!-- Acciones para colaborador que ya colaboró -->
                                     <div class="d-flex gap-2 mb-3">
-                                        <button class="btn btn-info" disabled>
-                                            Agregar Comentario
-                                        </button>
+                                        <a href="<%= request.getContextPath() %>/formularioComentario?titulo=<%= 
+                                            java.net.URLEncoder.encode(propuesta.getTitulo(), "UTF-8") %>" 
+                                           class="btn btn-info">
+                                            <i class="bi bi-chat-dots"></i> Agregar Comentario
+                                        </a>
                                     </div>
                                     <p class="text-muted small">
-                                        <em>Nota: La acción de agregar comentario se implementará en otro caso de uso.</em>
+                                        <em>Como colaborador de esta propuesta, puedes agregar un comentario sobre tu experiencia.</em>
                                     </p>
                                     
                                 <% } else { %>
@@ -193,7 +195,7 @@
                         <a href="<%= request.getContextPath() %>/consultaPropuesta" class="btn btn-secondary">
                             Volver a la Lista
                         </a>
-                        <a href="<%= request.getContextPath() %>/principal.jsp" class="btn btn-outline-secondary">
+                        <a href="<%= request.getContextPath() %>/principal" class="btn btn-outline-secondary">
                             Ir al Inicio
                         </a>
                     </div>

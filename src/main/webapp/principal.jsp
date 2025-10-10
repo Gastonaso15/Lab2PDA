@@ -148,6 +148,26 @@
             justify-content: space-between;
             font-size: 14px;
             color: #666;
+            margin-bottom: 15px;
+        }
+
+        .botonDetalles {
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        .botonDetalles .btn {
+            width: 100%;
+            padding: 8px 16px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .botonDetalles .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
         }
 
         .categorias {
@@ -197,7 +217,7 @@
                 <img src="imagenes/culturarte.png" alt="Logo Culturarte" style="width:150px; height:auto;">
             </div>
             <div class="auth-buttons">
-                <a href="#">Tengo una Propuesta</a> | <a href="consultaPropuesta">Quiero ver Propuestas</a>
+                <a href="#">Tengo una Propuesta</a> | <a href="consultaPropuesta">Quiero ver Propuestas</a> | <a href="listarPropuestasParaComentar">Comentar Propuestas</a>
             </div>
             <div class="search-bar">
                 <input type="text" placeholder="Título, descripción, lugar">
@@ -257,6 +277,13 @@
                                     <div class="datosPropuesta">
                                         <div><%= p.getEstadoActual() %></div>
                                         <div><%= p.getFechaPublicacion() %></div>
+                                    </div>
+                                    <div class="botonDetalles">
+                                        <a href="<%= request.getContextPath() %>/consultaPropuesta?accion=detalle&titulo=<%= 
+                                            java.net.URLEncoder.encode(p.getTitulo(), "UTF-8") %>" 
+                                           class="btn btn-primary">
+                                            Ver Detalles
+                                        </a>
                                     </div>
                                 </div>
                             </div>
