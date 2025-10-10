@@ -7,7 +7,7 @@
     <display-name>CulturarteWeb</display-name>
 
     <welcome-file-list>
-        <welcome-file>principal.jsp</welcome-file>
+        <welcome-file>principal</welcome-file>
     </welcome-file-list>
 
 </web-app>

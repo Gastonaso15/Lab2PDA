@@ -78,11 +78,20 @@
         .filter-tabs span {
             font-weight: bold;
             cursor: pointer;
-            padding: 5px 0;
+            padding: 8px 16px;
             border-bottom: 2px solid transparent;
+            border-radius: 4px 4px 0 0;
+            transition: all 0.3s ease;
+        }
+
+        .filter-tabs span:hover {
+            background-color: #f0f0f0;
+            border-bottom: 2px solid #666;
         }
 
         .filter-tabs span.active {
+            background-color: #333;
+            color: white;
             border-bottom: 2px solid #333;
         }
 
@@ -211,7 +220,7 @@
                            <div style="display:flex; flex-direction:column;">
                                 <span><%= usuario.getNombre() %> <%= usuario.getApellido() %></span>
                                 <span style="font-size:13px;">
-                                    <a href="consultaPerfilUsuario.jsp" style="text-decoration:none; color:#333;">Perfil</a> |
+                                    <a href="#" style="text-decoration:none; color:#333;">Perfil</a> |
                                     <a href="${pageContext.request.contextPath}/cierreSesion" style="text-decoration:none; color:#333;">
                                         Cerrar Sesión
                                     </a>
@@ -226,11 +235,11 @@
             </header>
 
         <div class="filter-tabs">
-            <span class="active">Propuestas Creadas</span>
-            <span>Propuestas en Financiación</span>
-            <span>Propuestas Financiadas</span>
-            <span>Propuestas NO Financiadas</span>
-            <span>Propuestas Canceladas</span>
+            <span class="estado-tab active" data-estado="todas">Propuestas Creadas</span>
+            <span class="estado-tab" data-estado="en_financiacion">Propuestas en Financiación</span>
+            <span class="estado-tab" data-estado="financiadas">Propuestas Financiadas</span>
+            <span class="estado-tab" data-estado="no_financiadas">Propuestas NO Financiadas</span>
+            <span class="estado-tab" data-estado="canceladas">Propuestas Canceladas</span>
         </div>
 
         <div class="gridPropuesta">
@@ -256,28 +265,83 @@
 
             <div class="categorias">
                 <h3>CATEGORÍAS</h3>
+                <form id="filtroCategorias" method="post" action="consultaPropuestaPorCategoria">
                    <div class="listaCategorias">
                         <%List<DTCategoria> categorias = (List<DTCategoria>) request.getAttribute("categorias");
+                       String[] categoriasSeleccionadas = (String[]) request.getAttribute("categoriasSeleccionadas");
                         if (categorias != null) {
-                            for (DTCategoria categ : categorias) {%>
+                            for (DTCategoria categ : categorias) {
+                                boolean estaSeleccionada = false;
+                                if (categoriasSeleccionadas != null) {
+                                    for (String catSel : categoriasSeleccionadas) {
+                                        if (catSel.equals(categ.getNombre())) {
+                                            estaSeleccionada = true;
+                                            break;
+                                        }
+                                    }
+                                }%>
                            <div class="itemCategoria">
                                <input type="checkbox" id="<%= categ.getNombre() %>" name="categoria" value="<%= categ.getNombre() %>">
                                <label for="<%= categ.getNombre() %>"><%= categ.getNombre() %></label>
                            </div>
                        <%}}%>
                    </div>
+                   <div style="margin-top: 15px;">
+                       <button type="submit" style="background-color: #333; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer;">
+                           Filtrar por Categorías
+                       </button>
+                       <button type="button" onclick="limpiarFiltros()" style="background-color: #666; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; margin-left: 10px;">
+                           Limpiar Filtros
+                       </button>
+                   </div>
+                </form>
                </div>
            </div>
 
     <script>
-        document.querySelectorAll('.filter-tabs span').forEach(tab => {
+        // Manejar clicks en los tabs de estado
+        document.querySelectorAll('.estado-tab').forEach(tab => {
             tab.addEventListener('click', function() {
-                document.querySelectorAll('.filter-tabs span').forEach(t => {
+                // Remover clase active de todos los tabs
+                document.querySelectorAll('.estado-tab').forEach(t => {
                     t.classList.remove('active');
                 });
+                // Agregar clase active al tab clickeado
                 this.classList.add('active');
+                
+                // Obtener el estado del tab clickeado
+                const estado = this.getAttribute('data-estado');
+                
+                // Redirigir con el parámetro de estado
+                const url = new URL(window.location);
+                url.searchParams.set('estado', estado);
+                window.location.href = url.toString();
+            });
+        });
+        
+        // Marcar el tab activo según el estado actual
+        const estadoFiltro = '<%= request.getAttribute("estadoFiltro") %>';
+        if (estadoFiltro && estadoFiltro !== 'null') {
+            document.querySelectorAll('.estado-tab').forEach(tab => {
+                tab.classList.remove('active');
+                if (tab.getAttribute('data-estado') === estadoFiltro) {
+                    tab.classList.add('active');
+                }
+            });
+        }
+        
+        function limpiarFiltros() {
+            document.querySelectorAll('input[name="categoria"]').forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            document.getElementById('filtroCategorias').submit();
+        }
+
+        document.querySelectorAll('input[name="categoria"]').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
             });
         });
     </script>
 </body>
+</html>
 </html>
