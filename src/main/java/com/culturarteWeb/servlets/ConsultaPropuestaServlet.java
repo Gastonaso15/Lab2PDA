@@ -7,6 +7,7 @@ import culturarte.logica.DTs.DTEstadoPropuesta;
 import culturarte.logica.Fabrica;
 import culturarte.logica.controladores.IPropuestaController;
 
+import culturarte.logica.controladores.IUsuarioController;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
@@ -19,11 +20,13 @@ import java.util.List;
 public class ConsultaPropuestaServlet extends HttpServlet {
 
     private IPropuestaController IPC;
+    private IUsuarioController ICU;
 
     @Override
     public void init() throws ServletException {
         Fabrica fabrica = Fabrica.getInstance();
         IPC = fabrica.getIPropuestaController();
+        ICU = fabrica.getIUsuarioController();
     }
 
     @Override
@@ -105,6 +108,7 @@ public class ConsultaPropuestaServlet extends HttpServlet {
             DTUsuario usuarioActual = null;
             boolean esProponente = false;
             boolean haColaborado = false;
+            boolean esFavorita = false;
             
             if (sesion != null && sesion.getAttribute("usuarioLogueado") != null) {
                 usuarioActual = (DTUsuario) sesion.getAttribute("usuarioLogueado");
@@ -119,6 +123,10 @@ public class ConsultaPropuestaServlet extends HttpServlet {
                 if (nicknamesColaboradores.contains(usuarioActual.getNickname())) {
                     haColaborado = true;
                 }
+
+                if (ICU.UsuarioYaTienePropuestaFavorita(usuarioActual.getNickname(), propuestaSeleccionada.getTitulo())){
+                    esFavorita = true;
+                }
             }
             
             request.setAttribute("propuesta", propuestaSeleccionada);
@@ -127,6 +135,7 @@ public class ConsultaPropuestaServlet extends HttpServlet {
             request.setAttribute("esProponente", esProponente);
             request.setAttribute("haColaborado", haColaborado);
             request.setAttribute("usuarioActual", usuarioActual);
+            request.setAttribute("esFavorita", esFavorita);
             
             request.getRequestDispatcher("/detallePropuesta.jsp").forward(request, response);
             

@@ -14,12 +14,12 @@ import java.io.IOException;
 
 @WebServlet("/seguimientoDeUsuario")
 public class SeguimientoDeUsuarioServlet extends HttpServlet {
-    private IUsuarioController IUC;
+    private IUsuarioController ICU;
 
     @Override
     public void init() throws ServletException {
         Fabrica fabrica = Fabrica.getInstance();
-        IUC = fabrica.getIUsuarioController();
+        ICU = fabrica.getIUsuarioController();
     }
 
     @Override
@@ -27,7 +27,7 @@ public class SeguimientoDeUsuarioServlet extends HttpServlet {
             throws ServletException, IOException {
 
         HttpSession sesion = request.getSession(false);
-        DTUsuario usuarioActual = (DTUsuario) sesion.getAttribute("usuario");
+        DTUsuario usuarioActual = (DTUsuario) sesion.getAttribute("usuarioLogueado");
 
         if (usuarioActual == null) {
             response.sendRedirect(request.getContextPath() + "/inicioDeSesion.jsp");
@@ -38,10 +38,10 @@ public class SeguimientoDeUsuarioServlet extends HttpServlet {
         String nickSeguido = request.getParameter("seguido");
 
         try{
-            if(IUC.UsuarioUnoYaSigueUsuarioDos(nickSeguidor, nickSeguido)){
-                IUC.dejarDeSeguirUsuario(nickSeguidor, nickSeguido);
+            if(ICU.UsuarioUnoYaSigueUsuarioDos(nickSeguidor, nickSeguido)){
+                ICU.dejarDeSeguirUsuario(nickSeguidor, nickSeguido);
             }else{
-                IUC.seguirUsuario(nickSeguidor,nickSeguido);
+                ICU.seguirUsuario(nickSeguidor,nickSeguido);
             }
             response.sendRedirect(request.getContextPath() + "/consultaPerfilUsuario?nick=" + nickSeguido);
         } catch (Exception e) {
