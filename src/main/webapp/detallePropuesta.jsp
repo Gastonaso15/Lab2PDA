@@ -28,6 +28,7 @@
                         Boolean esProponente = (Boolean) request.getAttribute("esProponente");
                         Boolean haColaborado = (Boolean) request.getAttribute("haColaborado");
                         DTUsuario usuarioActual = (DTUsuario) request.getAttribute("usuarioActual");
+                        Boolean esFavorita = (Boolean) request.getAttribute("esFavorita");
                     %>
                     
                         <!-- Imagen de la propuesta -->
@@ -169,7 +170,12 @@
                                         <em>Nota: La acción de registrar colaboración se implementará en otro caso de uso.</em>
                                     </p>
                                 <% } %>
-                                
+                            <form action="<%= request.getContextPath() %>/marcarPropuestaFavorita" method="post">
+                                <input type="hidden" name="titulo" value="<%= propuesta.getTitulo() %>">
+                                <button type="submit" class="btn <%= esFavorita ? "btn-danger" : "btn-success" %>">
+                                    <%= esFavorita ? "Quitar de Favoritas" : "Marcar Como Favorita" %>
+                                </button>
+                            </form>
                             <% } else { %>
                                 <!-- Usuario no logueado -->
                                 <div class="alert alert-info">
