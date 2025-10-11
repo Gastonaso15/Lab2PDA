@@ -144,10 +144,10 @@
                                         </button>
                                     </div>
                                     <p class="text-muted small">
-                                        <em>Nota: Las acciones de extender financiación y cancelar propuesta 
+                                        <em>Nota: Las acciones de extender financiación y cancelar propuesta
                                         se implementarán en otros casos de uso.</em>
                                     </p>
-                                    
+
                                 <% } else if (haColaborado) { %>
                                     <!-- Acciones para colaborador que ya colaboró -->
                                     <div class="d-flex gap-2 mb-3">
