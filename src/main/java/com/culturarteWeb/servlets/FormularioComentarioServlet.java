@@ -25,8 +25,7 @@ public class FormularioComentarioServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
-        
-        // Verificar que el usuario esté logueado
+
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("usuarioLogueado") == null) {
             response.sendRedirect(request.getContextPath() + "/inicioDeSesion");
@@ -43,7 +42,6 @@ public class FormularioComentarioServlet extends HttpServlet {
         }
         
         try {
-            // Buscar la propuesta
             List<DTPropuesta> todasLasPropuestas = IPC.devolverTodasLasPropuestas();
             DTPropuesta propuesta = null;
             
@@ -59,15 +57,13 @@ public class FormularioComentarioServlet extends HttpServlet {
                 request.getRequestDispatcher("/formularioComentario.jsp").forward(request, response);
                 return;
             }
-            
-            // Verificar que la propuesta esté financiada
+
             if (propuesta.getEstadoActual() != DTEstadoPropuesta.FINANCIADA) {
                 request.setAttribute("error", "Esta propuesta no está financiada");
                 request.getRequestDispatcher("/formularioComentario.jsp").forward(request, response);
                 return;
             }
-            
-            // Verificar que el usuario haya colaborado
+
             boolean haColaborado = false;
             if (propuesta.getColaboraciones() != null) {
                 for (DTColaboracion colaboracion : propuesta.getColaboraciones()) {
@@ -82,6 +78,17 @@ public class FormularioComentarioServlet extends HttpServlet {
                 request.setAttribute("error", "No puedes comentar esta propuesta porque no colaboraste con ella");
                 request.getRequestDispatcher("/formularioComentario.jsp").forward(request, response);
                 return;
+            }
+            
+            String claveComentario = usuario.getNickname() + "_" + propuesta.getTitulo();
+            if (session != null) {
+                @SuppressWarnings("unchecked")
+                java.util.Set<String> comentariosExistentes = (java.util.Set<String>) session.getAttribute("comentariosAgregados");
+                if (comentariosExistentes != null && comentariosExistentes.contains(claveComentario)) {
+                    request.setAttribute("error", "Ya has comentado esta propuesta anteriormente");
+                    request.getRequestDispatcher("/formularioComentario.jsp").forward(request, response);
+                    return;
+                }
             }
             
             request.setAttribute("propuesta", propuesta);

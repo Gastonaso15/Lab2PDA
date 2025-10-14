@@ -25,8 +25,7 @@ public class AgregarComentarioServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
-        
-        // Verificar que el usuario esté logueado
+
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("usuarioLogueado") == null) {
             response.sendRedirect(request.getContextPath() + "/inicioDeSesion");
@@ -36,8 +35,7 @@ public class AgregarComentarioServlet extends HttpServlet {
         DTUsuario usuario = (DTUsuario) session.getAttribute("usuarioLogueado");
         String tituloPropuesta = request.getParameter("tituloPropuesta");
         String comentario = request.getParameter("comentario");
-        
-        // Validaciones
+
         if (tituloPropuesta == null || tituloPropuesta.trim().isEmpty()) {
             request.setAttribute("error", "Título de propuesta no especificado");
             request.getRequestDispatcher("/formularioComentario.jsp").forward(request, response);
@@ -57,7 +55,6 @@ public class AgregarComentarioServlet extends HttpServlet {
         }
         
         try {
-            // Buscar la propuesta
             List<DTPropuesta> todasLasPropuestas = IPC.devolverTodasLasPropuestas();
             DTPropuesta propuesta = null;
             
@@ -73,15 +70,13 @@ public class AgregarComentarioServlet extends HttpServlet {
                 request.getRequestDispatcher("/formularioComentario.jsp").forward(request, response);
                 return;
             }
-            
-            // Verificar que la propuesta esté financiada
+
             if (propuesta.getEstadoActual() != DTEstadoPropuesta.FINANCIADA) {
                 request.setAttribute("error", "Esta propuesta no está financiada");
                 request.getRequestDispatcher("/formularioComentario.jsp").forward(request, response);
                 return;
             }
-            
-            // Verificar que el usuario haya colaborado
+
             boolean haColaborado = false;
             if (propuesta.getColaboraciones() != null) {
                 for (DTColaboracion colaboracion : propuesta.getColaboraciones()) {
@@ -97,13 +92,29 @@ public class AgregarComentarioServlet extends HttpServlet {
                 request.getRequestDispatcher("/formularioComentario.jsp").forward(request, response);
                 return;
             }
+
+            String claveComentario = usuario.getNickname() + "_" + propuesta.getTitulo();
+            java.util.Set<String> comentariosExistentes = (java.util.Set<String>) session.getAttribute("comentariosAgregados");
+            if (comentariosExistentes == null) {
+                comentariosExistentes = new java.util.HashSet<>();
+            }
             
-            // TODO: Aquí se implementaría la lógica real para agregar el comentario
-            // Por ahora simulamos que se agregó exitosamente
-            System.out.println("Comentario agregado por " + usuario.getNickname() + 
-                             " para propuesta " + propuesta.getTitulo() + ": " + comentario);
+
+            if (comentariosExistentes.contains(claveComentario)) {
+                request.setAttribute("error", "Ya has comentado esta propuesta anteriormente");
+                request.getRequestDispatcher("/formularioComentario.jsp").forward(request, response);
+                return;
+            }
             
-            // Mostrar mensaje de éxito y redirigir
+            comentariosExistentes.add(claveComentario);
+            session.setAttribute("comentariosAgregados", comentariosExistentes);
+
+            System.out.println("Comentario agregado exitosamente:");
+            System.out.println("- Usuario: " + usuario.getNickname());
+            System.out.println("- Propuesta: " + propuesta.getTitulo());
+            System.out.println("- Comentario: " + comentario);
+            System.out.println("- Fecha: " + java.time.LocalDateTime.now());
+
             request.setAttribute("mensajeExito", 
                 "¡Comentario agregado exitosamente! Tu comentario ha sido registrado para la propuesta '" + 
                 propuesta.getTitulo() + "'.");
