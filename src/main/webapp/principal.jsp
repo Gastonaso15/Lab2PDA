@@ -240,7 +240,7 @@
                            <div style="display:flex; flex-direction:column;">
                                 <span><%= usuario.getNombre() %> <%= usuario.getApellido() %></span>
                                 <span style="font-size:13px;">
-                                    <a href="#" style="text-decoration:none; color:#333;">Perfil</a> |
+                                    <a href="<%= request.getContextPath() %>/consultaPerfilUsuario?nick=<%= usuario.getNickname() %>" style="text-decoration:none; color:#333;">Perfil</a> |
                                     <a href="${pageContext.request.contextPath}/cierreSesion" style="text-decoration:none; color:#333;">
                                         Cerrar Sesión
                                     </a>
