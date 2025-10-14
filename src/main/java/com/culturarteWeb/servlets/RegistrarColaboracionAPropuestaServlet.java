@@ -1,4 +1,4 @@
-/*package com.culturarteWeb.servlets;
+package com.culturarteWeb.servlets;
 
 import culturarte.logica.Fabrica;
 import culturarte.logica.controladores.IPropuestaController;
@@ -71,4 +71,3 @@ public class RegistrarColaboracionAPropuestaServlet extends HttpServlet {
         }
     }
 }
-*/
