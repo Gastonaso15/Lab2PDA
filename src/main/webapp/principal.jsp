@@ -7,7 +7,7 @@
     <title>Culturarte</title>
     <style>
         * {
-            margin: 0;
+            margin: 0;3
             padding: 0;
             box-sizing: border-box;
             font-family: 'Arial', sans-serif;
