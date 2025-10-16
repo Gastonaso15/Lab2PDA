@@ -185,9 +185,9 @@
                                         <button class="btn btn-warning" disabled>
                                             Extender Financiación
                                         </button>
-                                        <button class="btn btn-danger" disabled>
-                                            Cancelar Propuesta
-                                        </button>
+                                        <a href="<%= request.getContextPath() %>/cancelarPropuesta" class="btn btn-danger">
+                                                        Cancelar Propuesta
+                                        </a>
                                     </div>
                                     <p class="text-muted small">
                                         <em>Nota: Las acciones de extender financiación y cancelar propuesta
