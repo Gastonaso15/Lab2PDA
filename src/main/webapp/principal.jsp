@@ -220,8 +220,18 @@
                 <a href="#">Tengo una Propuesta</a> | <a href="consultaPropuesta">Quiero ver Propuestas</a> | <a href="listarPropuestasParaComentar">Comentar Propuestas</a>
             </div>
             <div class="search-bar">
-                <input type="text" placeholder="Título, descripción, lugar">
-                <button>Buscar</button>
+                <form method="get" action="<%= request.getContextPath() %>/principal" style="display: flex; gap: 10px; width: 100%;">
+                    <input type="text" name="busqueda" placeholder="Buscar por título, lugar o descripción..." 
+                           value="<%= request.getParameter("busqueda") != null ? request.getParameter("busqueda") : "" %>"
+                           style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+                    <button type="submit" style="padding: 10px 20px; background-color: #333; color: white; border: none; border-radius: 4px; cursor: pointer;">Buscar</button>
+                    <% if (request.getParameter("busqueda") != null && !request.getParameter("busqueda").isEmpty()) { %>
+                        <a href="<%= request.getContextPath() %>/principal" 
+                           style="padding: 10px 15px; background-color: #666; color: white; text-decoration: none; border-radius: 4px; display: flex; align-items: center;">
+                            Limpiar
+                        </a>
+                    <% } %>
+                </form>
             </div>
              <div class="auth-buttons">
                     <%Object usuarioObj = session.getAttribute("usuarioLogueado");
@@ -254,6 +264,25 @@
                 </div>
             </header>
 
+        <% String busquedaActual = (String) request.getAttribute("busqueda"); %>
+        <% if (busquedaActual != null && !busquedaActual.isEmpty()) { %>
+            <div style="background-color: #e3f2fd; border: 1px solid #2196f3; border-radius: 4px; padding: 15px; margin-bottom: 20px;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <strong>🔍 Búsqueda activa:</strong> "<%= busquedaActual %>"
+                        <br>
+                        <small style="color: #666;">
+                            Mostrando <%= ((List<DTPropuesta>) request.getAttribute("propuestas")).size() %> resultado(s)
+                        </small>
+                    </div>
+                    <a href="<%= request.getContextPath() %>/principal" 
+                       style="background-color: #f44336; color: white; padding: 8px 12px; text-decoration: none; border-radius: 4px; font-size: 14px;">
+                        ✕ Limpiar búsqueda
+                    </a>
+                </div>
+            </div>
+        <% } %>
+
         <div class="filter-tabs">
             <span class="estado-tab active" data-estado="todas">Propuestas Creadas</span>
             <span class="estado-tab" data-estado="en_financiacion">Propuestas en Financiación</span>
@@ -281,7 +310,7 @@
                                     <div class="botonDetalles">
                                         <a href="<%= request.getContextPath() %>/consultaPropuesta?accion=detalle&titulo=<%= 
                                             java.net.URLEncoder.encode(p.getTitulo(), "UTF-8") %>" 
-                                           class="btn btn-primary">
+                                           class="btn btn-primary w-100">
                                             Ver Detalles
                                         </a>
                                     </div>
@@ -329,19 +358,20 @@
         // Manejar clicks en los tabs de estado
         document.querySelectorAll('.estado-tab').forEach(tab => {
             tab.addEventListener('click', function() {
-                // Remover clase active de todos los tabs
                 document.querySelectorAll('.estado-tab').forEach(t => {
                     t.classList.remove('active');
                 });
-                // Agregar clase active al tab clickeado
                 this.classList.add('active');
-                
-                // Obtener el estado del tab clickeado
                 const estado = this.getAttribute('data-estado');
-                
-                // Redirigir con el parámetro de estado
                 const url = new URL(window.location);
                 url.searchParams.set('estado', estado);
+                
+                // Mantener la búsqueda actual si existe
+                const busquedaActual = '<%= request.getParameter("busqueda") %>';
+                if (busquedaActual && busquedaActual !== 'null') {
+                    url.searchParams.set('busqueda', busquedaActual);
+                }
+                
                 window.location.href = url.toString();
             });
         });

@@ -25,20 +25,31 @@ public class PrincipalServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try{
             String estadoFiltro = request.getParameter("estado");
+            String busqueda = request.getParameter("busqueda");
             List<DTPropuesta> todasLasPropuestas = IPC.devolverTodasLasPropuestas();
             List<DTPropuesta> propuestasVisibles = new ArrayList<>();
             
             // Filtrar propuestas según el estado seleccionado
             for (DTPropuesta propuesta : todasLasPropuestas) {
                 if (propuesta.getEstadoActual() != DTEstadoPropuesta.INGRESADA) {
+                    boolean cumpleEstado = false;
+                    
+                    // Filtrar por estado
                     if (estadoFiltro == null || estadoFiltro.isEmpty() || "todas".equals(estadoFiltro)) {
-                        // Mostrar todas las propuestas visibles (estado "Propuestas Creadas")
-                        propuestasVisibles.add(propuesta);
+                        cumpleEstado = true; // Mostrar todas las propuestas visibles
                     } else {
-                        // Filtrar por estado específico
-                        if (coincideConEstadoFiltro(propuesta.getEstadoActual().toString(), estadoFiltro)) {
-                            propuestasVisibles.add(propuesta);
-                        }
+                        cumpleEstado = coincideConEstadoFiltro(propuesta.getEstadoActual().toString(), estadoFiltro);
+                    }
+                    
+                    // Filtrar por búsqueda si se proporciona
+                    boolean cumpleBusqueda = true;
+                    if (busqueda != null && !busqueda.trim().isEmpty()) {
+                        cumpleBusqueda = coincideConBusqueda(propuesta, busqueda.trim());
+                    }
+                    
+                    // Agregar si cumple ambos filtros
+                    if (cumpleEstado && cumpleBusqueda) {
+                        propuestasVisibles.add(propuesta);
                     }
                 }
             }
@@ -47,6 +58,7 @@ public class PrincipalServlet extends HttpServlet {
             request.setAttribute("categorias", categorias);
             request.setAttribute("propuestas", propuestasVisibles);
             request.setAttribute("estadoFiltro", estadoFiltro);
+            request.setAttribute("busqueda", busqueda);
             request.getRequestDispatcher("/principal.jsp").forward(request, response);
         } catch (Exception e) {
             request.setAttribute("error", "Error al cargar la página principal: " + e.getMessage());
@@ -85,6 +97,48 @@ public class PrincipalServlet extends HttpServlet {
             }
         }
         return categorias;
+    }
+
+    private boolean coincideConBusqueda(DTPropuesta propuesta, String busqueda) {
+        if (busqueda == null || busqueda.trim().isEmpty()) {
+            return true;
+        }
+        
+        String busquedaLower = busqueda.toLowerCase();
+        
+        // Buscar en título
+        if (propuesta.getTitulo() != null && 
+            propuesta.getTitulo().toLowerCase().contains(busquedaLower)) {
+            return true;
+        }
+        
+        // Buscar en descripción
+        if (propuesta.getDescripcion() != null && 
+            propuesta.getDescripcion().toLowerCase().contains(busquedaLower)) {
+            return true;
+        }
+        
+        // Buscar en lugar
+        if (propuesta.getLugar() != null && 
+            propuesta.getLugar().toLowerCase().contains(busquedaLower)) {
+            return true;
+        }
+        
+        // Buscar en nombre del proponente
+        if (propuesta.getDTProponente() != null && 
+            propuesta.getDTProponente().getNickname() != null &&
+            propuesta.getDTProponente().getNickname().toLowerCase().contains(busquedaLower)) {
+            return true;
+        }
+        
+        // Buscar en categoría
+        if (propuesta.getCategoria() != null && 
+            propuesta.getCategoria().getNombre() != null &&
+            propuesta.getCategoria().getNombre().toLowerCase().contains(busquedaLower)) {
+            return true;
+        }
+        
+        return false;
     }
 
     private boolean coincideConEstadoFiltro(String estadoPropuesta, String filtro) {

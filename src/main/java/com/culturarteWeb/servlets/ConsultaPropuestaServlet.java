@@ -4,6 +4,7 @@ import culturarte.logica.DTs.DTPropuesta;
 import culturarte.logica.DTs.DTUsuario;
 import culturarte.logica.DTs.DTColaboracion;
 import culturarte.logica.DTs.DTEstadoPropuesta;
+import culturarte.logica.DTs.DTComentario;
 import culturarte.logica.Fabrica;
 import culturarte.logica.controladores.IPropuestaController;
 
@@ -16,7 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @WebServlet("/consultaPropuesta")
-@SuppressWarnings("unused")
 public class ConsultaPropuestaServlet extends HttpServlet {
 
     private IPropuestaController IPC;
@@ -91,8 +91,6 @@ public class ConsultaPropuestaServlet extends HttpServlet {
                 request.getRequestDispatcher("/listaPropuestas.jsp").forward(request, response);
                 return;
             }
-            
-            // Calcular monto total recaudado
             double montoRecaudado = 0.0;
             List<String> nicknamesColaboradores = new ArrayList<>();
             
@@ -102,8 +100,6 @@ public class ConsultaPropuestaServlet extends HttpServlet {
                     nicknamesColaboradores.add(colaboracion.getColaborador().getNickname());
                 }
             }
-            
-            // Verificar permisos del usuario actual
             HttpSession sesion = request.getSession(false);
             DTUsuario usuarioActual = null;
             boolean esProponente = false;
@@ -112,23 +108,19 @@ public class ConsultaPropuestaServlet extends HttpServlet {
             
             if (sesion != null && sesion.getAttribute("usuarioLogueado") != null) {
                 usuarioActual = (DTUsuario) sesion.getAttribute("usuarioLogueado");
-                
-                // Verificar si es el proponente
                 if (propuestaSeleccionada.getDTProponente() != null && 
                     usuarioActual.getNickname().equals(propuestaSeleccionada.getDTProponente().getNickname())) {
                     esProponente = true;
                 }
-                
-                // Verificar si ha colaborado
                 if (nicknamesColaboradores.contains(usuarioActual.getNickname())) {
                     haColaborado = true;
                 }
-
                 if (ICU.UsuarioYaTienePropuestaFavorita(usuarioActual.getNickname(), propuestaSeleccionada.getTitulo())){
                     esFavorita = true;
                 }
             }
-            
+
+            List<DTComentario> comentarios = IPC.obtenerComentariosPropuesta(propuestaSeleccionada.getTitulo());
             request.setAttribute("propuesta", propuestaSeleccionada);
             request.setAttribute("montoRecaudado", montoRecaudado);
             request.setAttribute("nicknamesColaboradores", nicknamesColaboradores);
@@ -136,6 +128,7 @@ public class ConsultaPropuestaServlet extends HttpServlet {
             request.setAttribute("haColaborado", haColaborado);
             request.setAttribute("usuarioActual", usuarioActual);
             request.setAttribute("esFavorita", esFavorita);
+            request.setAttribute("comentarios", comentarios);
             
             request.getRequestDispatcher("/detallePropuesta.jsp").forward(request, response);
             

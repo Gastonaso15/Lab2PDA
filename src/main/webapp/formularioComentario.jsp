@@ -88,10 +88,6 @@
                                                  class="img-fluid rounded" style="max-height: 120px; object-fit: cover;" 
                                                  alt="Imagen de <%= propuesta.getTitulo() %>"
                                                  onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                                            <div class="bg-light d-flex align-items-center justify-content-center rounded"
-                                                 style="height: 120px; display: none; width: 100%;">
-                                                <span class="text-muted">Sin imagen</span>
-                                            </div>
                                        <% } else { %>
                                            <img src="<%= request.getContextPath() %>/imagenes/propuestaDefault.png"
                                                 class="img-fluid rounded" style="max-height: 120px; object-fit: cover;"
@@ -103,7 +99,7 @@
                             
                             <!-- Formulario de comentario -->
                             <div class="comentario-form">
-                                <form method="post" action="<%= request.getContextPath() %>/agregarComentario" id="comentarioForm">
+                                <form method="post" action="<%= request.getContextPath() %>/comentario" id="comentarioForm">
                                     <input type="hidden" name="tituloPropuesta" value="<%= propuesta.getTitulo() %>">
                                     
                                     <div class="mb-4">
@@ -115,7 +111,7 @@
                                             id="comentario" 
                                             name="comentario" 
                                             rows="6" 
-                                            placeholder="Comparte tu experiencia colaborando con esta propuesta. ¿Cómo fue el proceso? ¿Recomendarías a otros colaborar? ¿Qué destacarías del proyecto?"
+                                            placeholder="Comparte tu experiencia colaborando con esta propuesta"
                                             maxlength="1000"
                                             required></textarea>
                                         <div class="char-counter mt-2">
@@ -185,7 +181,7 @@
             }
         });
         
-        // Validación del formulario
+
         document.getElementById('comentarioForm').addEventListener('submit', function(e) {
             const comentario = document.getElementById('comentario').value.trim();
             
