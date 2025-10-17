@@ -28,7 +28,7 @@ public class PrincipalServlet extends HttpServlet {
             String busqueda = request.getParameter("busqueda");
             List<DTPropuesta> todasLasPropuestas = IPC.devolverTodasLasPropuestas();
             List<DTPropuesta> propuestasVisibles = new ArrayList<>();
-            
+
             // Filtrar propuestas según el estado seleccionado
             for (DTPropuesta propuesta : todasLasPropuestas) {
                 if (propuesta.getEstadoActual() != DTEstadoPropuesta.INGRESADA) {
@@ -53,7 +53,7 @@ public class PrincipalServlet extends HttpServlet {
                     }
                 }
             }
-            
+
             List<DTCategoria> categorias = extraerCategoriasReales(propuestasVisibles);
             request.setAttribute("categorias", categorias);
             request.setAttribute("propuestas", propuestasVisibles);
@@ -65,6 +65,7 @@ public class PrincipalServlet extends HttpServlet {
             request.getRequestDispatcher("/principal.jsp").forward(request, response);
         }
     }
+
     private List<DTCategoria> extraerCategoriasReales(List<DTPropuesta> propuestas) {
         List<DTCategoria> categorias = new ArrayList<>();
         java.util.Map<String, DTCategoria> categoriasMap = new java.util.LinkedHashMap<>();
@@ -147,13 +148,13 @@ public class PrincipalServlet extends HttpServlet {
         }
         switch (filtro.toLowerCase()) {
             case "en_financiacion":
-                return estadoPropuesta.toUpperCase().contains("FINANCIACION") || 
-                       estadoPropuesta.toUpperCase().contains("EN_FINANCIACION");
+                return estadoPropuesta.toUpperCase().contains("FINANCIACION") ||
+                        estadoPropuesta.toUpperCase().contains("EN_FINANCIACION");
             case "financiadas":
                 return estadoPropuesta.toUpperCase().contains("FINANCIADA");
             case "no_financiadas":
-                return estadoPropuesta.toUpperCase().contains("NO_FINANCIADA") || 
-                       estadoPropuesta.toUpperCase().contains("NO FINANCIADA");
+                return estadoPropuesta.toUpperCase().contains("NO_FINANCIADA") ||
+                        estadoPropuesta.toUpperCase().contains("NO FINANCIADA");
             case "canceladas":
                 return estadoPropuesta.toUpperCase().contains("CANCELADA");
             default:
@@ -162,4 +163,5 @@ public class PrincipalServlet extends HttpServlet {
     }
 
 }
+
 

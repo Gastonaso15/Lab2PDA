@@ -3,3 +3,24 @@
 /workspace.xml
 # Editor-based HTTP Client requests
 /httpRequests/
+target/
+!.mvn/
+!.mvn/wrapper/maven-wrapper.jar
+# Logs / temporales
+*.log
+logs/
+*.out
+temp/
+work/
+
+# ==== IntelliJ / JetBrains ====
+.idea/
+*.iml
+out/
+
+# ==== VS Code (por las dudas) ====
+.vscode/
+
+# ==== SO ====
+.DS_Store
+Thumbs.db

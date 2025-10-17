@@ -217,7 +217,7 @@
                 <img src="imagenes/culturarte.png" alt="Logo Culturarte" style="width:150px; height:auto;">
             </div>
             <div class="auth-buttons">
-                <a href="#">Tengo una Propuesta</a> | <a href="consultaPropuesta">Quiero ver Propuestas</a> | <a href="listarPropuestasParaComentar">Comentar Propuestas</a>
+                <a href="altaPropuesta">Tengo una Propuesta</a> | <a href="consultaPropuesta">Quiero ver Propuestas</a> | <a href="listarPropuestasParaComentar">Comentar Propuestas</a>
             </div>
             <div class="search-bar">
                 <form method="get" action="<%= request.getContextPath() %>/principal" style="display: flex; gap: 10px; width: 100%;">
