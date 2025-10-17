@@ -18,6 +18,8 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
+import static java.net.URLEncoder.encode;
+
 @WebServlet("/registrarColaboracion")
 public class RegistrarColaboracionAPropuestaServlet extends HttpServlet {
 
@@ -53,7 +55,7 @@ public class RegistrarColaboracionAPropuestaServlet extends HttpServlet {
             String tipoRetorno = request.getParameter("tipoRetorno");
 
             // 1. Obtener el usuario actual de la sesión
-            DTUsuario usuarioActual = (DTUsuario) session.getAttribute("usuarioActual");
+            DTUsuario usuarioActual = (DTUsuario) session.getAttribute("usuarioLogueado");
 
             // 2. Verificación de seguridad: si no hay usuario, no se puede colaborar
             if (usuarioActual == null) {
@@ -70,14 +72,14 @@ public class RegistrarColaboracionAPropuestaServlet extends HttpServlet {
                 IPropuestaController pc = Fabrica.getInstance().getIPropuestaController();
 
                 // 4. Llamar al método del caso de uso para guardar en la BD
-                pc.registrarColaboracion(usuarioActual.getNickname(), titulo, monto, tipoRetorno);
+                pc.registrarColaboracion(titulo,usuarioActual.getNickname(), monto, tipoRetorno);
 
                 // --- ÉXITO: REDIRIGIR A LA PÁGINA DE DETALLES ---
                 // 5. Guardar un mensaje de éxito en la sesión (flash message)
                 session.setAttribute("mensajeGlobal", "¡Tu colaboración ha sido registrada con éxito!");
 
                 // 6. Redirigir al servlet de detallePropuesta, pasando el título
-                response.sendRedirect("detallePropuesta?titulo=" + URLEncoder.encode(titulo, StandardCharsets.UTF_8));
+                response.sendRedirect(request.getContextPath() + "/consultaPropuesta?accion=detalle&titulo=" + encode(titulo, "UTF-8"));
 
             } catch (NumberFormatException e) {
                 // Error si el monto no es un número válido

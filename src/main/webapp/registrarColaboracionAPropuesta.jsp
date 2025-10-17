@@ -87,8 +87,8 @@
                             <div class="mb-3">
                                 <label for="tipoRetorno" class="form-label">Tipo de Retorno:</label>
                                 <select name="tipoRetorno" id="tipoRetorno" class="form-select" required>
-                                    <option value="ENTRADA">Entrada</option>
-                                    <option value="PORCENTAJE_GANANCIA">Porcentaje de Ganancia</option>
+                                    <option value="ENTRADAS_GRATIS">Entradas Gratis</option>
+                                    <option value="PORCENTAJE_GANANCIAS">Porcentaje de Ganancia</option>
                                     <option value="AMBOS">Ambos</option>
                                 </select>
                             </div>
