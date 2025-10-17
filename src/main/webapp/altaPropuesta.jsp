@@ -10,9 +10,10 @@
 </head>
 <body>
 
+<%-- Comentario #1: MIRA BRO; ACA LO RESIVO, fijate en ese request.getAttribute, viste que se llama "categorias" tambien
+ tremenda casualidad no?...o quizas no sea casualidad...--%>
 <% List<DTCategoria> categorias = (List<DTCategoria>) request.getAttribute("categorias");%>
-
-<form method="post" action="<%=request.getContextPath()%>/altaPropuesta">
+<form method="post" action="<%=request.getContextPath()%>/altaPropuesta" enctype="multipart/form-data">>
     <h1>Alta de Propuesta</h1>
 
     <fieldset class="row">
@@ -42,7 +43,7 @@
             <input name="lugar" required/>
         </div>
         <div>
-            <label>Fecha (AAAA-MM-DD)</label>
+            <label>Fecha (DD-MM-AAAA)</label>
             <input type="date" name="fecha" required/>
         </div>
     </fieldset>
@@ -64,17 +65,16 @@
             <label><input type="checkbox" name="retornos" value="ENTRADAS_GRATIS"> Entradas</label>
             <label><input type="checkbox" name="retornos" value="PORCENTAJE_GANANCIAS"> Porcentaje</label>
         </div>
-    </fieldset>
 
-    <fieldset>
-        <label>Imagen (opcional)</label>
-        <input name="imagen"/>
-    </fieldset>
+        <div class="mb-3">
+            <label class="form-label">Imagen (opcional)</label>
+            <input type="file" name="imagen" class="form-control" accept="image/*">
+        </div>
 
-    <div class="actions">
-        <a href="<%=request.getContextPath()%>/" class="btn">Cancelar</a>
-        <button type="submit">Crear propuesta</button>
-    </div>
+        <div class="actions">
+            <a href="<%=request.getContextPath()%>/" class="btn">Cancelar</a>
+            <button type="submit">Crear propuesta</button>
+        </div>
 </form>
 
 </body>

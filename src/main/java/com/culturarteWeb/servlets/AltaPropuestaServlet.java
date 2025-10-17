@@ -1,5 +1,3 @@
-package com.culturarteWeb.servlets;
-
 import culturarte.logica.DTs.DTCategoria;
 import culturarte.logica.DTs.DTUsuario;
 import culturarte.logica.DTs.DTPropuesta;
@@ -19,6 +17,7 @@ import java.time.LocalDate;
 import java.util.*;
 
 @WebServlet("/altaPropuesta")
+
 @MultipartConfig
 public class AltaPropuestaServlet extends HttpServlet {
 
@@ -28,25 +27,27 @@ public class AltaPropuestaServlet extends HttpServlet {
     @Override
     public void init() throws ServletException {
         super.init();
+        //Pido los controladores a las fabricas
         ICU = new UsuarioController();
         IPC = new PropuestaController();
     }
 
     @Override
+    //pido los datos a altaPropuesta.jsp con el doGet
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
         HttpSession ses = req.getSession(false);
         DTUsuario u = (ses != null) ? (DTUsuario) ses.getAttribute("usuarioLogueado") : null;
         if (u == null) {
-            resp.sendRedirect(req.getContextPath() + "/inicioDeSesion"); // o la página que uses
+            resp.sendRedirect(req.getContextPath() + "/inicioDeSesion");
             return;
         }
+        //preciso conseguir las categorias desde el servidor central (sino harcordeado es una chanchada)
         List<DTCategoria> categorias = IPC.devolverTodasLasCategorias();
 
-
+        //Comentario #1: al req le "pego" el atributo categorias en para mandarselo al JSP
         req.setAttribute("categorias", categorias);
-
         req.getRequestDispatcher("/altaPropuesta.jsp").forward(req, resp);
     }
 
@@ -63,6 +64,34 @@ public class AltaPropuestaServlet extends HttpServlet {
             return;
         }
 
+        String imagen = null;
+
+        Part part = req.getPart("imagen");
+        if (part != null && part.getSize() > 0) {
+            String type = part.getContentType();
+            if (type == null || !type.startsWith("image/"))
+                throw new IllegalArgumentException("El archivo no es una imagen válida.");
+
+            // elegir extensión fiable
+            String ext;
+            if (type.contains("png")) ext = ".png";
+            else if (type.contains("gif")) ext = ".gif";
+            else ext = ".jpg";
+
+            String relDir = "uploads/propuestas";
+            String fileName = "ImagenProp" + System.currentTimeMillis() + ext;
+
+            File base = new File(getServletContext().getRealPath("/"), relDir);
+            if (!base.exists() && !base.mkdirs())
+                throw new IOException("No se pudo crear el directorio de subida.");
+
+            File dest = new File(base, fileName);
+            part.write(dest.getAbsolutePath());
+
+            imagen = relDir + "/" + fileName; // guardar RUTA RELATIVA
+
+        }
+
         String categoria     = req.getParameter("categoria");
         String titulo        = req.getParameter("titulo");
         String descripcion   = req.getParameter("descripcion");
@@ -70,7 +99,7 @@ public class AltaPropuestaServlet extends HttpServlet {
         String fechaStr      = req.getParameter("fecha");
         String precioStr     = req.getParameter("precioEntrada");
         String montoStr      = req.getParameter("montoNecesario");
-        String imagen        = req.getParameter("imagen");
+        //String imagen        = req.getParameter("imagen");
         String[] retornosArr = req.getParameterValues("retornos");
 
         try {
@@ -78,9 +107,11 @@ public class AltaPropuestaServlet extends HttpServlet {
             Double precio = Double.parseDouble(precioStr);
             Double monto = Double.parseDouble(montoStr);
 
+
             List<String> retornos = (retornosArr != null)
                     ? Arrays.asList(retornosArr)
                     : new ArrayList<>();
+            /*  Estuve debuggeando y lo dejo por si lo preciso de nuevo
             System.out.println("Titulo: " + titulo);
             System.out.println("Descripcion: " + descripcion);
             System.out.println("Lugar: " + lugar);
@@ -91,19 +122,10 @@ public class AltaPropuestaServlet extends HttpServlet {
             System.out.println("Proponente: " + proponente.getNickname());
             System.out.println("Categoria: " + categoria);
             System.out.println("Retornos: " + retornos);
-
-            IPC.crearPropuesta(
-                    titulo,
-                    descripcion,
-                    lugar,
-                    fecha,
-                    precio,
-                    monto,
-                    imagen,
-                    proponente.getNickname(),
-                    categoria,
-                    retornos
-            );
+            */
+            //Creo la propuesta
+            IPC.crearPropuesta(titulo, descripcion, lugar, fecha, precio, monto, imagen,
+                    proponente.getNickname(), categoria, retornos);
 
             resp.sendRedirect(req.getContextPath() + "/");
         } catch (Exception e) {
@@ -115,3 +137,4 @@ public class AltaPropuestaServlet extends HttpServlet {
         }
     }
 }
+

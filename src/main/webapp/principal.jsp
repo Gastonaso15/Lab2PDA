@@ -234,6 +234,7 @@
                 </form>
             </div>
              <div class="auth-buttons">
+                 <%-- Condicional: si el usuario está logueado se muestra la pagina de cierta manera, sino se muestra para visitantes--%>
                     <%Object usuarioObj = session.getAttribute("usuarioLogueado");
                     if(usuarioObj != null) {
                         DTUsuario usuario = (DTUsuario) usuarioObj;%>
