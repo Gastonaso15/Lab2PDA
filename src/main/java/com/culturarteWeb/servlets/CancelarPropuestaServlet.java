@@ -1,5 +1,6 @@
 package com.culturarteWeb.servlets;
 
+import culturarte.logica.DTs.DTUsuario;
 import culturarte.logica.manejadores.PropuestaManejador;
 import culturarte.logica.modelos.Propuesta;
 import culturarte.logica.modelos.EstadoPropuesta;
@@ -19,6 +20,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static java.net.URLEncoder.encode;
+
 @WebServlet("/cancelarPropuesta")
 public class CancelarPropuestaServlet extends HttpServlet {
 
@@ -27,13 +30,15 @@ public class CancelarPropuestaServlet extends HttpServlet {
             throws ServletException, IOException {
 
         HttpSession session = request.getSession();
-        String nickname = (String) session.getAttribute("usuario");
+        DTUsuario usuarioActual = (DTUsuario) session.getAttribute("usuarioLogueado");
 
         // Si no hay nickname en la sesión, redirigir al inicio (o donde corresponda)
-        if (nickname == null) {
+        if (usuarioActual == null) {
             response.sendRedirect(request.getContextPath() + "/inicioDeSesion.jsp"); // O a /principal, etc.
             return;
         }
+
+        String nickname = usuarioActual.getNickname();
 
         // Recuperar mensaje de la sesión (si existe, por el redirect del POST)
         if (session.getAttribute("mensaje") != null) {
@@ -60,7 +65,16 @@ public class CancelarPropuestaServlet extends HttpServlet {
             throws ServletException, IOException {
 
         HttpSession session = request.getSession();
-        String nickname = (String) session.getAttribute("usuario");
+
+        DTUsuario usuarioActual = (DTUsuario) session.getAttribute("usuarioLogueado");
+
+        if (usuarioActual == null) {
+            response.sendRedirect(request.getContextPath() + "/inicioDeSesion.jsp");
+            return;
+        }
+
+        String nickname = usuarioActual.getNickname();
+
         String titulo = request.getParameter("titulo");
         String source = request.getParameter("source"); // Para saber de dónde viene la petición
 
@@ -99,8 +113,7 @@ public class CancelarPropuestaServlet extends HttpServlet {
         // Redirigir a la página de origen
         if ("detail".equals(source)) {
             // Si viene de la página de detalle, volver a ella
-            String encodedTitulo = URLEncoder.encode(titulo, StandardCharsets.UTF_8.toString());
-            response.sendRedirect(request.getContextPath() + "/detallePropuesta?titulo=" + encodedTitulo);
+            response.sendRedirect(request.getContextPath() + "/consultaPropuesta?accion=detalle&titulo=" + encode(titulo, "UTF-8"));
         } else {
             // Si viene del listado (o no se especifica), volver al listado
             response.sendRedirect(request.getContextPath() + "/cancelarPropuesta");
