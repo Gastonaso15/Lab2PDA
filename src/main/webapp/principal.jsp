@@ -217,7 +217,19 @@
                 <img src="imagenes/culturarte.png" alt="Logo Culturarte" style="width:150px; height:auto;">
             </div>
             <div class="auth-buttons">
-                <a href="altaPropuesta">Tengo una Propuesta</a> | <a href="consultaPropuesta">Quiero ver Propuestas</a> | <a href="listarPropuestasParaComentar">Comentar Propuestas</a>
+                <%
+                    Boolean esProponente = (Boolean) request.getAttribute("esProponente");
+                    if (esProponente != null && esProponente) {
+                %>
+                    <a href="altaPropuesta">Tengo una Propuesta</a> | 
+                <% } %>
+                <a href="consultaPropuesta">Quiero ver Propuestas</a>
+                <%
+                    Boolean esColaborador = (Boolean) request.getAttribute("esColaborador");
+                    if (esColaborador != null && esColaborador) {
+                %>
+                  | <a href="listarPropuestasParaComentar">Comentar Propuestas</a>
+                <% } %>
             </div>
             <div class="search-bar">
                 <form method="get" action="<%= request.getContextPath() %>/principal" style="display: flex; gap: 10px; width: 100%;">

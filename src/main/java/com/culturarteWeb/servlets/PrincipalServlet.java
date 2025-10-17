@@ -2,8 +2,11 @@ package com.culturarteWeb.servlets;
 import culturarte.logica.DTs.DTPropuesta;
 import culturarte.logica.DTs.DTCategoria;
 import culturarte.logica.DTs.DTEstadoPropuesta;
+import culturarte.logica.DTs.DTUsuario;
+import culturarte.logica.DTs.DTProponente;
 import culturarte.logica.Fabrica;
 import culturarte.logica.controladores.IPropuestaController;
+import culturarte.logica.controladores.IUsuarioController;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
@@ -14,11 +17,13 @@ import java.util.List;
 @WebServlet("/principal")
 public class PrincipalServlet extends HttpServlet {
     private IPropuestaController IPC;
+    private IUsuarioController ICU;
 
     @Override
     public void init() throws  ServletException {
         Fabrica fabrica = Fabrica.getInstance();
         IPC = fabrica.getIPropuestaController();
+        ICU = fabrica.getIUsuarioController();
     }
 
     @Override
@@ -54,11 +59,39 @@ public class PrincipalServlet extends HttpServlet {
                 }
             }
 
+            // Verificar si el usuario logueado es proponente
+            boolean esProponente = false;
+            HttpSession session = request.getSession(false);
+            if (session != null && session.getAttribute("usuarioLogueado") != null) {
+                DTUsuario usuarioLogueado = (DTUsuario) session.getAttribute("usuarioLogueado");
+                try {
+                    ICU.devolverProponentePorNickname(usuarioLogueado.getNickname());
+                    esProponente = true; // Si no lanza excepción, es proponente
+                } catch (Exception e) {
+                    esProponente = false; // Si lanza excepción, no es proponente
+                }
+            }
+
+            // Verificar si el usuario logueado es proponente
+            boolean esColaborador = false;
+            HttpSession session1 = request.getSession(false);
+            if (session != null && session.getAttribute("usuarioLogueado") != null) {
+                DTUsuario usuarioLogueado = (DTUsuario) session.getAttribute("usuarioLogueado");
+                try {
+                    ICU.devolverProponentePorNickname(usuarioLogueado.getNickname());
+                    esColaborador = false; // Si no lanza excepción, es proponente
+                } catch (Exception e) {
+                    esColaborador = true; // Si lanza excepción, no es
+                }
+            }
+            
             List<DTCategoria> categorias = extraerCategoriasReales(propuestasVisibles);
             request.setAttribute("categorias", categorias);
             request.setAttribute("propuestas", propuestasVisibles);
             request.setAttribute("estadoFiltro", estadoFiltro);
             request.setAttribute("busqueda", busqueda);
+            request.setAttribute("esProponente", esProponente);
+            request.setAttribute("esColaborador", esColaborador);
             request.getRequestDispatcher("/principal.jsp").forward(request, response);
         } catch (Exception e) {
             request.setAttribute("error", "Error al cargar la página principal: " + e.getMessage());
