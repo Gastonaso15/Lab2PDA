@@ -4,120 +4,134 @@
 <html>
 <head>
     <title>Registrar Colaboración a Propuesta</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 30px; }
-        label { display: block; margin-top: 10px; }
-        input, select { margin-top: 5px; }
-        h2 { color: #333; }
-        .mensaje { color: green; font-weight: bold; }
-        .error { color: red; font-weight: bold; }
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
 
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            padding-top: 150px;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.4);
-        }
-        .modal-content {
-            background-color: #fff;
-            margin: auto;
-            padding: 20px;
-            border-radius: 10px;
-            width: 300px;
-            text-align: center;
-        }
-        .modal-content button {
-            margin: 5px;
-        }
+    <style>
+        body { background-color: #f8f9fa; padding-top: 2rem; padding-bottom: 2rem; }
     </style>
 </head>
 <body>
 
-<h2>Registrar Colaboración a una Propuesta</h2>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
 
-<!-- Paso 1: Seleccionar propuesta -->
-<form action="registrarColaboracion" method="post">
-    <input type="hidden" name="accion" value="seleccionar"/>
+            <div class="text-center mb-4">
+                <h2><i class="bi bi-cash-coin"></i> Registrar Colaboración</h2>
+                <p class="lead">Apoya una propuesta cultural y sé parte del proyecto.</p>
+            </div>
 
-    <label for="titulo">Seleccionar Propuesta:</label>
-    <select name="titulo" required>
-        <c:forEach var="p" items="${propuestas}">
-            <option value="${p.titulo}"
-                    <c:if test="${propuestaSeleccionada != null && propuestaSeleccionada.titulo == p.titulo}">selected</c:if>>
-                ${p.titulo} - ${p.proponente}
-            </option>
-        </c:forEach>
-    </select>
+            <c:if test="${not empty mensaje}">
+                <div class="alert alert-success" role="alert">${mensaje}</div>
+            </c:if>
+            <c:if test="${not empty error}">
+                <div class="alert alert-danger" role="alert">${error}</div>
+            </c:if>
 
-    <button type="submit">Ver Detalles</button>
-</form>
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0">Paso 1: Selecciona una Propuesta</h5>
+                </div>
+                <div class="card-body">
+                    <form action="registrarColaboracion" method="post">
+                        <input type="hidden" name="accion" value="seleccionar"/>
+                        <div class="input-group">
+                            <select name="titulo" class="form-select" required onchange="this.form.submit()">
+                                <option value="" disabled ${empty propuestaSeleccionada ? 'selected' : ''}>-- Elige una propuesta para ver sus detalles --</option>
+                                <c:forEach var="p" items="${propuestas}">
+                                    <option value="${p.titulo}" <c:if test="${not empty propuestaSeleccionada && propuestaSeleccionada.titulo eq p.titulo}">selected</c:if>>
+                                        ${p.titulo} (por ${p.proponente})
+                                    </option>
+                                </c:forEach>
+                            </select>
+                            <button type="submit" class="btn btn-primary d-none d-md-block">Ver Detalles</button>
+                        </div>
+                        <div class="form-text mt-2">
+                            Al cambiar la selección, los detalles se cargarán automáticamente.
+                        </div>
+                    </form>
+                </div>
+            </div>
 
-<hr>
+            <c:if test="${not empty propuestaSeleccionada}">
+                <div class="card shadow-sm mt-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Paso 2: Detalles de "${propuestaSeleccionada.titulo}"</h5>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Descripción:</strong> ${propuestaSeleccionada.descripcion}</p>
+                        <ul class="list-group list-group-flush mb-3">
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Precio de entrada:
+                                <span class="badge bg-info rounded-pill">$${String.format("%.2f", propuestaSeleccionada.precioEntrada)}</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Monto requerido:
+                                <span class="badge bg-success rounded-pill">$${String.format("%.2f", propuestaSeleccionada.montoNecesario)}</span>
+                            </li>
+                        </ul>
 
-<!-- Paso 2: Mostrar detalles -->
-<c:if test="${not empty propuestaSeleccionada}">
-    <h3>Detalles de la Propuesta Seleccionada</h3>
-    <p><strong>Título:</strong> ${propuestaSeleccionada.titulo}</p>
-    <p><strong>Descripción:</strong> ${propuestaSeleccionada.descripcion}</p>
-    <p><strong>Precio de entrada:</strong> $${propuestaSeleccionada.precioEntrada}</p>
-    <p><strong>Monto requerido:</strong> $${propuestaSeleccionada.montoRequerido}</p>
+                        <hr>
 
-    <!-- Paso 3: Registrar colaboración -->
-    <form action="registrarColaboracion" method="post">
-        <input type="hidden" name="accion" value="confirmar"/>
-        <input type="hidden" name="titulo" value="${propuestaSeleccionada.titulo}"/>
+                        <h5 class="mt-3">Paso 3: Realiza tu Colaboración</h5>
+                        <form action="registrarColaboracion" method="post">
+                            <input type="hidden" name="accion" value="confirmar"/>
+                            <input type="hidden" name="titulo" value="${propuestaSeleccionada.titulo}"/>
 
-        <label for="monto">Monto a Colaborar:</label>
-        <input type="number" name="monto" min="1" required/>
+                            <div class="mb-3">
+                                <label for="monto" class="form-label">Monto a Colaborar ($):</label>
+                                <input type="number" name="monto" id="monto" class="form-control" min="1" required/>
+                            </div>
 
-        <label for="tipoRetorno">Tipo de Retorno:</label>
-        <select name="tipoRetorno" required>
-            <option value="ENTRADA">Entrada</option>
-            <option value="PORCENTAJE_GANANCIA">Porcentaje de Ganancia</option>
-            <option value="AMBOS">Ambos</option>
-        </select>
+                            <div class="mb-3">
+                                <label for="tipoRetorno" class="form-label">Tipo de Retorno:</label>
+                                <select name="tipoRetorno" id="tipoRetorno" class="form-select" required>
+                                    <option value="ENTRADA">Entrada</option>
+                                    <option value="PORCENTAJE_GANANCIA">Porcentaje de Ganancia</option>
+                                    <option value="AMBOS">Ambos</option>
+                                </select>
+                            </div>
 
-        <br><br>
-        <button type="submit">Confirmar</button>
-        <button type="button" onclick="abrirModal()">Cancelar</button>
-    </form>
-</c:if>
+                            <div class="d-flex justify-content-end gap-2 mt-4">
+                                <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalCancelar">
+                                    Cancelar
+                                </button>
+                                <button type="submit" class="btn btn-success">
+                                    <i class="bi bi-check-circle"></i> Confirmar Colaboración
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </c:if>
 
-<!-- Modal de cancelación -->
-<div id="modalCancelar" class="modal">
-    <div class="modal-content">
-        <p>¿Seguro que deseas cancelar la colaboración?</p>
-        <form action="registrarColaboracion" method="post">
-            <input type="hidden" name="accion" value="cancelar"/>
-            <button type="submit">Sí</button>
-            <button type="button" onclick="cerrarModal()">No</button>
-        </form>
+        </div>
     </div>
 </div>
 
-<!-- Mensajes -->
-<c:if test="${not empty mensaje}">
-    <p class="mensaje">${mensaje}</p>
-</c:if>
+<div class="modal fade" id="modalCancelar" tabindex="-1" aria-labelledby="modalCancelarLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalCancelarLabel">Confirmar Cancelación</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                ¿Seguro que deseas cancelar la colaboración y volver a la página principal?
+            </div>
+            <div class="modal-footer">
+                <form action="registrarColaboracion" method="post" class="d-inline">
+                    <input type="hidden" name="accion" value="cancelar"/>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                    <button type="submit" class="btn btn-danger">Sí, cancelar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
-<c:if test="${not empty error}">
-    <p class="error">${error}</p>
-</c:if>
-
-<script>
-    function abrirModal() {
-        document.getElementById("modalCancelar").style.display = "block";
-    }
-    function cerrarModal() {
-        document.getElementById("modalCancelar").style.display = "none";
-    }
-</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>

@@ -228,13 +228,12 @@
 
                                 <% } else { %>
                                     <div class="d-flex gap-2 mb-3">
-                                        <button class="btn btn-success" disabled>
-                                            Colaborar con esta Propuesta
-                                        </button>
+                                        <%-- Este es el enlace que llama a tu servlet de registro --%>
+                                        <a href="<%= request.getContextPath() %>/registrarColaboracion?titulo=<%= java.net.URLEncoder.encode(propuesta.getTitulo(), "UTF-8") %>"
+                                           class="btn btn-success">
+                                            <i class="bi bi-cash-coin"></i> Colaborar con esta Propuesta
+                                        </a>
                                     </div>
-                                    <p class="text-muted small">
-                                        <em>Nota: La acción de registrar colaboración se implementará en otro caso de uso.</em>
-                                    </p>
                                 <% } %>
                             <form action="<%= request.getContextPath() %>/marcarPropuestaFavorita" method="post">
                                 <input type="hidden" name="titulo" value="<%= propuesta.getTitulo() %>">
