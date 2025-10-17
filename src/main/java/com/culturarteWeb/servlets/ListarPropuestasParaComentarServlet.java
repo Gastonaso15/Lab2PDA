@@ -26,8 +26,7 @@ public class ListarPropuestasParaComentarServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
-        
-        // Verificar que el usuario esté logueado
+
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("usuarioLogueado") == null) {
             response.sendRedirect(request.getContextPath() + "/inicioDeSesion");
@@ -37,15 +36,11 @@ public class ListarPropuestasParaComentarServlet extends HttpServlet {
         DTUsuario usuario = (DTUsuario) session.getAttribute("usuarioLogueado");
         
         try {
-            // Obtener todas las propuestas
             List<DTPropuesta> todasLasPropuestas = IPC.devolverTodasLasPropuestas();
             List<DTPropuesta> propuestasParaComentar = new ArrayList<>();
-            
-            // Filtrar propuestas financiadas donde el usuario colaboró y no ha comentado
+
             for (DTPropuesta propuesta : todasLasPropuestas) {
-                // Verificar que esté en estado FINANCIADA
                 if (propuesta.getEstadoActual() == DTEstadoPropuesta.FINANCIADA) {
-                    // Verificar que el usuario haya colaborado
                     boolean haColaborado = false;
                     if (propuesta.getColaboraciones() != null) {
                         for (DTColaboracion colaboracion : propuesta.getColaboraciones()) {
@@ -55,10 +50,16 @@ public class ListarPropuestasParaComentarServlet extends HttpServlet {
                             }
                         }
                     }
-                    
-                    // Verificar que no haya comentado (asumimos que no hay comentarios implementados aún)
-                    // TODO: Implementar verificación de comentarios cuando esté disponible
-                    boolean yaComento = false; // Por ahora siempre false
+                    boolean yaComento = false;
+                    String claveComentario = usuario.getNickname() + "_" + propuesta.getTitulo();
+
+                    HttpSession sessionComentarios = request.getSession(false);
+                    if (sessionComentarios != null) {
+                        java.util.Set<String> comentariosExistentes = (java.util.Set<String>) sessionComentarios.getAttribute("comentariosAgregados");
+                        if (comentariosExistentes != null && comentariosExistentes.contains(claveComentario)) {
+                            yaComento = true;
+                        }
+                    }
                     
                     if (haColaborado && !yaComento) {
                         propuestasParaComentar.add(propuesta);

@@ -1,10 +1,11 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="culturarte.logica.DTs.DTPropuesta, culturarte.logica.DTs.DTUsuario, java.util.List" %>
+<%@ page import="culturarte.logica.DTs.DTPropuesta, culturarte.logica.DTs.DTUsuario, culturarte.logica.DTs.DTComentario, java.util.List, java.time.format.DateTimeFormatter" %>
 <!DOCTYPE html>
 <html>
 <head>
     <title>Detalle de Propuesta - Culturarte</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
 </head>
 <body class="bg-light">
 
@@ -29,6 +30,7 @@
                         Boolean haColaborado = (Boolean) request.getAttribute("haColaborado");
                         DTUsuario usuarioActual = (DTUsuario) request.getAttribute("usuarioActual");
                         Boolean esFavorita = (Boolean) request.getAttribute("esFavorita");
+                        List<DTComentario> comentarios = (List<DTComentario>) request.getAttribute("comentarios");
                     %>
                     
                         <!-- Imagen de la propuesta -->
@@ -55,7 +57,7 @@
                                 class="card-img-top" style="height: 200px; object-fit: cover;"
                                 alt="Imagen por defecto">
                         <% } %>
-                        <!-- Información básica -->
+
                         <div class="row mb-4">
                             <div class="col-md-6">
                                 <h4><%= propuesta.getTitulo() %></h4>
@@ -83,8 +85,7 @@
                                 </div>
                             </div>
                         </div>
-                        
-                        <!-- Información adicional -->
+
                         <div class="row mb-4">
                             <div class="col-md-6">
                                 <h6>Proponente</h6>
@@ -113,8 +114,7 @@
                                 <% } %>
                             </div>
                         </div>
-                        
-                        <!-- Colaboradores -->
+
                         <div class="mb-4">
                             <h6>Colaboradores (<%= nicknamesColaboradores.size() %>)</h6>
                             <% if (!nicknamesColaboradores.isEmpty()) { %>
@@ -127,21 +127,67 @@
                                 <p class="text-muted">Aún no hay colaboradores</p>
                             <% } %>
                         </div>
-                        
-                        <!-- Acciones según el tipo de usuario -->
+
+                        <div class="mb-4">
+                            <h6>Comentarios de Colaboradores (<%= comentarios != null ? comentarios.size() : 0 %>)</h6>
+                            
+                            <% if (comentarios != null && !comentarios.isEmpty()) { %>
+                                <div class="row">
+                                    <% for (DTComentario comentario : comentarios) { %>
+                                        <div class="col-12 mb-3">
+                                            <div class="card border-start border-info border-4">
+                                                <div class="card-body">
+                                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                                        <div>
+                                                            <h6 class="card-title mb-1">
+                                                                <i class="bi bi-person-circle text-info"></i>
+                                                                <%= comentario.getUsuarioNickname() != null ? comentario.getUsuarioNickname() : "Usuario Anónimo" %>
+                                                            </h6>
+                                                            <% if (comentario.getUsuarioNombreCompleto() != null && !comentario.getUsuarioNombreCompleto().isEmpty()) { %>
+                                                                <small class="text-muted">
+                                                                    <%= comentario.getUsuarioNombreCompleto() %>
+                                                                </small>
+                                                            <% } %>
+                                                        </div>
+                                                        <small class="text-muted">
+                                                            <% if (comentario.getFechaHora() != null) { %>
+                                                                <%= comentario.getFechaHora().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")) %>
+                                                            <% } else { %>
+                                                                Fecha no disponible
+                                                            <% } %>
+                                                        </small>
+                                                    </div>
+                                                    <p class="card-text">
+                                                        <%= comentario.getContenido() != null ? comentario.getContenido() : "Sin contenido" %>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <% } %>
+                                </div>
+                            <% } else { %>
+                                <div class="text-center py-4">
+                                    <div class="text-muted">
+                                        <i class="bi bi-chat-dots" style="font-size: 2rem;"></i>
+                                        <p class="mt-2 mb-0">Aún no hay comentarios</p>
+                                        <small>Los colaboradores pueden compartir su experiencia aquí</small>
+                                    </div>
+                                </div>
+                            <% } %>
+                        </div>
+
                         <div class="border-top pt-4">
                             <h6>Acciones Disponibles</h6>
                             
                             <% if (usuarioActual != null) { %>
                                 <% if (esProponente) { %>
-                                    <!-- Acciones para el proponente -->
                                     <div class="d-flex gap-2 mb-3">
                                         <button class="btn btn-warning" disabled>
                                             Extender Financiación
                                         </button>
-                                        <button class="btn btn-danger" disabled>
-                                            Cancelar Propuesta
-                                        </button>
+                                        <a href="<%= request.getContextPath() %>/cancelarPropuesta" class="btn btn-danger">
+                                                        Cancelar Propuesta
+                                        </a>
                                     </div>
                                     <p class="text-muted small">
                                         <em>Nota: Las acciones de extender financiación y cancelar propuesta
@@ -149,9 +195,8 @@
                                     </p>
 
                                 <% } else if (haColaborado) { %>
-                                    <!-- Acciones para colaborador que ya colaboró -->
                                     <div class="d-flex gap-2 mb-3">
-                                        <a href="<%= request.getContextPath() %>/formularioComentario?titulo=<%= 
+                                        <a href="<%= request.getContextPath() %>/comentario?titulo=<%= 
                                             java.net.URLEncoder.encode(propuesta.getTitulo(), "UTF-8") %>" 
                                            class="btn btn-info">
                                             <i class="bi bi-chat-dots"></i> Agregar Comentario
@@ -162,7 +207,6 @@
                                     </p>
                                     
                                 <% } else { %>
-                                    <!-- Acciones para colaborador que no ha colaborado -->
                                     <div class="d-flex gap-2 mb-3">
                                         <button class="btn btn-success" disabled>
                                             Colaborar con esta Propuesta
@@ -179,7 +223,6 @@
                                 </button>
                             </form>
                             <% } else { %>
-                                <!-- Usuario no logueado -->
                                 <div class="alert alert-info">
                                     <p class="mb-2">Para colaborar con esta propuesta, debes iniciar sesión.</p>
                                     <a href="<%= request.getContextPath() %>/inicioDeSesion" class="btn btn-primary btn-sm">

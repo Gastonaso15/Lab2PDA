@@ -68,13 +68,9 @@
                                             
                                             <% if (tieneImagen) { %>
                                                 <img src="<%= request.getContextPath() %>/<%= imagenPropuesta %>" 
-                                                     class="card-img-top" style="height: 200px; object-fit: cover;" 
+                                                     class="card-img-top" style="height: 400px; object-fit: cover;"
                                                      alt="Imagen de <%= propuesta.getTitulo() %>"
                                                      onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                                                <div class="card-img-top bg-light d-flex align-items-center justify-content-center"
-                                                     style="height: 200px; display: none;">
-                                                    <span class="text-muted">Error al cargar imagen</span>
-                                                </div>
                                            <% } else { %>
                                                <img src="<%= request.getContextPath() %>/imagenes/propuestaDefault.png"
                                                     class="card-img-top" style="height: 200px; object-fit: cover;"
@@ -113,7 +109,7 @@
                                                 </div>
                                                 
                                                 <div class="mt-auto">
-                                                    <a href="<%= request.getContextPath() %>/formularioComentario?titulo=<%= 
+                                                    <a href="<%= request.getContextPath() %>/comentario?titulo=<%= 
                                                         java.net.URLEncoder.encode(propuesta.getTitulo(), "UTF-8") %>" 
                                                        class="btn btn-primary w-100">
                                                         <i class="bi bi-chat-dots"></i> Agregar Comentario
