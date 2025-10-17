@@ -17,12 +17,12 @@
                     <h3 class="text-center mb-0">Detalle de Propuesta</h3>
                 </div>
                 <div class="card-body">
-                    
+
                     <% if (request.getAttribute("error") != null) { %>
                         <div class="alert alert-danger" role="alert">
                             <%= request.getAttribute("error") %>
                         </div>
-                    <% } else { 
+                    <% } else {
                         DTPropuesta propuesta = (DTPropuesta) request.getAttribute("propuesta");
                         Double montoRecaudado = (Double) request.getAttribute("montoRecaudado");
                         List<String> nicknamesColaboradores = (List<String>) request.getAttribute("nicknamesColaboradores");
@@ -32,21 +32,21 @@
                         Boolean esFavorita = (Boolean) request.getAttribute("esFavorita");
                         List<DTComentario> comentarios = (List<DTComentario>) request.getAttribute("comentarios");
                     %>
-                    
+
                         <!-- Imagen de la propuesta -->
-                        <% 
+                        <%
                         String imagenPropuesta = propuesta.getImagen();
                         boolean tieneImagen = imagenPropuesta != null && !imagenPropuesta.trim().isEmpty();
                         %>
-                        
+
                         <% if (tieneImagen) { %>
                             <div class="text-center mb-4">
-                                <img src="<%= request.getContextPath() %>/<%= imagenPropuesta %>" 
-                                     class="img-fluid rounded" style="max-height: 300px;" 
+                                <img src="<%= request.getContextPath() %>/<%= imagenPropuesta %>"
+                                     class="img-fluid rounded" style="max-height: 300px;"
                                      alt="Imagen de <%= propuesta.getTitulo() %>"
                                      onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
                                 <!-- Siempre aparece error al cargar imagen con esto
-                                <div class="bg-light d-flex align-items-center justify-content-center rounded" 
+                                <div class="bg-light d-flex align-items-center justify-content-center rounded"
                                      style="height: 200px; display: none;">
                                     <span class="text-muted">Error al cargar imagen</span>
                                 </div>
@@ -68,15 +68,15 @@
                                     <div class="card-body">
                                         <h6 class="card-title">Estado</h6>
                                         <span class="badge bg-primary fs-6"><%= propuesta.getEstadoActual() %></span>
-                                        
+
                                         <h6 class="card-title mt-3">Monto Necesario</h6>
                                         <p class="mb-0">$<%= String.format("%.2f", propuesta.getMontoNecesario()) %></p>
-                                        
+
                                         <h6 class="card-title mt-3">Monto Recaudado</h6>
                                         <p class="mb-0">$<%= String.format("%.2f", montoRecaudado) %></p>
-                                        
+
                                         <div class="progress mt-2">
-                                            <div class="progress-bar" role="progressbar" 
+                                            <div class="progress-bar" role="progressbar"
                                                  style="width: <%= (montoRecaudado / propuesta.getMontoNecesario()) * 100 %>%">
                                                 <%= String.format("%.1f", (montoRecaudado / propuesta.getMontoNecesario()) * 100) %>%
                                             </div>
@@ -89,25 +89,25 @@
                         <div class="row mb-4">
                             <div class="col-md-6">
                                 <h6>Proponente</h6>
-                                <p><%= propuesta.getDTProponente() != null ? 
+                                <p><%= propuesta.getDTProponente() != null ?
                                     propuesta.getDTProponente().getNickname() : "N/A" %></p>
-                                
+
                                 <h6>Lugar</h6>
                                 <p><%= propuesta.getLugar() != null ? propuesta.getLugar() : "No especificado" %></p>
-                                
+
                                 <h6>Fecha Prevista</h6>
-                                <p><%= propuesta.getFechaPrevista() != null ? 
+                                <p><%= propuesta.getFechaPrevista() != null ?
                                     propuesta.getFechaPrevista() : "No especificada" %></p>
                             </div>
                             <div class="col-md-6">
                                 <h6>Fecha de Publicación</h6>
-                                <p><%= propuesta.getFechaPublicacion() != null ? 
+                                <p><%= propuesta.getFechaPublicacion() != null ?
                                     propuesta.getFechaPublicacion() : "No publicada" %></p>
-                                
+
                                 <h6>Categoría</h6>
-                                <p><%= propuesta.getCategoria() != null ? 
+                                <p><%= propuesta.getCategoria() != null ?
                                     propuesta.getCategoria().getNombre() : "Sin categoría" %></p>
-                                
+
                                 <% if (propuesta.getPrecioEntrada() != null && propuesta.getPrecioEntrada() > 0) { %>
                                     <h6>Precio de Entrada</h6>
                                     <p>$<%= String.format("%.2f", propuesta.getPrecioEntrada()) %></p>
@@ -130,7 +130,7 @@
 
                         <div class="mb-4">
                             <h6>Comentarios de Colaboradores (<%= comentarios != null ? comentarios.size() : 0 %>)</h6>
-                            
+
                             <% if (comentarios != null && !comentarios.isEmpty()) { %>
                                 <div class="row">
                                     <% for (DTComentario comentario : comentarios) { %>
@@ -178,16 +178,36 @@
 
                         <div class="border-top pt-4">
                             <h6>Acciones Disponibles</h6>
-                            
+
                             <% if (usuarioActual != null) { %>
                                 <% if (esProponente) { %>
                                     <div class="d-flex gap-2 mb-3">
                                         <button class="btn btn-warning" disabled>
                                             Extender Financiación
                                         </button>
-                                        <a href="<%= request.getContextPath() %>/cancelarPropuesta" class="btn btn-danger">
-                                                        Cancelar Propuesta
-                                        </a>
+                                        <%-- Lógica para el botón de cancelar --%>
+                                                <% if (propuesta.getEstadoActual() != null && "FINANCIADA".equalsIgnoreCase(propuesta.getEstadoActual().name())) { %>
+                                                    <%-- El botón está ACTIVO solo si la propuesta está financiada --%>
+                                                    <form method="post" action="<%= request.getContextPath() %>/cancelarPropuesta" class="d-inline">
+                                                        <input type="hidden" name="titulo" value="<%= propuesta.getTitulo() %>"/>
+                                                        <input type="hidden" name="source" value="detail"/> <%-- Parámetro para saber que venimos del detalle --%>
+                                                        <button type="submit" class="btn btn-danger"
+                                                                onclick="return confirm('¿Estás seguro de que deseas cancelar esta propuesta?');">
+                                                            <i class="bi bi-x-circle"></i> Cancelar Propuesta
+                                                        </button>
+                                                    </form>
+                                                <% } else { %>
+                                                    <%-- El botón está DESACTIVADO si la propuesta NO está financiada --%>
+                                                    <button class="btn btn-danger" disabled>
+                                                        <i class="bi bi-x-circle"></i> Cancelar Propuesta
+                                                    </button>
+                                                <% } %>
+                                            </div>
+                                            <p class="text-muted small">
+                                                <em>Nota: Solo puedes cancelar propuestas que se encuentren en estado "Financiada".</em>
+                                            </p>
+
+                                        <% } else if (haColaborado) { %>
                                     </div>
                                     <p class="text-muted small">
                                         <em>Nota: Las acciones de extender financiación y cancelar propuesta
@@ -196,8 +216,8 @@
 
                                 <% } else if (haColaborado) { %>
                                     <div class="d-flex gap-2 mb-3">
-                                        <a href="<%= request.getContextPath() %>/comentario?titulo=<%= 
-                                            java.net.URLEncoder.encode(propuesta.getTitulo(), "UTF-8") %>" 
+                                        <a href="<%= request.getContextPath() %>/comentario?titulo=<%=
+                                            java.net.URLEncoder.encode(propuesta.getTitulo(), "UTF-8") %>"
                                            class="btn btn-info">
                                             <i class="bi bi-chat-dots"></i> Agregar Comentario
                                         </a>
@@ -205,7 +225,7 @@
                                     <p class="text-muted small">
                                         <em>Como colaborador de esta propuesta, puedes agregar un comentario sobre tu experiencia.</em>
                                     </p>
-                                    
+
                                 <% } else { %>
                                     <div class="d-flex gap-2 mb-3">
                                         <button class="btn btn-success" disabled>
@@ -231,9 +251,9 @@
                                 </div>
                             <% } %>
                         </div>
-                        
+
                     <% } %>
-                    
+
                     <div class="text-center mt-4">
                         <a href="<%= request.getContextPath() %>/consultaPropuesta" class="btn btn-secondary">
                             Volver a la Lista

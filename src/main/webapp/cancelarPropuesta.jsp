@@ -2,16 +2,11 @@
 <%@ page import="culturarte.logica.DTs.DTPropuesta" %>
 <%@ page import="java.util.List" %>
 <%
-    // Verificar sesión activa
-    String usuario = (String) session.getAttribute("usuario");
-    if (usuario == null) {
-        response.sendRedirect(request.getContextPath() + "/login.jsp");
-        return;
-    }
-
-    // Obtener lista de propuestas
+    // Obtener lista de propuestas y mensaje del servlet
     List<DTPropuesta> propuestas = (List<DTPropuesta>) request.getAttribute("propuestas");
     String mensaje = (String) request.getAttribute("mensaje");
+    // Obtener el nickname del usuario de la sesión para el título
+    String nickname = (String) session.getAttribute("usuario");
 %>
 <!DOCTYPE html>
 <html>
@@ -19,20 +14,24 @@
     <meta charset="UTF-8">
     <title>Cancelar Propuesta</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-        th { background-color: #f4f4f4; }
-        .mensaje { color: green; margin-bottom: 20px; }
-        .error { color: red; margin-bottom: 20px; }
-        button { padding: 6px 12px; cursor: pointer; }
+        body { font-family: Arial, sans-serif; margin: 20px; padding: 20px; background-color: #f9f9f9; }
+        h2 { color: #333; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); background-color: #fff; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        th { background-color: #f2f2f2; color: #555; }
+        .mensaje { padding: 15px; margin-bottom: 20px; border-radius: 5px; color: #155724; background-color: #d4edda; border: 1px solid #c3e6cb; }
+        .error { padding: 15px; margin-bottom: 20px; border-radius: 5px; color: #721c24; background-color: #f8d7da; border: 1px solid #f5c6cb; }
+        button { padding: 8px 15px; cursor: pointer; border-radius: 5px; border: none; background-color: #dc3545; color: white; font-weight: bold; }
+        button:hover { background-color: #c82333; }
+        a { color: #007bff; text-decoration: none; }
+        a:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
-    <h2>Propuestas Financiadas de <%= usuario %></h2>
+    <h2>Propuestas Financiadas de <%= nickname != null ? nickname : "Usuario" %></h2>
 
     <% if (mensaje != null) { %>
-        <p class="<%= mensaje.contains("correctamente") ? "mensaje" : "error" %>"><%= mensaje %></p>
+        <p class="<%= mensaje.toLowerCase().contains("correctamente") ? "mensaje" : "error" %>"><%= mensaje %></p>
     <% } %>
 
     <% if (propuestas != null && !propuestas.isEmpty()) { %>
@@ -42,8 +41,6 @@
                     <th>Título</th>
                     <th>Descripción</th>
                     <th>Lugar</th>
-                    <th>Fecha Prevista</th>
-                    <th>Precio Entrada</th>
                     <th>Monto Necesario</th>
                     <th>Acción</th>
                 </tr>
@@ -54,12 +51,11 @@
                         <td><%= p.getTitulo() %></td>
                         <td><%= p.getDescripcion() %></td>
                         <td><%= p.getLugar() %></td>
-                        <td><%= p.getFechaPrevista() != null ? p.getFechaPrevista() : "" %></td>
-                        <td><%= p.getPrecioEntrada() != null ? p.getPrecioEntrada() : "" %></td>
-                        <td><%= p.getMontoNecesario() != null ? p.getMontoNecesario() : "" %></td>
+                        <td>$<%= String.format("%.2f", p.getMontoNecesario()) %></td>
                         <td>
                             <form method="post" action="<%= request.getContextPath() %>/cancelarPropuesta">
                                 <input type="hidden" name="titulo" value="<%= p.getTitulo() %>"/>
+                                <%-- No es necesario el source aquí, el servlet lo manejará por defecto --%>
                                 <button type="submit" onclick="return confirm('¿Estás seguro que deseas cancelar esta propuesta?');">
                                     Cancelar
                                 </button>
@@ -70,10 +66,9 @@
             </tbody>
         </table>
     <% } else { %>
-        <p>No tienes propuestas financiadas actualmente.</p>
+        <p>No tienes propuestas en estado "Financiada" para cancelar.</p>
     <% } %>
 
-    <p><a href="<%= request.getContextPath() %>/inicio.jsp">Volver al inicio</a></p>
-    <p><a href="<%= request.getContextPath() %>/cierreSesion">Cerrar sesión</a></p>
+    <p><a href="<%= request.getContextPath() %>/principal">Volver al inicio</a></p>
 </body>
 </html>
