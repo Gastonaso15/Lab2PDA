@@ -35,32 +35,32 @@
             border-bottom: 1px solid #ddd;
         }
 
-        .auth-buttons {
+        .Botones-Menu-Superior {
             display: flex;
             gap: 10px;
         }
 
-        .auth-buttons a {
+        .Botones-Menu-Superior a {
             text-decoration: none;
             color: #333;
             font-weight: bold;
             font-size: 14px;
         }
 
-        .search-bar {
+        .search-bar-Menu-Superior {
             margin: 20px 0;
             display: flex;
             gap: 10px;
         }
 
-        .search-bar input {
+        .search-bar-Menu-Superior input {
             flex: 1;
             padding: 10px;
             border: 1px solid #ddd;
             border-radius: 4px;
         }
 
-        .search-bar button {
+        .search-bar-Menu-Superior button {
             padding: 10px 20px;
             background-color: #333;
             color: white;
@@ -246,31 +246,40 @@
     </style>
 </head>
 <body>
+<%-- Queria refactorizarlo como container-Menu-Superior pero vi que refactorizaba literalmente todos los jsp porque todos dependen del el y aunque con refactor no deberia dar ningun error prefiero no hacerlo por si rompo algo sin querer--%>
     <div class="container">
         <header>
             <div class="logo">
                 <img src="imagenes/culturarte.png" alt="Logo Culturarte" style="width:150px; height:auto;">
             </div>
-            <div class="auth-buttons">
+            <div class="Botones-Menu-Superior">
+                <%-- Solo autorizo que puedan ver "Tengo une Propuesta" los PROPONENTES --%>
                 <%
                     Boolean esProponente = (Boolean) request.getAttribute("esProponente");
                     if (esProponente != null && esProponente) {
                 %>
                     <a href="altaPropuesta">Tengo una Propuesta</a> | 
                 <% } %>
+                <%-- BOTON: QUIERO VER PROPUESTA--%>
                 <a href="consultaPropuesta">Quiero ver Propuestas</a>
+                <%-- BOTON: QUIERO VER USUARIO--%>
+                <a href="consultaPerfilUsuario">Quiero ver Usuario</a>
+                <%-- Solo autorizo que puedan ver "Comentar Propuesta" los COLABORADORES --%>
                 <%
                     Boolean esColaborador = (Boolean) request.getAttribute("esColaborador");
                     if (esColaborador != null && esColaborador) {
                 %>
+                <%-- BOTON: COMENTAR PROPUESTA--%>
                   | <a href="listarPropuestasParaComentar">Comentar Propuestas</a>
                 <% } %>
             </div>
-            <div class="search-bar">
+            <%-- BARRA DE BUSQUEDA--%>
+            <div class="search-bar-Menu-Superior">
                 <form method="get" action="<%= request.getContextPath() %>/principal" style="display: flex; gap: 10px; width: 100%;">
                     <input type="text" name="busqueda" placeholder="Buscar por título, lugar o descripción..." 
                            value="<%= request.getParameter("busqueda") != null ? request.getParameter("busqueda") : "" %>"
                            style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+                <%-- BOTON: BUSCAR--%>
                     <button type="submit" style="padding: 10px 20px; background-color: #333; color: white; border: none; border-radius: 4px; cursor: pointer;">Buscar</button>
                     <% if (request.getParameter("busqueda") != null && !request.getParameter("busqueda").isEmpty()) { %>
                         <a href="<%= request.getContextPath() %>/principal" 
@@ -280,11 +289,12 @@
                     <% } %>
                 </form>
             </div>
-             <div class="auth-buttons">
-                 <%-- Condicional: si el usuario está logueado se muestra la pagina de cierta manera, sino se muestra para visitantes--%>
+             <div class="Botones-Menu-Superior">
+                 <%-- Condicional: si el usuario está logueado se muestran los botones PERFIL y CERRAR SESION--%>
                     <%Object usuarioObj = session.getAttribute("usuarioLogueado");
                     if(usuarioObj != null) {
                         DTUsuario usuario = (DTUsuario) usuarioObj;%>
+                     <%-- Imagen chiquita al lado del nombre del usuario--%>
                         <div style="display:flex; align-items:center; gap:10px;">
                            <%
                                String rutaImagen = usuario.getImagen();
@@ -296,18 +306,24 @@
                            %>
                            <img src="<%= rutaImagen %>" alt="Imagen de Usuario" style="width:40px; height:40px; border-radius:50%;">
                            <div style="display:flex; flex-direction:column;">
+                               <%-- Muestro en pantalla directamente el nombre y apellido invocandolos directo--%>
                                 <span><%= usuario.getNombre() %> <%= usuario.getApellido() %></span>
                                 <span style="font-size:13px;">
+                                     <%-- Elemento que hace referencia la funcion consulta Peril Usuario pero ya pasandole el nickname del usuario logeado actualmente y abajo el de cierre de sesión--%>
+                           <%-- BOTON: PERFIL--%>
                                     <a href="<%= request.getContextPath() %>/consultaPerfilUsuario?nick=<%= usuario.getNickname() %>" style="text-decoration:none; color:#333;">Perfil</a> |
-                                    <a href="${pageContext.request.contextPath}/cierreSesion" style="text-decoration:none; color:#333;">
-                                        Cerrar Sesión
-                                    </a>
+                           <%-- BOTON: CERRAR SESION--%>
+                                    <a href="${pageContext.request.contextPath}/cierreSesion" style="text-decoration:none; color:#333;">Cerrar Sesión </a>
 
                                 </span>
                             </div>
                         </div>
+                     <%-- Condicional: De los contrario se muestran los botones REGISTRASE Y ENTRAR--%>
                     <%}else{%>
-                        <a href="altaPerfil">REGISTRARSE</a> | <a href="inicioDeSesion">ENTRAR</a>
+                     <%-- BOTON: REGISTRARSE--%>
+                        <a href="altaPerfil">REGISTRARSE</a> |
+                     <%-- BOTON: ENTRAR--%>
+                        <a href="inicioDeSesion">ENTRAR</a>
                     <%}%>
                 </div>
             </header>
