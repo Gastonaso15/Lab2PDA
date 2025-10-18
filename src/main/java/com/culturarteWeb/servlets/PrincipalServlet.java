@@ -200,15 +200,13 @@ public class PrincipalServlet extends HttpServlet {
             totalColaboradores = propuesta.getColaboraciones().size();
         }
         
-        // Calcular días restantes (asumiendo que la fecha de publicación es la fecha de inicio de financiación)
+        // Calcular días restantes (diferencia entre fecha actual y fecha prevista)
         try {
-            if (propuesta.getFechaPublicacion() != null) {
-                LocalDate fechaPublicacion = propuesta.getFechaPublicacion();
+            if (propuesta.getFechaPrevista() != null) {
+                LocalDate fechaPrevista = propuesta.getFechaPrevista();
                 LocalDate fechaActual = LocalDate.now();
                 
-                // Asumiendo que el período de financiación es de 30 días
-                LocalDate fechaFinFinanciacion = fechaPublicacion.plusDays(30);
-                diasRestantes = ChronoUnit.DAYS.between(fechaActual, fechaFinFinanciacion);
+                diasRestantes = ChronoUnit.DAYS.between(fechaActual, fechaPrevista);
                 if (diasRestantes < 0) {
                     diasRestantes = 0;
                 }
@@ -220,8 +218,7 @@ public class PrincipalServlet extends HttpServlet {
         
         return new PropuestaConDatos(propuesta, montoRecaudado, totalColaboradores, diasRestantes);
     }
-    
-    // Clase interna para contener la propuesta con sus datos calculados
+
     public static class PropuestaConDatos {
         private DTPropuesta propuesta;
         private double montoRecaudado;
