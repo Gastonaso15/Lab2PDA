@@ -1,3 +1,5 @@
+package com.culturarteWeb.servlets;
+
 import culturarte.logica.DTs.DTCategoria;
 import culturarte.logica.DTs.DTUsuario;
 import culturarte.logica.DTs.DTPropuesta;

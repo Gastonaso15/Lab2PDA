@@ -3,7 +3,7 @@ import culturarte.logica.DTs.DTPropuesta;
 import culturarte.logica.DTs.DTCategoria;
 import culturarte.logica.DTs.DTEstadoPropuesta;
 import culturarte.logica.DTs.DTUsuario;
-import culturarte.logica.DTs.DTProponente;
+import culturarte.logica.DTs.DTColaboracion;
 import culturarte.logica.Fabrica;
 import culturarte.logica.controladores.IPropuestaController;
 import culturarte.logica.controladores.IUsuarioController;
@@ -11,6 +11,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,60 +36,60 @@ public class PrincipalServlet extends HttpServlet {
             List<DTPropuesta> todasLasPropuestas = IPC.devolverTodasLasPropuestas();
             List<DTPropuesta> propuestasVisibles = new ArrayList<>();
 
-            // Filtrar propuestas según el estado seleccionado
             for (DTPropuesta propuesta : todasLasPropuestas) {
                 if (propuesta.getEstadoActual() != DTEstadoPropuesta.INGRESADA) {
                     boolean cumpleEstado = false;
                     
-                    // Filtrar por estado
                     if (estadoFiltro == null || estadoFiltro.isEmpty() || "todas".equals(estadoFiltro)) {
-                        cumpleEstado = true; // Mostrar todas las propuestas visibles
+                        cumpleEstado = true;
                     } else {
                         cumpleEstado = coincideConEstadoFiltro(propuesta.getEstadoActual().toString(), estadoFiltro);
                     }
-                    
-                    // Filtrar por búsqueda si se proporciona
+
                     boolean cumpleBusqueda = true;
                     if (busqueda != null && !busqueda.trim().isEmpty()) {
                         cumpleBusqueda = coincideConBusqueda(propuesta, busqueda.trim());
                     }
-                    
-                    // Agregar si cumple ambos filtros
+
                     if (cumpleEstado && cumpleBusqueda) {
                         propuestasVisibles.add(propuesta);
                     }
                 }
             }
 
-            // Verificar si el usuario logueado es proponente
             boolean esProponente = false;
             HttpSession session = request.getSession(false);
             if (session != null && session.getAttribute("usuarioLogueado") != null) {
                 DTUsuario usuarioLogueado = (DTUsuario) session.getAttribute("usuarioLogueado");
                 try {
                     ICU.devolverProponentePorNickname(usuarioLogueado.getNickname());
-                    esProponente = true; // Si no lanza excepción, es proponente
+                    esProponente = true;
                 } catch (Exception e) {
-                    esProponente = false; // Si lanza excepción, no es proponente
+                    esProponente = false;
                 }
             }
 
-            // Verificar si el usuario logueado es proponente
             boolean esColaborador = false;
-            HttpSession session1 = request.getSession(false);
             if (session != null && session.getAttribute("usuarioLogueado") != null) {
                 DTUsuario usuarioLogueado = (DTUsuario) session.getAttribute("usuarioLogueado");
                 try {
                     ICU.devolverProponentePorNickname(usuarioLogueado.getNickname());
-                    esColaborador = false; // Si no lanza excepción, es proponente
+                    esColaborador = false;
                 } catch (Exception e) {
-                    esColaborador = true; // Si lanza excepción, no es
+                    esColaborador = true;
                 }
+            }
+            
+            // Calcular datos adicionales para cada propuesta
+            List<PropuestaConDatos> propuestasConDatos = new ArrayList<>();
+            for (DTPropuesta propuesta : propuestasVisibles) {
+                PropuestaConDatos propuestaConDatos = calcularDatosPropuesta(propuesta);
+                propuestasConDatos.add(propuestaConDatos);
             }
             
             List<DTCategoria> categorias = extraerCategoriasReales(propuestasVisibles);
             request.setAttribute("categorias", categorias);
-            request.setAttribute("propuestas", propuestasVisibles);
+            request.setAttribute("propuestas", propuestasConDatos);
             request.setAttribute("estadoFiltro", estadoFiltro);
             request.setAttribute("busqueda", busqueda);
             request.setAttribute("esProponente", esProponente);
@@ -139,39 +141,29 @@ public class PrincipalServlet extends HttpServlet {
         }
         
         String busquedaLower = busqueda.toLowerCase();
-        
-        // Buscar en título
+
         if (propuesta.getTitulo() != null && 
             propuesta.getTitulo().toLowerCase().contains(busquedaLower)) {
             return true;
         }
-        
-        // Buscar en descripción
-        if (propuesta.getDescripcion() != null && 
+        if (propuesta.getDescripcion() != null &&
             propuesta.getDescripcion().toLowerCase().contains(busquedaLower)) {
             return true;
         }
-        
-        // Buscar en lugar
         if (propuesta.getLugar() != null && 
             propuesta.getLugar().toLowerCase().contains(busquedaLower)) {
             return true;
         }
-        
-        // Buscar en nombre del proponente
         if (propuesta.getDTProponente() != null && 
             propuesta.getDTProponente().getNickname() != null &&
             propuesta.getDTProponente().getNickname().toLowerCase().contains(busquedaLower)) {
             return true;
         }
-        
-        // Buscar en categoría
         if (propuesta.getCategoria() != null && 
             propuesta.getCategoria().getNombre() != null &&
             propuesta.getCategoria().getNombre().toLowerCase().contains(busquedaLower)) {
             return true;
         }
-        
         return false;
     }
 
@@ -193,6 +185,60 @@ public class PrincipalServlet extends HttpServlet {
             default:
                 return false;
         }
+    }
+
+    private PropuestaConDatos calcularDatosPropuesta(DTPropuesta propuesta) {
+        double montoRecaudado = 0.0;
+        int totalColaboradores = 0;
+        long diasRestantes = 0;
+        
+        // Calcular monto recaudado y total de colaboradores
+        if (propuesta.getColaboraciones() != null) {
+            for (DTColaboracion colaboracion : propuesta.getColaboraciones()) {
+                montoRecaudado += colaboracion.getMonto();
+            }
+            totalColaboradores = propuesta.getColaboraciones().size();
+        }
+        
+        // Calcular días restantes (asumiendo que la fecha de publicación es la fecha de inicio de financiación)
+        try {
+            if (propuesta.getFechaPublicacion() != null) {
+                LocalDate fechaPublicacion = propuesta.getFechaPublicacion();
+                LocalDate fechaActual = LocalDate.now();
+                
+                // Asumiendo que el período de financiación es de 30 días
+                LocalDate fechaFinFinanciacion = fechaPublicacion.plusDays(30);
+                diasRestantes = ChronoUnit.DAYS.between(fechaActual, fechaFinFinanciacion);
+                if (diasRestantes < 0) {
+                    diasRestantes = 0;
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Error al calcular días restantes: " + e.getMessage());
+            diasRestantes = 0;
+        }
+        
+        return new PropuestaConDatos(propuesta, montoRecaudado, totalColaboradores, diasRestantes);
+    }
+    
+    // Clase interna para contener la propuesta con sus datos calculados
+    public static class PropuestaConDatos {
+        private DTPropuesta propuesta;
+        private double montoRecaudado;
+        private int totalColaboradores;
+        private long diasRestantes;
+        
+        public PropuestaConDatos(DTPropuesta propuesta, double montoRecaudado, int totalColaboradores, long diasRestantes) {
+            this.propuesta = propuesta;
+            this.montoRecaudado = montoRecaudado;
+            this.totalColaboradores = totalColaboradores;
+            this.diasRestantes = diasRestantes;
+        }
+        
+        public DTPropuesta getPropuesta() { return propuesta; }
+        public double getMontoRecaudado() { return montoRecaudado; }
+        public int getTotalColaboradores() { return totalColaboradores; }
+        public long getDiasRestantes() { return diasRestantes; }
     }
 
 }

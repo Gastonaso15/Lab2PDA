@@ -5,6 +5,7 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Culturarte</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         * {
             margin: 0;3
@@ -151,24 +152,58 @@
             margin-bottom: 15px;
         }
 
-        .botonDetalles {
-            margin-top: 10px;
-            text-align: center;
+        .progreso-financiacion {
+            margin-bottom: 15px;
         }
 
-        .botonDetalles .btn {
+        .barra-progreso {
             width: 100%;
-            padding: 8px 16px;
-            font-size: 14px;
-            font-weight: bold;
+            height: 8px;
+            background-color: #e0e0e0;
             border-radius: 4px;
-            transition: all 0.3s ease;
+            overflow: hidden;
+            margin-bottom: 5px;
         }
 
-        .botonDetalles .btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        .barra-progreso-llena {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50, #8BC34A);
+            border-radius: 4px;
+            transition: width 0.3s ease;
         }
+
+        .info-progreso {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .estadisticas-propuesta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .dias-restantes {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .colaboradores-count {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .icono {
+            font-size: 14px;
+        }
+
 
         .categorias {
             background-color: white;
@@ -305,32 +340,56 @@
         </div>
 
         <div class="gridPropuesta">
-        <%List<DTPropuesta> propuestas = (List<DTPropuesta>) request.getAttribute("propuestas");
+        <%List<com.culturarteWeb.servlets.PrincipalServlet.PropuestaConDatos> propuestas = (List<com.culturarteWeb.servlets.PrincipalServlet.PropuestaConDatos>) request.getAttribute("propuestas");
             if (propuestas != null) {
-                for (DTPropuesta p : propuestas) {
-                    String imagen = (p.getImagen() != null && !p.getImagen().isEmpty()) ? p.getImagen() : "imagenes/propuestaDefault.png";%>
+                for (com.culturarteWeb.servlets.PrincipalServlet.PropuestaConDatos propuestaConDatos : propuestas) {
+                    culturarte.logica.DTs.DTPropuesta p = propuestaConDatos.getPropuesta();
+                    String imagen = (p.getImagen() != null && !p.getImagen().isEmpty()) ? p.getImagen() : "imagenes/propuestaDefault.png";
+                    double porcentajeProgreso = p.getMontoNecesario() > 0 ? (propuestaConDatos.getMontoRecaudado() / p.getMontoNecesario()) * 100 : 0;
+                    if (porcentajeProgreso > 100) porcentajeProgreso = 100;%>
             <div class="cartaPropuesta">
                 <div class="imagenPropuesta">
                     <img src="<%= imagen %>" alt="Imagen de <%= p.getTitulo() %>" style="width:100%; height:180px; object-fit:cover;"></div>
                     <div class="contenidoPropuesta">
                         <div class="tituloPropuesta"><%= p.getTitulo() %></div>
-                            <div class="descripcionPropuesta"><%= p.getDescripcion() %></div>
-                                <div class="montoPropuesta"><%= p.getMontoNecesario() %> UYU</div>
-                                    <div class="datosPropuesta">
-                                        <div><%= p.getEstadoActual() %></div>
-                                        <div><%= p.getFechaPublicacion() %></div>
-                                    </div>
-                                    <div class="botonDetalles">
-                                        <a href="<%= request.getContextPath() %>/consultaPropuesta?accion=detalle&titulo=<%= 
-                                            java.net.URLEncoder.encode(p.getTitulo(), "UTF-8") %>" 
-                                           class="btn btn-primary w-100">
-                                            Ver Detalles
-                                        </a>
-                                    </div>
-                                </div>
+                        <div class="descripcionPropuesta"><%= p.getDescripcion() %></div>
+                        
+                        <!-- Barra de progreso de financiación -->
+                        <div class="progreso-financiacion">
+                            <div class="info-progreso">
+                                <span>$<%= String.format("%.0f", propuestaConDatos.getMontoRecaudado()) %> recaudado</span>
+                                <span>$<%= String.format("%.0f", p.getMontoNecesario()) %> objetivo</span>
                             </div>
-                        <%}}%>
+                            <div class="barra-progreso">
+                                <div class="barra-progreso-llena" style="width: <%= porcentajeProgreso %>%"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Estadísticas de la propuesta -->
+                        <div class="estadisticas-propuesta">
+                            <div class="dias-restantes">
+                                <span class="icono">⏰</span>
+                                <span><%= propuestaConDatos.getDiasRestantes() %> días restantes</span>
+                            </div>
+                            <div class="colaboradores-count">
+                                <span class="icono">👥</span>
+                                <span><%= propuestaConDatos.getTotalColaboradores() %> colaboradores</span>
+                            </div>
+                        </div>
+                        
+                        <div class="datosPropuesta">
+                            <div><%= p.getEstadoActual() %></div>
+                            <div><%= p.getFechaPublicacion() %></div>
+                        </div>
+                        <a href="<%= request.getContextPath() %>/consultaPropuesta?accion=detalle&titulo=<%= 
+                            java.net.URLEncoder.encode(p.getTitulo(), "UTF-8") %>" 
+                           class="btn btn-primary w-100">
+                            Ver Detalles
+                        </a>
                     </div>
+                </div>
+            <%}}%>
+        </div>
 
             <div class="categorias">
                 <h3>CATEGORÍAS</h3>
@@ -412,6 +471,6 @@
             });
         });
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-</html>
 </html>
