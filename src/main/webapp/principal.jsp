@@ -258,12 +258,13 @@
                     Boolean esProponente = (Boolean) request.getAttribute("esProponente");
                     if (esProponente != null && esProponente) {
                 %>
-                    <a href="altaPropuesta">Tengo una Propuesta</a> | 
-                <% } %>
+                    <a href="altaPropuesta">Tengo una Propuesta</a> |
+                    <a href="extenderFinanciacion">Quiero extender financiacion </a> |
+                    <% } %>
                 <%-- BOTON: QUIERO VER PROPUESTA--%>
                 <a href="consultaPropuesta">Quiero ver Propuestas</a>
                 <%-- BOTON: QUIERO VER USUARIO--%>
-                <a href="consultaPerfilUsuario">Quiero ver Usuario</a>
+                <a href="consultaPerfilUsuario">|Quiero ver Usuario</a>
                 <%-- Solo autorizo que puedan ver "Comentar Propuesta" los COLABORADORES --%>
                 <%
                     Boolean esColaborador = (Boolean) request.getAttribute("esColaborador");
@@ -290,7 +291,7 @@
                 </form>
             </div>
              <div class="Botones-Menu-Superior">
-                 <%-- Condicional: si el usuario está logueado se muestran los botones PERFIL y CERRAR SESION--%>
+                  <%--Condicional: si el usuario está logueado se muestran los botones PERFIL y CERRAR SESION --%>
                     <%Object usuarioObj = session.getAttribute("usuarioLogueado");
                     if(usuarioObj != null) {
                         DTUsuario usuario = (DTUsuario) usuarioObj;%>
