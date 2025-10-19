@@ -107,7 +107,7 @@
                     <% } %>
                     
                     <div class="text-center mt-4">
-                        <a href="<%= request.getContextPath() %>/principal.jsp" class="btn btn-secondary">
+                        <a href="<%= request.getContextPath() %>/principal" class="btn btn-secondary">
                             Volver al Inicio
                         </a>
                     </div>
