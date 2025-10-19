@@ -14,8 +14,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,7 +30,6 @@ public class CancelarPropuestaServlet extends HttpServlet {
         HttpSession session = request.getSession();
         DTUsuario usuarioActual = (DTUsuario) session.getAttribute("usuarioLogueado");
 
-        // Si no hay nickname en la sesión, redirigir al inicio (o donde corresponda)
         if (usuarioActual == null) {
             response.sendRedirect(request.getContextPath() + "/inicioDeSesion.jsp"); // O a /principal, etc.
             return;
@@ -40,13 +37,11 @@ public class CancelarPropuestaServlet extends HttpServlet {
 
         String nickname = usuarioActual.getNickname();
 
-        // Recuperar mensaje de la sesión (si existe, por el redirect del POST)
         if (session.getAttribute("mensaje") != null) {
             request.setAttribute("mensaje", session.getAttribute("mensaje"));
             session.removeAttribute("mensaje");
         }
 
-        // Obtener propuestas financiadas del proponente
         PropuestaManejador pm = PropuestaManejador.getInstance();
         List<DTPropuesta> propuestasFinanciadas = pm.obtenerTodasLasPropuestas()
                 .stream()
@@ -78,7 +73,6 @@ public class CancelarPropuestaServlet extends HttpServlet {
         String titulo = request.getParameter("titulo");
         String source = request.getParameter("source"); // Para saber de dónde viene la petición
 
-        // Validar que los datos necesarios están presentes
         if (nickname == null || titulo == null || titulo.trim().isEmpty()) {
             session.setAttribute("mensaje", "Error: No se pudo procesar la solicitud. Faltan datos.");
             response.sendRedirect(request.getContextPath() + "/principal"); // Redirigir a una página segura
@@ -89,16 +83,12 @@ public class CancelarPropuestaServlet extends HttpServlet {
         Propuesta propuesta = pm.obtenerPropuestaPorTitulo(titulo);
         String mensaje;
 
-        // Lógica de negocio para cancelar
         if (propuesta != null
                 && propuesta.getProponente() != null
                 && nickname.equals(propuesta.getProponente().getNickname())
                 && propuesta.getEstadoActual() == EstadoPropuesta.FINANCIADA) {
 
-            // Cambiar estado y registrar fecha
             propuesta.setEstadoActual(EstadoPropuesta.CANCELADA);
-            // La siguiente línea puede ser redundante si el manejador ya gestiona el historial de estados al actualizar.
-            // Confirma si necesitas agregar explícitamente el estado o si .actualizarPropuesta() ya lo hace.
             propuesta.agregarPropuestaEstado(new culturarte.logica.modelos.PropuestaEstado(propuesta, EstadoPropuesta.CANCELADA, LocalDate.now()));
             pm.actualizarPropuesta(propuesta);
 
@@ -107,15 +97,11 @@ public class CancelarPropuestaServlet extends HttpServlet {
             mensaje = "Error: No se pudo cancelar la propuesta. Puede que no te pertenezca o su estado no sea 'Financiada'.";
         }
 
-        // Guardar mensaje en la sesión para mostrarlo después de redirigir
         session.setAttribute("mensaje", mensaje);
 
-        // Redirigir a la página de origen
         if ("detail".equals(source)) {
-            // Si viene de la página de detalle, volver a ella
             response.sendRedirect(request.getContextPath() + "/consultaPropuesta?accion=detalle&titulo=" + encode(titulo, "UTF-8"));
         } else {
-            // Si viene del listado (o no se especifica), volver al listado
             response.sendRedirect(request.getContextPath() + "/cancelarPropuesta");
         }
     }
