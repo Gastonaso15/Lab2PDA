@@ -80,24 +80,31 @@ public class ExtenderFinanciacionServlet extends HttpServlet {
             throws ServletException, IOException {
         String propuestaSeleccionada = request.getParameter("propuestas");
 
-        System.out.println("Propuesta seleccionada: " + propuestaSeleccionada);
-
         try {
-            //Obtengo el usuario actual para poder trabajar con él
+
+            //<-- Obtengo el usuario actual para poder trabajar con él -->
             HttpSession session = request.getSession(false);
             session.getAttribute("usuarioLogueado"); //esto funciona porque está codeado en InicioDeSesionServlet
             DTUsuario user = (DTUsuario) session.getAttribute("usuarioLogueado");
 
-            //Obtengo la propuesta para poder trabajar con ella
-            PropuestaManejador PM = PropuestaManejador.getInstance();
-            Propuesta propuesta = PM.obtenerPropuestaPorTitulo(propuestaSeleccionada);
-            System.out.println("Fecha Prevista Propuesta:" + propuesta.getFechaPrevista());
-
-            IPC.extenderFinanciacion(user, propuestaSeleccionada);
-
-            System.out.println("Fecha Prevista Propuesta:" +propuesta.getFechaPrevista());
 
 
+            //<-- Modificaciones para funcionamiento de AJAX -->
+                // Es una llamada AJAX desde el detalle?
+            boolean esAjax = "1".equals(request.getParameter("ajax"));
+                // Recupero el titulo como me lo manda Ajax
+            String tituloSeleccionado = request.getParameter("titulo");
+            if (tituloSeleccionado == null || tituloSeleccionado.isBlank()) {
+                tituloSeleccionado = request.getParameter("propuestas");
+            }
+            if (esAjax) {
+                IPC.extenderFinanciacion(user, tituloSeleccionado);
+                response.setContentType("text/plain;charset=UTF-8");
+                response.getWriter().write("Financiación extendida correctamente.");
+                return;
+            }else {
+                IPC.extenderFinanciacion(user, propuestaSeleccionada);
+            }
             request.setAttribute("mensaje", "La financiación de la propuesta ha sido extendida exitosamente.");
         } catch (Exception e) {
             e.printStackTrace(); // <-- imprime el error completo en la consola del servidor

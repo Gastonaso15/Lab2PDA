@@ -259,7 +259,7 @@
                     if (esProponente != null && esProponente) {
                 %>
                     <a href="altaPropuesta">Tengo una Propuesta</a> |
-                    <a href="extenderFinanciacion">Quiero extender financiacion </a> |
+                    <a href="extenderFinanciacion">Quiero Extender financiacion </a> |
                     <% } %>
                 <%-- BOTON: QUIERO VER PROPUESTA--%>
                 <a href="consultaPropuesta">Quiero ver Propuestas</a>

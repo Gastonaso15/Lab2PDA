@@ -182,8 +182,61 @@
                             <% if (usuarioActual != null) { %>
                                 <% if (esProponente) { %>
                                     <div class="d-flex gap-2 mb-3">
-                                        <button class="btn btn-warning" disabled>
+
+                                            <%
+                                                // Obtener el título de la propuesta actual
+                                                String _tituloSel = null;
+                                                DTPropuesta _prop = (DTPropuesta) request.getAttribute("propuesta");
+                                                if (_prop != null) _tituloSel = _prop.getTitulo();
+                                                if (_tituloSel == null) _tituloSel = request.getParameter("titulo");
+                                                String _tituloEnc = (_tituloSel != null)
+                                                        ? java.net.URLEncoder.encode(_tituloSel, "UTF-8")
+                                                        : "";
+                                            %>
+
+                                            <%
+                                                String tituloParaJS = (_tituloSel != null) ? _tituloSel.replace("'", "\\'") : "";
+                                            %>
+
+                                        <div id="extender-msg" style="margin:8px 0;"></div>
+
+                                        <button type="button" class="btn btn-warning"
+                                                onclick="extenderFinanciacion('<%= tituloParaJS %>')">
                                             Extender Financiación
+                                        </button>
+
+                                        <script>
+                                            async function extenderFinanciacion(titulo) {
+                                                if (!confirm('¿Extender la financiación de esta propuesta?')) return;
+
+                                                const msg = document.getElementById('extender-msg');
+                                                msg.textContent = 'Procesando...';
+                                                msg.className = 'alert alert-secondary py-1 my-2';
+
+                                                try {
+                                                    const resp = await fetch('<%= request.getContextPath() %>/extenderFinanciacion?ajax=1&titulo=' + encodeURIComponent(titulo), {
+                                                        method: 'POST'
+                                                    });
+
+                                                    const texto = await resp.text();
+                                                    if (resp.ok) {
+                                                        msg.textContent = texto && texto.trim().length ? texto : 'Financiación extendida correctamente.';
+                                                        msg.className = 'alert alert-success py-1 my-2';
+                                                    } else {
+                                                        msg.textContent = 'No se pudo extender la financiación (HTTP ' + resp.status + ').';
+                                                        msg.className = 'alert alert-danger py-1 my-2';
+                                                    }
+                                                } catch (e) {
+                                                    msg.textContent = 'Error de red al extender la financiación.';
+                                                    msg.className = 'alert alert-danger py-1 my-2';
+                                                }
+                                            }
+                                        </script>
+
+
+
+
+
                                         </button>
                                         <%-- Lógica para el botón de cancelar --%>
                                                 <% if (propuesta.getEstadoActual() != null && "FINANCIADA".equalsIgnoreCase(propuesta.getEstadoActual().name())) { %>
