@@ -31,6 +31,9 @@ public class PrincipalServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try{
+            // Verificar vencimientos automáticamente cada vez que se accede a la página principal
+            verificarVencimientosAutomaticamente();
+            
             String estadoFiltro = request.getParameter("estado");
             String busqueda = request.getParameter("busqueda");
             List<DTPropuesta> todasLasPropuestas = IPC.devolverTodasLasPropuestas();
@@ -239,6 +242,80 @@ public class PrincipalServlet extends HttpServlet {
         public double getMontoRecaudado() { return montoRecaudado; }
         public int getTotalColaboradores() { return totalColaboradores; }
         public long getDiasRestantes() { return diasRestantes; }
+    }
+
+    /**
+     * Verifica automáticamente los vencimientos de financiación y procesa las transiciones de estado
+     */
+    private void verificarVencimientosAutomaticamente() {
+        try {
+            culturarte.logica.manejadores.PropuestaManejador pm = culturarte.logica.manejadores.PropuestaManejador.getInstance();
+            List<DTPropuesta> todasLasPropuestas = IPC.devolverTodasLasPropuestas();
+            
+            java.time.LocalDate fechaActual = java.time.LocalDate.now();
+            
+            for (DTPropuesta dtPropuesta : todasLasPropuestas) {
+                culturarte.logica.modelos.Propuesta propuesta = pm.obtenerPropuestaPorTitulo(dtPropuesta.getTitulo());
+                
+                if (propuesta != null && 
+                    (propuesta.getEstadoActual() == culturarte.logica.modelos.EstadoPropuesta.PUBLICADA || 
+                     propuesta.getEstadoActual() == culturarte.logica.modelos.EstadoPropuesta.EN_FINANCIACION)) {
+                    
+                    // Verificar si ha vencido el plazo (30 días desde la fecha de publicación)
+                    if (propuesta.getFechaPublicacion() != null) {
+                        java.time.LocalDate fechaVencimiento = propuesta.getFechaPublicacion().plusDays(30);
+                        
+                        if (fechaActual.isAfter(fechaVencimiento)) {
+                            // El plazo ha vencido, verificar si alcanzó el monto objetivo
+                            double montoRecaudado = calcularMontoRecaudado(dtPropuesta);
+                            double montoNecesario = dtPropuesta.getMontoNecesario();
+                            
+                            if (montoRecaudado >= montoNecesario) {
+                                // Alcanzó el objetivo: cambiar a FINANCIADA
+                                propuesta.setEstadoActual(culturarte.logica.modelos.EstadoPropuesta.FINANCIADA);
+                                propuesta.agregarPropuestaEstado(new culturarte.logica.modelos.PropuestaEstado(
+                                    propuesta, culturarte.logica.modelos.EstadoPropuesta.FINANCIADA, fechaActual));
+                                
+                                System.out.println("Propuesta '" + propuesta.getTitulo() + 
+                                    "' transicionada a FINANCIADA automáticamente (monto recaudado: $" + montoRecaudado + 
+                                    ", monto necesario: $" + montoNecesario + ")");
+                                
+                            } else {
+                                // No alcanzó el objetivo: cambiar a NO_FINANCIADA
+                                propuesta.setEstadoActual(culturarte.logica.modelos.EstadoPropuesta.NO_FINANCIADA);
+                                propuesta.agregarPropuestaEstado(new culturarte.logica.modelos.PropuestaEstado(
+                                    propuesta, culturarte.logica.modelos.EstadoPropuesta.NO_FINANCIADA, fechaActual));
+                                
+                                System.out.println("Propuesta '" + propuesta.getTitulo() + 
+                                    "' transicionada a NO_FINANCIADA automáticamente (monto recaudado: $" + montoRecaudado + 
+                                    ", monto necesario: $" + montoNecesario + ")");
+                            }
+                            
+                            pm.actualizarPropuesta(propuesta);
+                        }
+                    }
+                }
+            }
+            
+        } catch (Exception e) {
+            System.err.println("Error al verificar vencimientos automáticamente: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Calcula el monto total recaudado por una propuesta
+     */
+    private double calcularMontoRecaudado(DTPropuesta propuesta) {
+        double montoTotal = 0.0;
+        
+        if (propuesta.getColaboraciones() != null) {
+            for (var colaboracion : propuesta.getColaboraciones()) {
+                montoTotal += colaboracion.getMonto();
+            }
+        }
+        
+        return montoTotal;
     }
 
 }

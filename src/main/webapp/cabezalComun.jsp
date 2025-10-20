@@ -12,6 +12,7 @@
             if (esProponente != null && esProponente) {
         %>
             <a href="altaPropuesta">Nueva Propuesta</a> |
+            <a href="ejecutarPropuesta">Ejecutar Propuestas</a> |
             <% } %>
         <a href="consultaPropuesta">Ver Propuestas</a> |
         <a href="consultaPerfilUsuario">Ver Usuarios</a>

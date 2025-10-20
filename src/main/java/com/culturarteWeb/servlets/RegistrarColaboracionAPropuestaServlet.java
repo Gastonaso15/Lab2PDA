@@ -64,7 +64,29 @@ public class RegistrarColaboracionAPropuestaServlet extends HttpServlet {
             try {
                 double monto = Double.parseDouble(montoStr);
                 IPropuestaController pc = Fabrica.getInstance().getIPropuestaController();
+                
+                // Verificar si es la primera colaboración para cambiar estado automáticamente
+                PropuestaManejador pm = PropuestaManejador.getInstance();
+                Propuesta propuesta = pm.obtenerPropuestaPorTitulo(titulo);
+                
+                boolean esPrimeraColaboracion = false;
+                if (propuesta != null && propuesta.getColaboraciones() != null && propuesta.getColaboraciones().isEmpty()) {
+                    esPrimeraColaboracion = true;
+                }
+                
                 pc.registrarColaboracion(titulo,usuarioActual.getNickname(), monto, tipoRetorno);
+                
+                // Si es la primera colaboración y la propuesta está en estado PUBLICADA, cambiar a EN_FINANCIACION
+                if (esPrimeraColaboracion && propuesta != null && 
+                    propuesta.getEstadoActual().toString().equals("PUBLICADA")) {
+                    
+                    propuesta.setEstadoActual(culturarte.logica.modelos.EstadoPropuesta.EN_FINANCIACION);
+                    propuesta.agregarPropuestaEstado(new culturarte.logica.modelos.PropuestaEstado(
+                        propuesta, culturarte.logica.modelos.EstadoPropuesta.EN_FINANCIACION, 
+                        java.time.LocalDate.now()));
+                    pm.actualizarPropuesta(propuesta);
+                }
+                
                 session.setAttribute("mensajeGlobal", "¡Tu colaboración ha sido registrada con éxito!");
                 response.sendRedirect(request.getContextPath() + "/consultaPropuesta?accion=detalle&titulo=" + encode(titulo, "UTF-8"));
 
