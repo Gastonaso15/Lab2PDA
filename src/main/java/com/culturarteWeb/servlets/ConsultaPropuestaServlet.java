@@ -67,32 +67,22 @@ public class ConsultaPropuestaServlet extends HttpServlet {
                     if (busqueda != null && !busqueda.trim().isEmpty()) {
                         cumpleBusqueda = coincideConBusqueda(propuesta, busqueda.trim());
                     }
-                    
-                    // Aplicar filtro de estado
                     if (estadoFiltro != null && !estadoFiltro.isEmpty() && !"todas".equals(estadoFiltro)) {
                         cumpleEstado = coincideConEstadoFiltro(propuesta.getEstadoActual().toString(), estadoFiltro);
                     }
-                    
-                    // Aplicar filtro de categoría
                     if (categoriaFiltro != null && !categoriaFiltro.isEmpty() && !"todas".equals(categoriaFiltro)) {
                         cumpleCategoria = coincideConCategoriaFiltro(propuesta, categoriaFiltro);
                     }
-                    
                     if (cumpleBusqueda && cumpleEstado && cumpleCategoria) {
                         propuestasVisibles.add(propuesta);
                     }
                 }
             }
-            
-            // Aplicar ordenamiento
+
             if (ordenarPor != null && !ordenarPor.isEmpty()) {
                 propuestasVisibles = ordenarPropuestas(propuestasVisibles, ordenarPor);
             }
-            
-            // Obtener categorías para filtros
             List<DTCategoria> categorias = extraerCategoriasReales(propuestasVisibles);
-            
-            // Obtener información del usuario
             boolean esProponente = false;
             boolean esColaborador = false;
             HttpSession session = request.getSession(false);
@@ -170,6 +160,7 @@ public class ConsultaPropuestaServlet extends HttpServlet {
             HttpSession sesion = request.getSession(false);
             DTUsuario usuarioActual = null;
             boolean esProponente = false;
+            boolean esProponenteDeEstaPropuesta = false;
             boolean haColaborado = false;
             boolean esFavorita = false;
             
@@ -177,8 +168,16 @@ public class ConsultaPropuestaServlet extends HttpServlet {
                 usuarioActual = (DTUsuario) sesion.getAttribute("usuarioLogueado");
                 if (propuestaSeleccionada.getDTProponente() != null && 
                     usuarioActual.getNickname().equals(propuestaSeleccionada.getDTProponente().getNickname())) {
-                    esProponente = true;
+                    esProponenteDeEstaPropuesta = true;
                 }
+
+                try {
+                    ICU.devolverProponentePorNickname(usuarioActual.getNickname());
+                    esProponente = true;
+                } catch (Exception e) {
+                    esProponente = false;
+                }
+                
                 if (nicknamesColaboradores.contains(usuarioActual.getNickname())) {
                     haColaborado = true;
                 }
@@ -192,6 +191,7 @@ public class ConsultaPropuestaServlet extends HttpServlet {
             request.setAttribute("montoRecaudado", montoRecaudado);
             request.setAttribute("nicknamesColaboradores", nicknamesColaboradores);
             request.setAttribute("esProponente", esProponente);
+            request.setAttribute("esProponenteDeEstaPropuesta", esProponenteDeEstaPropuesta);
             request.setAttribute("haColaborado", haColaborado);
             request.setAttribute("usuarioActual", usuarioActual);
             request.setAttribute("esFavorita", esFavorita);
@@ -212,7 +212,6 @@ public class ConsultaPropuestaServlet extends HttpServlet {
         
         String busquedaLower = busqueda.toLowerCase();
 
-        // Buscar en título, descripción y lugar
         if (propuesta.getTitulo() != null && 
             propuesta.getTitulo().toLowerCase().contains(busquedaLower)) {
             return true;

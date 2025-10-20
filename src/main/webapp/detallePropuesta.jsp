@@ -177,7 +177,7 @@
                             <h6>Acciones Disponibles</h6>
 
                             <% if (usuarioActual != null) { %>
-                                <% if (esProponente) { %>
+                                <% if (esProponente && propuesta.getDTProponente() != null && usuarioActual.getNickname().equals(propuesta.getDTProponente().getNickname())) { %>
                                     <div class="d-flex gap-2 mb-3">
 
                                             <%
@@ -235,9 +235,7 @@
 
 
                                         </button>
-                                        <%-- Lógica para el botón de cancelar --%>
                                                 <% if (propuesta.getEstadoActual() != null && "FINANCIADA".equalsIgnoreCase(propuesta.getEstadoActual().name())) { %>
-                                                    <%-- El botón está ACTIVO solo si la propuesta está financiada --%>
                                                     <form method="post" action="<%= request.getContextPath() %>/cancelarPropuesta" class="d-inline">
                                                         <input type="hidden" name="titulo" value="<%= propuesta.getTitulo() %>"/>
                                                         <input type="hidden" name="source" value="detail"/> <%-- Parámetro para saber que venimos del detalle --%>
@@ -272,9 +270,8 @@
                                         <em>Como colaborador de esta propuesta, puedes agregar un comentario sobre tu experiencia.</em>
                                     </p>
 
-                                <% } else { %>
+                                <% } else if (!esProponente) { %>
                                     <div class="d-flex gap-2 mb-3">
-                                        <%-- Este es el enlace que llama a tu servlet de registro --%>
                                         <a href="<%= request.getContextPath() %>/registrarColaboracion?titulo=<%= java.net.URLEncoder.encode(propuesta.getTitulo(), "UTF-8") %>"
                                            class="btn btn-success">
                                             <i class="bi bi-cash-coin"></i> Colaborar con esta Propuesta
