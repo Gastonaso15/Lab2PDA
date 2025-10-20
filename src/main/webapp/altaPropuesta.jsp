@@ -3,86 +3,141 @@
 <%@ page import="culturarte.logica.DTs.DTCategoria" %>
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
 <!doctype html>
-<html>
+<html lang="es">
 <head>
     <title>Alta de Propuesta</title>
     <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
+<body class="bg-light">
 
 <%-- Comentario #1: MIRA BRO; ACA LO RESIVO, fijate en ese request.getAttribute, viste que se llama "categorias" tambien
  tremenda casualidad no?...o quizas no sea casualidad...--%>
-<% List<DTCategoria> categorias = (List<DTCategoria>) request.getAttribute("categorias");%>
+<% List<DTCategoria> categorias = (List<DTCategoria>) request.getAttribute("categororias"); %>
+<% categorias = (categorias == null) ? (List<DTCategoria>) request.getAttribute("categorias") : categorias; %>
 
-<% if (request.getAttribute("error") != null) { %>
-<div style="color:#b00020; margin-bottom:12px;"><%= request.getAttribute("error") %></div>
-<% } %>
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-10">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h1 class="h3 mb-4">Alta de Propuesta</h1>
 
-<form method="post" action="<%=request.getContextPath()%>/altaPropuesta" enctype="multipart/form-data">
-    <h1>Alta de Propuesta</h1>
+                    <% if (request.getAttribute("error") != null) { %>
+                    <div class="alert alert-danger" role="alert">
+                        <%= request.getAttribute("error") %>
+                    </div>
+                    <% } %>
 
-    <fieldset class="row">
-        <div>
-            <label>Categoría</label>
-            <select name="categoria" required>
-                <option value="" disabled selected>Seleccionar categoría</option>
-                <% if (categorias != null) {
-                    for (DTCategoria cat : categorias) { %>
-                <option value="<%=cat.getNombre()%>"><%=cat.getNombre()%></option>
-                <%   }
-                } %>
-            </select>
-        </div>
-        <div>
-            <label>Título</label>
-            <input name="titulo" maxlength="120" required/>
-        </div>
-    </fieldset>
+                    <form method="post" action="<%=request.getContextPath()%>/altaPropuesta" enctype="multipart/form-data" class="needs-validation" novalidate>
+                        <div class="row g-3">
 
-    <fieldset>
-        <label>Descripción</label>
-        <textarea name="descripcion" rows="4" required></textarea>
-    </fieldset>
+                            <!-- Categoría / Título -->
+                            <div class="col-12 col-md-6">
+                                <label class="form-label">Categoría</label>
+                                <select name="categoria" class="form-select" required>
+                                    <option value="" disabled selected>Seleccionar categoría</option>
+                                    <% if (categorias != null) {
+                                        for (DTCategoria cat : categorias) { %>
+                                    <option value="<%=cat.getNombre()%>"><%=cat.getNombre()%></option>
+                                    <%   }
+                                    } %>
+                                </select>
+                                <div class="invalid-feedback">Elegí una categoría.</div>
+                            </div>
 
-    <fieldset class="row">
-        <div>
-            <label>Lugar</label>
-            <input name="lugar" required/>
-        </div>
-        <div>
-            <label>Fecha (AAAA-MM-DD)</label>
-            <input type="date" name="fecha" required/>
-        </div>
-    </fieldset>
+                            <div class="col-12 col-md-6">
+                                <label class="form-label">Título</label>
+                                <input name="titulo" maxlength="120" required class="form-control" placeholder="Nombre de la propuesta"/>
+                                <div class="invalid-feedback">Ingresá un título.</div>
+                            </div>
 
-    <fieldset class="row">
-        <div>
-            <label>Precio de entrada</label>
-            <input type="number" name="precioEntrada" min="1" step="0.01" required/>
-        </div>
-        <div>
-            <label>Monto necesario</label>
-            <input type="number" name="montoNecesario" min="1" step="0.01" required/>
-        </div>
-    </fieldset>
+                            <!-- Descripción -->
+                            <div class="col-12">
+                                <label class="form-label">Descripción</label>
+                                <textarea name="descripcion" rows="4" required class="form-control" placeholder="Contanos de qué se trata..."></textarea>
+                                <div class="invalid-feedback">Ingresá una descripción.</div>
+                            </div>
 
-    <fieldset>
-        <label>Tipos de retorno</label>
-        <div class="checks">
-            <label><input type="checkbox" name="retornos" value="ENTRADAS_GRATIS"> Entradas</label>
-            <label><input type="checkbox" name="retornos" value="PORCENTAJE_GANANCIAS"> Porcentaje</label>
-        </div>
+                            <!-- Lugar / Fecha -->
+                            <div class="col-12 col-md-6">
+                                <label class="form-label">Lugar</label>
+                                <input name="lugar" required class="form-control" placeholder="Ej: Teatro Unión"/>
+                                <div class="invalid-feedback">Ingresá un lugar.</div>
+                            </div>
 
-        <div class="mb-3">
-            <label class="form-label">Imagen (opcional)</label>
-            <input type="file" name="imagen" class="form-control" accept="image/*">
-        </div>
+                            <div class="col-12 col-md-6">
+                                <label class="form-label">Fecha (AAAA-MM-DD)</label>
+                                <input type="date" name="fecha" required class="form-control"/>
+                                <div class="invalid-feedback">Seleccioná una fecha.</div>
+                            </div>
 
-        <div class="actions">
-            <a href="<%=request.getContextPath()%>/" class="btn">Volver al inicio</a>
-            <button type="submit">Crear propuesta</button>
+                            <!-- Precios -->
+                            <div class="col-12 col-md-6">
+                                <label class="form-label">Precio de entrada</label>
+                                <input type="number" name="precioEntrada" min="1" step="0.01" required class="form-control" placeholder="0.00"/>
+                                <div class="invalid-feedback">Ingresá un precio válido.</div>
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <label class="form-label">Monto necesario</label>
+                                <input type="number" name="montoNecesario" min="1" step="0.01" required class="form-control" placeholder="0.00"/>
+                                <div class="invalid-feedback">Ingresá un monto válido.</div>
+                            </div>
+
+                            <!-- Retornos -->
+                            <div class="col-12">
+                                <label class="form-label d-block">Tipos de retorno</label>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" id="ret1" type="checkbox" name="retornos" value="ENTRADAS_GRATIS">
+                                    <label class="form-check-label" for="ret1">Entradas</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" id="ret2" type="checkbox" name="retornos" value="PORCENTAJE_GANANCIAS">
+                                    <label class="form-check-label" for="ret2">Porcentaje</label>
+                                </div>
+                            </div>
+
+                            <!-- Imagen -->
+                            <div class="col-12">
+                                <label class="form-label">Imagen (opcional)</label>
+                                <input type="file" name="imagen" class="form-control" accept="image/*">
+                            </div>
+
+                            <!-- Acciones -->
+                            <div class="col-12 d-flex gap-2 mt-2">
+                                <a href="<%=request.getContextPath()%>/" class="btn btn-outline-secondary">Volver al inicio</a>
+                                <button type="submit" class="btn btn-primary">Crear propuesta</button>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
         </div>
-    </fieldset>
-</form>
+    </div>
+</div>
+
+<!-- Bootstrap JS (opcional, para validación visual) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Validación Bootstrap-> Simplemente recumpero los required que puse con html y mando mensajes con bootstrap bonitos
+    (function () {
+        'use strict';
+        const forms = document.querySelectorAll('.needs-validation');
+        Array.prototype.slice.call(forms).forEach(function (form) {
+            form.addEventListener('submit', function (event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    })();
+</script>
 </body>
 </html>

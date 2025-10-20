@@ -37,8 +37,35 @@ public class ConsultaPerfilUsuarioServlet extends HttpServlet {
         if (nick == null || nick.isBlank()) {
             try {
                 List<String> nicks = ICU.devolverNicknamesUsuarios();
-                //Seteo los nicks que acabo de obtener del controlador del servidor central mediante la fabrica que me dio a ICU
-                req.setAttribute("nicknames", nicks);
+
+                UsuarioManejador UM = UsuarioManejador.getInstance();
+                List<Map<String, Object>> usuariosCombo = new ArrayList<>();
+
+                for (String n : nicks) {
+                    Usuario u = UM.obtenerUsuarioPorNickname(n);
+                    if (u == null) continue;
+
+                    String tipo;
+                    try {
+                        ICU.devolverProponentePorNickname(n);
+                        tipo = "Proponente";
+                    } catch (Exception ex) {
+                        tipo = "Colaborador";
+                    }
+
+                    Map<String, Object> row = new HashMap<>();
+                    row.put("id", u.getId());
+                    row.put("nick", u.getNickname());
+                    row.put("tipo", tipo);
+                    usuariosCombo.add(row);
+                }
+
+                // ordenado por id ascendente
+                usuariosCombo.sort(Comparator.comparingLong(m -> (Long) m.get("id")));
+
+                // Seteo la lista enriquecida para el JSP
+                req.setAttribute("usuariosCombo", usuariosCombo);
+
             } catch (Exception e) {
                 req.setAttribute("error", "No se pudo listar usuarios: " + e.getMessage());
             }
@@ -46,27 +73,11 @@ public class ConsultaPerfilUsuarioServlet extends HttpServlet {
             req.getRequestDispatcher("/consultaPerfilUsuario.jsp").forward(req, resp);
             return;
         }
+
+
         //Procedo a consultar el perfil deseado
         try {
-            /*
-            //Obtengo el usuario que está logueado y averiguo de quá tipo es para saber qué muestro y qué no
-            boolean esProponente = false;
-            boolean esColaborador = false;
-            boolean esVisitante = false;
-            HttpSession session = req.getSession(false);
-            if (session != null && session.getAttribute("usuarioLogueado") != null) {
-                DTUsuario usuarioLogueado = (DTUsuario) session.getAttribute("usuarioLogueado");
-                try {
-                    ICU.devolverProponentePorNickname(usuarioLogueado.getNickname());
-                    esProponente = true;
-                } catch (Exception e) {
-                    esColaborador = true;
-                }
-            }
-            if (esProponente == false && esColaborador ==false){
-                esVisitante = true;
-            }
-            */
+            //averiguo frente a que tipo de usuario estoy para saber despues que le muestro
             HttpSession ses = req.getSession(false);
             DTUsuario actual = (ses != null) ? (DTUsuario) ses.getAttribute("usuarioLogueado") : null;
             boolean esPropio = (actual != null && nick.equalsIgnoreCase(actual.getNickname()));
