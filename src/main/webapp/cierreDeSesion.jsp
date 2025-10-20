@@ -26,7 +26,7 @@
         </div>
 
         <div class="d-grid gap-2 mt-3">
-            <a href="<%= request.getContextPath() %>/principal.jsp" class="btn btn-primary">
+            <a href="<%= request.getContextPath() %>/principal" class="btn btn-primary">
                 Volver al Inicio
             </a>
             <a href="<%= request.getContextPath() %>/inicioDeSesion.jsp" class="btn btn-outline-secondary">

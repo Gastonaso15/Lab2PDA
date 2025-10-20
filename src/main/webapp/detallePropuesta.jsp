@@ -6,10 +6,14 @@
     <title>Detalle de Propuesta - Culturarte</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <jsp:include page="estiloCabezalComun.jsp"/>
 </head>
 <body class="bg-light">
 
-<div class="container py-5">
+<div class="container">
+    <jsp:include page="cabezalComun.jsp"/>
+    
+    <div class="py-5">
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card shadow-sm">
@@ -33,7 +37,6 @@
                         List<DTComentario> comentarios = (List<DTComentario>) request.getAttribute("comentarios");
                     %>
 
-                        <!-- Imagen de la propuesta -->
                         <%
                         String imagenPropuesta = propuesta.getImagen();
                         boolean tieneImagen = imagenPropuesta != null && !imagenPropuesta.trim().isEmpty();
@@ -45,12 +48,6 @@
                                      class="img-fluid rounded" style="max-height: 300px;"
                                      alt="Imagen de <%= propuesta.getTitulo() %>"
                                      onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                                <!-- Siempre aparece error al cargar imagen con esto
-                                <div class="bg-light d-flex align-items-center justify-content-center rounded"
-                                     style="height: 200px; display: none;">
-                                    <span class="text-muted">Error al cargar imagen</span>
-                                </div>
-                                -->
                             </div>
                         <% } else { %>
                             <img src="<%= request.getContextPath() %>/imagenes/propuestaDefault.png"
@@ -313,6 +310,7 @@
                 </div>
             </div>
         </div>
+    </div>
     </div>
 </div>
 

@@ -6,12 +6,14 @@
     <title>Registrar Colaboración a Propuesta</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <jsp:include page="estiloCabezalComun.jsp"/>
 
     <style>
         body { background-color: #f8f9fa; padding-top: 2rem; padding-bottom: 2rem; }
     </style>
 </head>
 <body>
+    <jsp:include page="cabezalComun.jsp"/>
 
 <div class="container">
     <div class="row justify-content-center">

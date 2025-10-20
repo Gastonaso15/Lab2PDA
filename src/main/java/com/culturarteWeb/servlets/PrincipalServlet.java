@@ -200,13 +200,16 @@ public class PrincipalServlet extends HttpServlet {
             totalColaboradores = propuesta.getColaboraciones().size();
         }
         
-        // Calcular días restantes (diferencia entre fecha actual y fecha prevista)
+        // Calcular días restantes (30 días desde la fecha de publicación)
         try {
-            if (propuesta.getFechaPrevista() != null) {
-                LocalDate fechaPrevista = propuesta.getFechaPrevista();
+            if (propuesta.getFechaPublicacion() != null) {
+                LocalDate fechaPublicacion = propuesta.getFechaPublicacion();
                 LocalDate fechaActual = LocalDate.now();
                 
-                diasRestantes = ChronoUnit.DAYS.between(fechaActual, fechaPrevista);
+                // Calcular la fecha límite (30 días después de la publicación)
+                LocalDate fechaLimite = fechaPublicacion.plusDays(30);
+                
+                diasRestantes = ChronoUnit.DAYS.between(fechaActual, fechaLimite);
                 if (diasRestantes < 0) {
                     diasRestantes = 0;
                 }

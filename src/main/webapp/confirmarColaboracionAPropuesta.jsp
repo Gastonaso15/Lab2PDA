@@ -5,9 +5,13 @@
 <head>
     <title>Confirmar Colaboración - Culturarte</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <jsp:include page="estiloCabezalComun.jsp"/>
 </head>
 <body class="bg-light">
-<div class="container py-5">
+<div class="container">
+    <jsp:include page="cabezalComun.jsp"/>
+    
+    <div class="py-5">
     <div class="card shadow-sm p-4 mx-auto" style="max-width: 600px;">
         <h2 class="text-center mb-3">Colaborar en: ${propuesta.titulo}</h2>
 
@@ -49,6 +53,7 @@
         <c:if test="${not empty mensaje}">
             <div class="alert alert-success mt-3 text-center">${mensaje}</div>
         </c:if>
+    </div>
     </div>
 </div>
 </body>

@@ -26,8 +26,10 @@
         a { color: #007bff; text-decoration: none; }
         a:hover { text-decoration: underline; }
     </style>
+    <jsp:include page="estiloCabezalComun.jsp"/>
 </head>
 <body>
+    <jsp:include page="cabezalComun.jsp"/>
     <h2>Propuestas Financiadas de <%= nickname != null ? nickname : "Usuario" %></h2>
 
     <% if (mensaje != null) { %>
