@@ -7,6 +7,7 @@ import culturarte.logica.controladores.PropuestaController;
 import culturarte.logica.controladores.UsuarioController;
 
 import culturarte.logica.manejadores.UsuarioManejador;
+import culturarte.logica.modelos.Usuario;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
@@ -32,10 +33,9 @@ public class ConsultaPerfilUsuarioServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String nick = req.getParameter("nick");
+        //Muestro la lista de usuarios disponibles a consultar
         if (nick == null || nick.isBlank()) {
             try {
-                //*1: --> ESTO ME PASA AL JSP LOS DATOS QUE SOLICITO: nicks es la variable en que guardo la lista de strings y "nicknames" es el nombre que uso
-                // como medio para mandarselo al jsp
                 List<String> nicks = ICU.devolverNicknamesUsuarios();
                 //Seteo los nicks que acabo de obtener del controlador del servidor central mediante la fabrica que me dio a ICU
                 req.setAttribute("nicknames", nicks);
@@ -46,11 +46,9 @@ public class ConsultaPerfilUsuarioServlet extends HttpServlet {
             req.getRequestDispatcher("/consultaPerfilUsuario.jsp").forward(req, resp);
             return;
         }
-
-
-
-
+        //Procedo a consultar el perfil deseado
         try {
+            /*
             //Obtengo el usuario que está logueado y averiguo de quá tipo es para saber qué muestro y qué no
             boolean esProponente = false;
             boolean esColaborador = false;
@@ -68,9 +66,7 @@ public class ConsultaPerfilUsuarioServlet extends HttpServlet {
             if (esProponente == false && esColaborador ==false){
                 esVisitante = true;
             }
-
-
-
+            */
             HttpSession ses = req.getSession(false);
             DTUsuario actual = (ses != null) ? (DTUsuario) ses.getAttribute("usuarioLogueado") : null;
             boolean esPropio = (actual != null && nick.equalsIgnoreCase(actual.getNickname()));
@@ -95,36 +91,41 @@ public class ConsultaPerfilUsuarioServlet extends HttpServlet {
 
             DTUsuario usuarioConsultado = (proponente != null) ? proponente : colaborador;
             req.setAttribute("usuarioConsultado", usuarioConsultado);
-            //<-- 1: Armo lista de seguidos -->
-            List<String> siguiendoNicks = ICU.devolverUsuariosSeguidos(nick); //este es el nick que obtendo del doGet()
-            //Separo lista en lista de Proponentes y lista de Colaboradores
+
+            //<-- PROCEDO A RECOLECTAR LA INFO QUE VOY A MOSTRAR -->
+
+            // <-- 1: Armo lista de "siguiendo" (a quién sigue 'nick') -->
             List<String> siguiendoProponentes = new ArrayList<>();
             List<String> siguiendoColaboradores = new ArrayList<>();
+            List<String> siguiendoNicks = ICU.devolverUsuariosSeguidos(nick);
+
             for (String s : siguiendoNicks) {
-                if (ICU.devolverProponentePorNickname(s) != null) {
-                    siguiendoProponentes.add(s);
-                }else{
-                    siguiendoColaboradores.add(s);
-                }
+                boolean esProp = false;
+                try {
+                    esProp = (ICU.devolverProponentePorNickname(s) != null);
+                } catch (Exception ignore) { /* no es proponente */ }
+
+                if (esProp) siguiendoProponentes.add(s);
+                else        siguiendoColaboradores.add(s);
             }
 
             // <-- 2: Armo lista de seguidores -->
             UsuarioManejador mu = UsuarioManejador.getInstance();
             List<String> followers = mu.obtenerFollowers(nick);
-            //Separo lista en lista de Proponentes y lista de Colaboradores
+
             List<String> followersProponentes = new ArrayList<>();
             List<String> followersColaboradores = new ArrayList<>();
             for (String f : followers) {
-                if (ICU.devolverProponentePorNickname(f) != null) {
-                    followersProponentes.add(f);
-                }else{
-                    followersColaboradores.add(f);
-                }
+                boolean esProp = false;
+                try {
+                    esProp = (ICU.devolverProponentePorNickname(f) != null);
+                } catch (Exception ignore) { }
+                if (esProp) followersProponentes.add(f);
+                else        followersColaboradores.add(f);
             }
 
 
-
-            //CREO LA LISTA DE PROPUESTAS FAVORITAS
+            // <-- 3: Armo lista de Propuestas Favoritas -->
             List<DTPropuesta> todasLasProp = IPC.devolverTodasLasPropuestas();
             List<DTPropuesta> favoritas = new ArrayList<>();
             for (DTPropuesta propuesta : todasLasProp) {
@@ -134,8 +135,8 @@ public class ConsultaPerfilUsuarioServlet extends HttpServlet {
                 }
             }
 
-            //<--Separo Propuestas entre INGRESADAS y todos los demas estados; La unica forma de ver las INGRESADAS es si un Proponente entra  -->
-            //<--A su propio perfil -->
+            // <-- 4: Armo lista de todas las Propuestas que el Proponente registrado publicó menos las que están en estado INGREADAS, y otra en que solo están las que esten en estado INGRESADA-->
+            //<--Separo Propuestas entre INGRESADAS y todos los demas estados; La unica forma de ver las INGRESADAS es si un Proponente entra a su propio perfil -->
             List<DTPropuesta> publicadasNoIngresada = new ArrayList<>();
             List<DTPropuesta> creadasIngresadas = new ArrayList<>();
             if (proponente != null && proponente.getPropuestas() != null) {
@@ -148,7 +149,7 @@ public class ConsultaPerfilUsuarioServlet extends HttpServlet {
                 }
             }
 
-            // Colaboradas si es Colaborador
+            //  <-- 5: Armo lista de Propuestas en que el Colaborador colaboró -->
             List<DTPropuesta> colaboradas = new ArrayList<>();
             List<DTColaboracion> misColaboraciones = new ArrayList<>();
             if (colaborador != null && colaborador.getColaboraciones() != null) {
@@ -158,26 +159,18 @@ public class ConsultaPerfilUsuarioServlet extends HttpServlet {
                 }
             }
 
-
-
-
-            // Seteos a la vista
+            // Seteo los atributos que mando al jsp
             req.setAttribute("esPropio", esPropio);
             req.setAttribute("usuarioActual", actual);
-
             req.setAttribute("siguiendoProponentes", siguiendoProponentes);
             req.setAttribute("siguiendoColaboradores", siguiendoColaboradores);
             req.setAttribute("followersProponentes", followersProponentes);
             req.setAttribute("followersColaboradores", followersColaboradores);
-
-
             req.setAttribute("favoritas", favoritas);
             req.setAttribute("publicadasNoIngresada", publicadasNoIngresada);
             req.setAttribute("colaboradas", colaboradas);
-
             req.setAttribute("creadasIngresadas", creadasIngresadas);
             req.setAttribute("misColaboraciones", misColaboraciones);
-
             req.setAttribute("esProponente", proponente != null);
             req.setAttribute("esColaborador", colaborador != null);
 

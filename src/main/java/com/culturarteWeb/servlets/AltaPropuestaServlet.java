@@ -2,25 +2,21 @@ package com.culturarteWeb.servlets;
 
 import culturarte.logica.DTs.DTCategoria;
 import culturarte.logica.DTs.DTUsuario;
-import culturarte.logica.DTs.DTPropuesta;
 import culturarte.logica.controladores.IPropuestaController;
 import culturarte.logica.controladores.IUsuarioController;
 import culturarte.logica.controladores.PropuestaController;
 import culturarte.logica.controladores.UsuarioController;
-
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.*;
 
 @WebServlet("/altaPropuesta")
 
-@MultipartConfig
+@MultipartConfig // necesario para req.getPart(...)
 public class AltaPropuestaServlet extends HttpServlet {
 
     private IUsuarioController ICU;
@@ -68,7 +64,14 @@ public class AltaPropuestaServlet extends HttpServlet {
 
         String imagen = null;
 
-        Part part = req.getPart("imagen");
+        // --- Subida de imagen (opcional para el usuario) ---
+        Part part = null;
+        try {
+            part = req.getPart("imagen"); // si no sube nada, getPart existe pero size=0
+        } catch (IllegalStateException ise) {
+            part = null; // defensivo si el form no viene multipart
+        }
+
         if (part != null && part.getSize() > 0) {
             String type = part.getContentType();
             if (type == null || !type.startsWith("image/"))
@@ -78,6 +81,7 @@ public class AltaPropuestaServlet extends HttpServlet {
             String ext;
             if (type.contains("png")) ext = ".png";
             else if (type.contains("gif")) ext = ".gif";
+            else if (type.contains("jpeg")) ext = ".jpeg";
             else ext = ".jpg";
 
             String relDir = "uploads/propuestas";
@@ -91,7 +95,6 @@ public class AltaPropuestaServlet extends HttpServlet {
             part.write(dest.getAbsolutePath());
 
             imagen = relDir + "/" + fileName; // guardar RUTA RELATIVA
-
         }
 
         String categoria     = req.getParameter("categoria");
@@ -108,7 +111,6 @@ public class AltaPropuestaServlet extends HttpServlet {
             LocalDate fecha = LocalDate.parse(fechaStr);
             Double precio = Double.parseDouble(precioStr);
             Double monto = Double.parseDouble(montoStr);
-
 
             List<String> retornos = (retornosArr != null)
                     ? Arrays.asList(retornosArr)
@@ -139,4 +141,3 @@ public class AltaPropuestaServlet extends HttpServlet {
         }
     }
 }
-

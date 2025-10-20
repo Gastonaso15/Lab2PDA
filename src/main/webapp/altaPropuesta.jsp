@@ -13,7 +13,12 @@
 <%-- Comentario #1: MIRA BRO; ACA LO RESIVO, fijate en ese request.getAttribute, viste que se llama "categorias" tambien
  tremenda casualidad no?...o quizas no sea casualidad...--%>
 <% List<DTCategoria> categorias = (List<DTCategoria>) request.getAttribute("categorias");%>
-<form method="post" action="<%=request.getContextPath()%>/altaPropuesta" enctype="multipart/form-data">>
+
+<% if (request.getAttribute("error") != null) { %>
+<div style="color:#b00020; margin-bottom:12px;"><%= request.getAttribute("error") %></div>
+<% } %>
+
+<form method="post" action="<%=request.getContextPath()%>/altaPropuesta" enctype="multipart/form-data">
     <h1>Alta de Propuesta</h1>
 
     <fieldset class="row">
@@ -21,9 +26,11 @@
             <label>Categoría</label>
             <select name="categoria" required>
                 <option value="" disabled selected>Seleccionar categoría</option>
-                <% for (DTCategoria cat : categorias) { %>
+                <% if (categorias != null) {
+                    for (DTCategoria cat : categorias) { %>
                 <option value="<%=cat.getNombre()%>"><%=cat.getNombre()%></option>
-                <% } %>
+                <%   }
+                } %>
             </select>
         </div>
         <div>
@@ -43,7 +50,7 @@
             <input name="lugar" required/>
         </div>
         <div>
-            <label>Fecha (DD-MM-AAAA)</label>
+            <label>Fecha (AAAA-MM-DD)</label>
             <input type="date" name="fecha" required/>
         </div>
     </fieldset>
@@ -72,10 +79,10 @@
         </div>
 
         <div class="actions">
-            <a href="<%=request.getContextPath()%>/" class="btn">Cancelar</a>
+            <a href="<%=request.getContextPath()%>/" class="btn">Volver al inicio</a>
             <button type="submit">Crear propuesta</button>
         </div>
+    </fieldset>
 </form>
-
 </body>
 </html>
