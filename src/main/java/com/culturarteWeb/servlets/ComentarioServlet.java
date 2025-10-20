@@ -145,8 +145,7 @@ public class ComentarioServlet extends HttpServlet {
                 request.getRequestDispatcher("/formularioComentario.jsp").forward(request, response);
                 return;
             }
-            
-            // También verificar en sesión para evitar duplicados en la misma sesión
+
             String claveComentario = usuario.getNickname() + "_" + propuesta.getTitulo();
             java.util.Set<String> comentariosEnSesion = (java.util.Set<String>) session.getAttribute("comentariosAgregados");
             if (comentariosEnSesion == null) {
@@ -158,11 +157,9 @@ public class ComentarioServlet extends HttpServlet {
                 request.getRequestDispatcher("/formularioComentario.jsp").forward(request, response);
                 return;
             }
-            
-            // Agregar el comentario a la base de datos usando el controlador
+
             IPC.agregarComentario(propuesta.getTitulo(), usuario.getNickname(), comentario);
 
-            // Actualizar sesión para evitar duplicados en la misma sesión
             comentariosEnSesion.add(claveComentario);
             session.setAttribute("comentariosAgregados", comentariosEnSesion);
 

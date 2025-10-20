@@ -70,8 +70,7 @@
                         </div>
                     </div>
                 </div>
-                
-                <!-- Información adicional -->
+
                 <div class="card mt-4">
                     <div class="card-body">
                         <h6 class="card-title">

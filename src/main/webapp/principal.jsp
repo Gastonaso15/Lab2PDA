@@ -291,8 +291,7 @@
                     <div class="contenidoPropuesta">
                         <div class="tituloPropuesta"><%= p.getTitulo() %></div>
                         <div class="descripcionPropuesta"><%= p.getDescripcion() %></div>
-                        
-                        <!-- Barra de progreso de financiación -->
+
                         <div class="progreso-financiacion">
                             <div class="info-progreso">
                                 <span>$<%= String.format("%.0f", propuestaConDatos.getMontoRecaudado()) %> recaudado</span>
@@ -302,8 +301,7 @@
                                 <div class="barra-progreso-llena" style="width: <%= Math.min(100, Math.max(0, porcentajeProgreso)) %>%"></div>
                             </div>
                         </div>
-                        
-                        <!-- Estadísticas de la propuesta -->
+
                         <div class="estadisticas-propuesta">
                             <div class="dias-restantes">
                                 <span class="icono">⏰</span>
@@ -365,7 +363,6 @@
            </div>
 
     <script>
-        // Manejar clicks en los tabs de estado
         document.querySelectorAll('.estado-tab').forEach(tab => {
             tab.addEventListener('click', function() {
                 document.querySelectorAll('.estado-tab').forEach(t => {
@@ -375,8 +372,7 @@
                 const estado = this.getAttribute('data-estado');
                 const url = new URL(window.location);
                 url.searchParams.set('estado', estado);
-                
-                // Mantener la búsqueda actual si existe
+
                 const busquedaActual = '<%= request.getParameter("busqueda") %>';
                 if (busquedaActual && busquedaActual !== 'null') {
                     url.searchParams.set('busqueda', busquedaActual);
@@ -385,8 +381,7 @@
                 window.location.href = url.toString();
             });
         });
-        
-        // Marcar el tab activo según el estado actual
+
         const estadoFiltro = '<%= request.getAttribute("estadoFiltro") %>';
         if (estadoFiltro && estadoFiltro !== 'null') {
             document.querySelectorAll('.estado-tab').forEach(tab => {

@@ -98,7 +98,6 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    // Mostrar/ocultar campos de Proponente
     document.addEventListener('DOMContentLoaded', function() {
         const tipoUsuarioRadios = document.querySelectorAll('input[name="tipoUsuario"]');
         const proponenteFields = document.getElementById('proponenteFields');

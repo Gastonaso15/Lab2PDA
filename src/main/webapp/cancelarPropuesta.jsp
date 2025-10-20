@@ -2,10 +2,8 @@
 <%@ page import="culturarte.logica.DTs.DTPropuesta" %>
 <%@ page import="java.util.List" %>
 <%
-    // Obtener lista de propuestas y mensaje del servlet
     List<DTPropuesta> propuestas = (List<DTPropuesta>) request.getAttribute("propuestas");
     String mensaje = (String) request.getAttribute("mensaje");
-    // Obtener el nickname del usuario de la sesión para el título
     String nickname = (String) session.getAttribute("usuario");
 %>
 <!DOCTYPE html>

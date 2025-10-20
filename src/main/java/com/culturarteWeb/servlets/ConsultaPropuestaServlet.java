@@ -62,8 +62,7 @@ public class ConsultaPropuestaServlet extends HttpServlet {
                     boolean cumpleBusqueda = true;
                     boolean cumpleEstado = true;
                     boolean cumpleCategoria = true;
-                    
-                    // Aplicar filtro de búsqueda
+
                     if (busqueda != null && !busqueda.trim().isEmpty()) {
                         cumpleBusqueda = coincideConBusqueda(propuesta, busqueda.trim());
                     }
@@ -290,7 +289,6 @@ public class ConsultaPropuestaServlet extends HttpServlet {
                 });
                 break;
             default:
-                // Sin ordenamiento específico, mantener orden original
                 break;
         }
 

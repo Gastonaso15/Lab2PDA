@@ -39,7 +39,6 @@ public class EjecutarPropuestaServlet extends HttpServlet {
             session.removeAttribute("mensaje");
         }
 
-        // Obtener propuestas financiadas del usuario
         PropuestaManejador pm = PropuestaManejador.getInstance();
         List<Propuesta> propuestasFinanciadas = pm.obtenerTodasLasPropuestas()
                 .stream()
@@ -85,8 +84,6 @@ public class EjecutarPropuestaServlet extends HttpServlet {
                 && nickname.equals(propuesta.getProponente().getNickname())
                 && propuesta.getEstadoActual() == EstadoPropuesta.FINANCIADA) {
 
-            // Marcar como ejecutada (agregar un nuevo estado o campo)
-            // Por ahora, simplemente agregamos un comentario en el historial de estados
             propuesta.agregarPropuestaEstado(new culturarte.logica.modelos.PropuestaEstado(
                 propuesta, EstadoPropuesta.FINANCIADA, LocalDate.now()));
             pm.actualizarPropuesta(propuesta);

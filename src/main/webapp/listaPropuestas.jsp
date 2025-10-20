@@ -26,8 +26,7 @@
                             <%= request.getAttribute("error") %>
                         </div>
                     <% } %>
-                    
-                    <!-- Panel de Filtros -->
+
                     <div class="row mb-4">
                         <div class="col-12">
                             <div class="card bg-light">
@@ -38,15 +37,13 @@
                                     
                                     <form method="get" action="<%= request.getContextPath() %>/consultaPropuesta">
                                         <div class="row g-3">
-                                            <!-- Búsqueda por texto -->
                                             <div class="col-md-4">
                                                 <label for="busqueda" class="form-label">Buscar</label>
                                                 <input type="text" class="form-control" id="busqueda" name="busqueda" 
                                                        placeholder="Título, descripción o lugar..." 
                                                        value="<%= request.getAttribute("busqueda") != null ? request.getAttribute("busqueda") : "" %>">
                                             </div>
-                                            
-                                            <!-- Filtro por estado -->
+
                                             <div class="col-md-3">
                                                 <label for="estado" class="form-label">Estado</label>
                                                 <select class="form-select" id="estado" name="estado">
@@ -57,8 +54,7 @@
                                                     <option value="canceladas" <%= "canceladas".equals(request.getAttribute("estadoFiltro")) ? "selected" : "" %>>Canceladas</option>
                                                 </select>
                                             </div>
-                                            
-                                            <!-- Filtro por categoría -->
+
                                             <div class="col-md-3">
                                                 <label for="categoria" class="form-label">Categoría</label>
                                                 <select class="form-select" id="categoria" name="categoria">
@@ -77,8 +73,7 @@
                                                     %>
                                                 </select>
                                             </div>
-                                            
-                                            <!-- Ordenamiento -->
+
                                             <div class="col-md-2">
                                                 <label for="ordenarPor" class="form-label">Ordenar por</label>
                                                 <select class="form-select" id="ordenarPor" name="ordenarPor">
@@ -102,8 +97,7 @@
                                             </div>
                                         </div>
                                     </form>
-                                    
-                                    <!-- Información de resultados -->
+
                                     <% if (request.getAttribute("totalResultados") != null) { %>
                                         <div class="mt-3">
                                             <small class="text-muted">

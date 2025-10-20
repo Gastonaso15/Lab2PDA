@@ -181,7 +181,6 @@
                                     <div class="d-flex gap-2 mb-3">
 
                                             <%
-                                                // Obtener el título de la propuesta actual
                                                 String _tituloSel = null;
                                                 DTPropuesta _prop = (DTPropuesta) request.getAttribute("propuesta");
                                                 if (_prop != null) _tituloSel = _prop.getTitulo();
