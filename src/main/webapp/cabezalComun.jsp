@@ -12,7 +12,6 @@
             if (esProponente != null && esProponente) {
         %>
             <a href="altaPropuesta">Nueva Propuesta</a> |
-            <a href="extenderFinanciacion">Quiero Extender financiacion </a> |
             <% } %>
         <a href="consultaPropuesta">Ver Propuestas</a> |
         <a href="consultaPerfilUsuario">Ver Usuarios</a>
