@@ -170,6 +170,8 @@ public class ConsultaPerfilUsuarioServlet extends HttpServlet {
                 }
             }
 
+
+
             // Seteo los atributos que mando al jsp
             req.setAttribute("esPropio", esPropio);
             req.setAttribute("usuarioActual", actual);
