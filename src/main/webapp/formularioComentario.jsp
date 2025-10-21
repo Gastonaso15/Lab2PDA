@@ -63,8 +63,7 @@
                         %>
                         
                         <% if (propuesta != null && usuario != null) { %>
-                            
-                            <!-- Información de la propuesta -->
+
                             <div class="propuesta-info">
                                 <h5 class="mb-3">
                                     <i class="bi bi-info-circle"></i> Información de la Propuesta
@@ -100,8 +99,7 @@
                                     </div>
                                 </div>
                             </div>
-                            
-                            <!-- Formulario de comentario -->
+
                             <div class="comentario-form">
                                 <form method="post" action="<%= request.getContextPath() %>/comentario" id="comentarioForm">
                                     <input type="hidden" name="tituloPropuesta" value="<%= propuesta.getTitulo() %>">
@@ -167,7 +165,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Contador de caracteres
         const textarea = document.getElementById('comentario');
         const charCount = document.getElementById('charCount');
         const charCounter = document.querySelector('.char-counter');
@@ -175,8 +172,7 @@
         textarea.addEventListener('input', function() {
             const length = this.value.length;
             charCount.textContent = length;
-            
-            // Cambiar color según la cantidad de caracteres
+
             if (length > 800) {
                 charCounter.className = 'char-counter danger mt-2';
             } else if (length > 600) {

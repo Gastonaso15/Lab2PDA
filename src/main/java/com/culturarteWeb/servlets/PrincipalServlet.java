@@ -31,7 +31,6 @@ public class PrincipalServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try{
-            // Verificar vencimientos automáticamente cada vez que se accede a la página principal
             verificarVencimientosAutomaticamente();
             
             String estadoFiltro = request.getParameter("estado");
@@ -82,8 +81,7 @@ public class PrincipalServlet extends HttpServlet {
                     esColaborador = true;
                 }
             }
-            
-            // Calcular datos adicionales para cada propuesta
+
             List<PropuestaConDatos> propuestasConDatos = new ArrayList<>();
             for (DTPropuesta propuesta : propuestasVisibles) {
                 PropuestaConDatos propuestaConDatos = calcularDatosPropuesta(propuesta);
@@ -194,22 +192,19 @@ public class PrincipalServlet extends HttpServlet {
         double montoRecaudado = 0.0;
         int totalColaboradores = 0;
         long diasRestantes = 0;
-        
-        // Calcular monto recaudado y total de colaboradores
+
         if (propuesta.getColaboraciones() != null) {
             for (DTColaboracion colaboracion : propuesta.getColaboraciones()) {
                 montoRecaudado += colaboracion.getMonto();
             }
             totalColaboradores = propuesta.getColaboraciones().size();
         }
-        
-        // Calcular días restantes (30 días desde la fecha de publicación)
+
         try {
             if (propuesta.getFechaPublicacion() != null) {
                 LocalDate fechaPublicacion = propuesta.getFechaPublicacion();
                 LocalDate fechaActual = LocalDate.now();
-                
-                // Calcular la fecha límite (30 días después de la publicación)
+
                 LocalDate fechaLimite = fechaPublicacion.plusDays(30);
                 
                 diasRestantes = ChronoUnit.DAYS.between(fechaActual, fechaLimite);
@@ -244,9 +239,6 @@ public class PrincipalServlet extends HttpServlet {
         public long getDiasRestantes() { return diasRestantes; }
     }
 
-    /**
-     * Verifica automáticamente los vencimientos de financiación y procesa las transiciones de estado
-     */
     private void verificarVencimientosAutomaticamente() {
         try {
             culturarte.logica.manejadores.PropuestaManejador pm = culturarte.logica.manejadores.PropuestaManejador.getInstance();
@@ -260,18 +252,15 @@ public class PrincipalServlet extends HttpServlet {
                 if (propuesta != null && 
                     (propuesta.getEstadoActual() == culturarte.logica.modelos.EstadoPropuesta.PUBLICADA || 
                      propuesta.getEstadoActual() == culturarte.logica.modelos.EstadoPropuesta.EN_FINANCIACION)) {
-                    
-                    // Verificar si ha vencido el plazo (30 días desde la fecha de publicación)
+
                     if (propuesta.getFechaPublicacion() != null) {
                         java.time.LocalDate fechaVencimiento = propuesta.getFechaPublicacion().plusDays(30);
                         
                         if (fechaActual.isAfter(fechaVencimiento)) {
-                            // El plazo ha vencido, verificar si alcanzó el monto objetivo
                             double montoRecaudado = calcularMontoRecaudado(dtPropuesta);
                             double montoNecesario = dtPropuesta.getMontoNecesario();
                             
                             if (montoRecaudado >= montoNecesario) {
-                                // Alcanzó el objetivo: cambiar a FINANCIADA
                                 propuesta.setEstadoActual(culturarte.logica.modelos.EstadoPropuesta.FINANCIADA);
                                 propuesta.agregarPropuestaEstado(new culturarte.logica.modelos.PropuestaEstado(
                                     propuesta, culturarte.logica.modelos.EstadoPropuesta.FINANCIADA, fechaActual));
@@ -281,7 +270,6 @@ public class PrincipalServlet extends HttpServlet {
                                     ", monto necesario: $" + montoNecesario + ")");
                                 
                             } else {
-                                // No alcanzó el objetivo: cambiar a NO_FINANCIADA
                                 propuesta.setEstadoActual(culturarte.logica.modelos.EstadoPropuesta.NO_FINANCIADA);
                                 propuesta.agregarPropuestaEstado(new culturarte.logica.modelos.PropuestaEstado(
                                     propuesta, culturarte.logica.modelos.EstadoPropuesta.NO_FINANCIADA, fechaActual));
@@ -303,9 +291,6 @@ public class PrincipalServlet extends HttpServlet {
         }
     }
 
-    /**
-     * Calcula el monto total recaudado por una propuesta
-     */
     private double calcularMontoRecaudado(DTPropuesta propuesta) {
         double montoTotal = 0.0;
         

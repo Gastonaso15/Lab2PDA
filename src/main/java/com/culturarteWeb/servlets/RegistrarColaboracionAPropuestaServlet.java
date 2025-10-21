@@ -64,8 +64,7 @@ public class RegistrarColaboracionAPropuestaServlet extends HttpServlet {
             try {
                 double monto = Double.parseDouble(montoStr);
                 IPropuestaController pc = Fabrica.getInstance().getIPropuestaController();
-                
-                // Verificar si es la primera colaboración para cambiar estado automáticamente
+
                 PropuestaManejador pm = PropuestaManejador.getInstance();
                 Propuesta propuesta = pm.obtenerPropuestaPorTitulo(titulo);
                 
@@ -75,8 +74,7 @@ public class RegistrarColaboracionAPropuestaServlet extends HttpServlet {
                 }
                 
                 pc.registrarColaboracion(titulo,usuarioActual.getNickname(), monto, tipoRetorno);
-                
-                // Si es la primera colaboración y la propuesta está en estado PUBLICADA, cambiar a EN_FINANCIACION
+
                 if (esPrimeraColaboracion && propuesta != null && 
                     propuesta.getEstadoActual().toString().equals("PUBLICADA")) {
                     

@@ -31,7 +31,7 @@ public class CancelarPropuestaServlet extends HttpServlet {
         DTUsuario usuarioActual = (DTUsuario) session.getAttribute("usuarioLogueado");
 
         if (usuarioActual == null) {
-            response.sendRedirect(request.getContextPath() + "/inicioDeSesion.jsp"); // O a /principal, etc.
+            response.sendRedirect(request.getContextPath() + "/inicioDeSesion.jsp");
             return;
         }
 
