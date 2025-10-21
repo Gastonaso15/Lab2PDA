@@ -208,7 +208,7 @@
         <div class="col-12">
             <div class="card shadow-sm">
                 <div class="card-body">
-                    <h3 class="h5">Publicadas (no INGRESADA)</h3>
+                    <h3 class="h5">Publicadas</h3>
                     <table class="table table-sm table-bordered align-middle mb-0">
                         <thead class="table-light">
                         <tr><th>Título</th><th>Estado</th><th class="text-center">Acciones</th></tr>
