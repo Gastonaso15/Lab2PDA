@@ -253,11 +253,17 @@
                         %>
                         <tr>
                         <td><%=prop.getTitulo()%></td>
+                            <%--si esta en su propio perfil es la unica manera de que vea el monto y fecha--%>
+                            <% if (esPropio != null && esPropio ){%>
                         <td><%= (m.getFechaHora() != null) ? m.getFechaHora().format(fmtUY) : "-" %></td>
                         <td><%=m.getMonto()%></td>
+                            <%}else{%>
+                            <td>- </td>
+                            <td>-</td>
+                            <%}%>
                         <td class="text-center"><a class="btn btn-link btn-sm" href="<%=ctx%>/consultaPropuesta?accion=detalle&titulo=<%=prop.getTitulo()%>">Ver detalle</a></td>
                     </tr>
-                        <% } } else { %>
+                        <% }}  else { %>
                         <tr><td colspan="2" class="text-center text-muted">(sin colaboraciones)</td></tr>
                         <% } %>
                         </tbody>
