@@ -78,6 +78,16 @@
                                                 <%= String.format("%.1f", (montoRecaudado / propuesta.getMontoNecesario()) * 100) %>%
                                             </div>
                                         </div>
+
+                                        <%
+                                            Long diasRestantes = (Long) request.getAttribute("diasRestantes");
+                                            if (diasRestantes != null) {
+                                        %>
+
+                                        <h6 class="card-title mt-3">⏰ <%= diasRestantes %> días restantes</h6>
+
+                                        <% } %>
+
                                     </div>
                                 </div>
                             </div>
@@ -201,6 +211,20 @@
                                             Extender Financiación
                                         </button>
 
+                                        <%
+                                            boolean puedeExtender = propuesta.getEstadoActual() != null &&
+                                                (propuesta.getEstadoActual().toString().equals("PUBLICADA") ||
+                                                 propuesta.getEstadoActual().toString().equals("EN_FINANCIACION"));
+                                        if (!puedeExtender) { %>
+                                            <script>
+                                                // Desactiva el botón si no se puede extender
+                                                document.addEventListener('DOMContentLoaded', () => {
+                                                    const btn = document.querySelector('.btn.btn-warning');
+                                                    if (btn) btn.disabled = true;
+                                                });
+                                            </script>
+                                        <% } %>
+
                                         <script>
                                             async function extenderFinanciacion(titulo) {
                                                 if (!confirm('¿Extender la financiación de esta propuesta?')) return;
@@ -251,7 +275,8 @@
                                                 <% } %>
                                             </div>
                                             <p class="text-muted small">
-                                                <em>Nota: Solo puedes cancelar propuestas que se encuentren en estado "Financiada".</em>
+                                                <em>Nota 1: Solo puedes extender la financiación si la propuesta está en estado "Publicada" o "En Financiación".<br>
+                                                Nota 2: Solo puedes cancelar propuestas que se encuentren en estado "Financiada".</em>
                                             </p>
 
                                         <% } else if (haColaborado) { %>

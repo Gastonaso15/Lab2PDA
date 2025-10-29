@@ -14,6 +14,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -147,6 +149,21 @@ public class ConsultaPropuestaServlet extends HttpServlet {
                 request.getRequestDispatcher("/listaPropuestas.jsp").forward(request, response);
                 return;
             }
+
+            long diasRestantes = 0;
+            if (propuestaSeleccionada.getFechaPublicacion() != null) {
+                LocalDate fechaPublicacion = propuestaSeleccionada.getFechaPublicacion();
+                LocalDate fechaActual = LocalDate.now();
+
+                LocalDate fechaLimite = fechaPublicacion.plusDays(30);
+
+                diasRestantes = ChronoUnit.DAYS.between(fechaActual, fechaLimite);
+                if (diasRestantes < 0) {
+                    diasRestantes = 0;
+                }
+            }
+            request.setAttribute("diasRestantes", diasRestantes);
+
             double montoRecaudado = 0.0;
             List<String> nicknamesColaboradores = new ArrayList<>();
             
@@ -225,27 +242,28 @@ public class ConsultaPropuestaServlet extends HttpServlet {
         }
         return false;
     }
-    
+
     private boolean coincideConEstadoFiltro(String estadoPropuesta, String filtro) {
         if (filtro == null || estadoPropuesta == null) {
             return false;
         }
+
+        estadoPropuesta = estadoPropuesta.toUpperCase();
         switch (filtro.toLowerCase()) {
             case "en_financiacion":
-                return estadoPropuesta.toUpperCase().contains("FINANCIACION") ||
-                        estadoPropuesta.toUpperCase().contains("EN_FINANCIACION");
+                return estadoPropuesta.equals("EN_FINANCIACION");
             case "financiadas":
-                return estadoPropuesta.toUpperCase().contains("FINANCIADA");
+                return estadoPropuesta.equals("FINANCIADA");
             case "no_financiadas":
-                return estadoPropuesta.toUpperCase().contains("NO_FINANCIADA") ||
-                        estadoPropuesta.toUpperCase().contains("NO FINANCIADA");
+                return estadoPropuesta.equals("NO_FINANCIADA");
             case "canceladas":
-                return estadoPropuesta.toUpperCase().contains("CANCELADA");
+                return estadoPropuesta.equals("CANCELADA");
             default:
                 return false;
         }
     }
-    
+
+
     private boolean coincideConCategoriaFiltro(DTPropuesta propuesta, String filtro) {
         if (filtro == null || propuesta.getCategoria() == null) {
             return false;

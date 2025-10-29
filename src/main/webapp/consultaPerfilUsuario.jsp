@@ -9,11 +9,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Bootstrap 5 (CDN) -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <jsp:include page="estiloCabezalComun.jsp"/>
 </head>
 <body class="bg-light">
 <% String ctx = request.getContextPath(); %>
 
 <div class="container py-4">
+    <jsp:include page="cabezalComun.jsp"/>
     <h1 class="h3 mb-4">Consulta de Perfil de Usuario</h1>
 
     <%-- Mensaje de error si llegó algo desde el servlet --%>
@@ -43,10 +45,12 @@
             <select name="nick" class="form-select">
                 <% for (Map<String, Object> u : usuariosCombo) {
                     String nickOpt = (String) u.get("nick");
+                    String nombreOpt = (String) u.get("nombre");
+                    String apellidoOpt = (String) u.get("apellido");
                     String tipoOpt = (String) u.get("tipo");
                     Long   idOpt   = (Long)   u.get("id"); %>
                 <option value="<%= nickOpt %>">
-                    <%= nickOpt %> — <%= tipoOpt %> (#<%= idOpt %>)
+                    <%= nickOpt %> — <%= nombreOpt %> <%= apellidoOpt %> — <%= tipoOpt %> (#<%= idOpt %>)
                 </option>
                 <% } %>
             </select>
@@ -81,9 +85,14 @@
         <div class="card-body">
             <h2 class="h4 mb-3">Perfil de <%= (usuario != null ? usuario.getNickname() : request.getParameter("nick")) %></h2>
             <div class="d-flex gap-3 align-items-start">
-                <% if (usuario != null && usuario.getImagen() != null && !usuario.getImagen().isBlank()) { %>
-                <img alt="avatar" src="<%=usuario.getImagen()%>" class="rounded-circle border" style="width:96px;height:96px;object-fit:cover">
-                <% } %>
+
+               <%String rutaImagen = (usuario != null) ? usuario.getImagen() : null;
+                   if (rutaImagen == null || rutaImagen.isBlank()) {
+                       rutaImagen = ctx + "/imagenes/usuarioDefault.png";
+                   } else {
+                       rutaImagen = ctx + "/" + rutaImagen;
+                   }%>
+               <img alt="avatar" src="<%= rutaImagen %>" class="rounded-circle border" style="width:96px;height:96px;object-fit:cover">
                 <div>
                     <div class="mb-1">
                         <span class="badge <%= esProponente ? "text-bg-primary" : (esColaborador ? "text-bg-success" : "text-bg-secondary") %>">

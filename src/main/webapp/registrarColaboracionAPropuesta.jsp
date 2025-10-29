@@ -13,9 +13,9 @@
     </style>
 </head>
 <body>
-    <jsp:include page="cabezalComun.jsp"/>
 
 <div class="container">
+    <jsp:include page="cabezalComun.jsp"/>
     <div class="row justify-content-center">
         <div class="col-md-8">
 
@@ -39,7 +39,7 @@
                     <form action="registrarColaboracion" method="post">
                         <input type="hidden" name="accion" value="seleccionar"/>
                         <div class="input-group">
-                            <select name="titulo" class="form-select" required onchange="this.form.submit()">
+                            <select id="selectPropuesta" name="titulo" class="form-select" required>
                                 <option value="" disabled ${empty propuestaSeleccionada ? 'selected' : ''}>-- Elige una propuesta para ver sus detalles --</option>
                                 <c:forEach var="p" items="${propuestas}">
                                     <option value="${p.titulo}" <c:if test="${not empty propuestaSeleccionada && propuestaSeleccionada.titulo eq p.titulo}">selected</c:if>>
@@ -47,7 +47,10 @@
                                     </option>
                                 </c:forEach>
                             </select>
-                            <button type="submit" class="btn btn-primary d-none d-md-block">Ver Detalles</button>
+                            <button type="button" class="btn btn-primary d-none d-md-block"
+                                    onclick="if(document.getElementById('selectPropuesta').value){window.location.href='${pageContext.request.contextPath}/consultaPropuesta?accion=detalle&titulo=' + encodeURIComponent(document.getElementById('selectPropuesta').value);}">
+                                Ver Detalles
+                            </button>
                         </div>
                         <div class="form-text mt-2">
                             Al cambiar la selección, los detalles se cargarán automáticamente.

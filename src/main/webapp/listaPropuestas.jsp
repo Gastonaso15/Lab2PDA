@@ -138,12 +138,6 @@
                                                  class="card-img-top" style="height: 200px; object-fit: cover;" 
                                                  alt="Imagen de <%= propuesta.getTitulo() %>"
                                                  onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                                            <!-- Siempre aparece error al cargar imagen con esto
-                                            <div class="card-img-top bg-light d-flex align-items-center justify-content-center"
-                                                 style="height: 200px; display: none;">
-                                                <span class="text-muted">Error al cargar imagen</span>
-                                            </div>
-                                            -->
                                        <% } else { %>
                                            <img src="<%= request.getContextPath() %>/imagenes/propuestaDefault.png"
                                                 class="card-img-top" style="height: 200px; object-fit: cover;"

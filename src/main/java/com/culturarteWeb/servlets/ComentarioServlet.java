@@ -5,6 +5,7 @@ import culturarte.logica.DTs.DTUsuario;
 import culturarte.logica.DTs.DTColaboracion;
 import culturarte.logica.DTs.DTEstadoPropuesta;
 import culturarte.logica.DTs.DTComentario;
+import culturarte.logica.Fabrica;
 import culturarte.logica.controladores.IPropuestaController;
 import culturarte.logica.controladores.PropuestaController;
 import jakarta.servlet.ServletException;
@@ -20,7 +21,8 @@ public class ComentarioServlet extends HttpServlet {
     @Override
     public void init() throws ServletException {
         super.init();
-        IPC = new PropuestaController();
+        Fabrica fabrica = Fabrica.getInstance();
+        IPC = fabrica.getIPropuestaController();
     }
 
     @Override

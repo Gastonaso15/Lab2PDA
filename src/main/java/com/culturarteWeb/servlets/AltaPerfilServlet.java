@@ -61,6 +61,15 @@ public class AltaPerfilServlet extends HttpServlet {
                                    email, fechaNacimiento, tipoUsuario, direccion);
         if (error != null) {
             request.setAttribute("error", error);
+            request.setAttribute("nickname", nickname);
+            request.setAttribute("nombre", nombre);
+            request.setAttribute("apellido", apellido);
+            request.setAttribute("email", email);
+            request.setAttribute("fechaNacimiento", fechaNacimiento);
+            request.setAttribute("tipoUsuario", tipoUsuario);
+            request.setAttribute("direccion", direccion);
+            request.setAttribute("biografia", biografia);
+            request.setAttribute("sitioWeb", sitioWeb);
             request.getRequestDispatcher("/altaPerfil.jsp").forward(request, response);
             return;
         }
@@ -89,6 +98,15 @@ public class AltaPerfilServlet extends HttpServlet {
                     imagenBase64 = rutaRelativa; // Ahora guardamos la ruta, no Base64
                 } else {
                     request.setAttribute("error", "El archivo seleccionado no es una imagen válida");
+                    request.setAttribute("nickname", nickname);
+                    request.setAttribute("nombre", nombre);
+                    request.setAttribute("apellido", apellido);
+                    request.setAttribute("email", email);
+                    request.setAttribute("fechaNacimiento", fechaNacimiento);
+                    request.setAttribute("tipoUsuario", tipoUsuario);
+                    request.setAttribute("direccion", direccion);
+                    request.setAttribute("biografia", biografia);
+                    request.setAttribute("sitioWeb", sitioWeb);
                     request.getRequestDispatcher("/altaPerfil.jsp").forward(request, response);
                     return;
                 }
@@ -120,12 +138,30 @@ public class AltaPerfilServlet extends HttpServlet {
             IUC.crearUsuario(usuario);
             
             request.setAttribute("mensaje", "Usuario creado exitosamente");
-            request.getRequestDispatcher("/principal.jsp").forward(request, response);
+            response.sendRedirect(request.getContextPath());
         } catch (DateTimeParseException e) {
             request.setAttribute("error", "Formato de fecha inválido");
+            request.setAttribute("nickname", nickname);
+            request.setAttribute("nombre", nombre);
+            request.setAttribute("apellido", apellido);
+            request.setAttribute("email", email);
+            request.setAttribute("fechaNacimiento", fechaNacimiento);
+            request.setAttribute("tipoUsuario", tipoUsuario);
+            request.setAttribute("direccion", direccion);
+            request.setAttribute("biografia", biografia);
+            request.setAttribute("sitioWeb", sitioWeb);
             request.getRequestDispatcher("/altaPerfil.jsp").forward(request, response);
         } catch (Exception e) {
             request.setAttribute("error", "Error al crear usuario: " + e.getMessage());
+            request.setAttribute("nickname", nickname);
+            request.setAttribute("nombre", nombre);
+            request.setAttribute("apellido", apellido);
+            request.setAttribute("email", email);
+            request.setAttribute("fechaNacimiento", fechaNacimiento);
+            request.setAttribute("tipoUsuario", tipoUsuario);
+            request.setAttribute("direccion", direccion);
+            request.setAttribute("biografia", biografia);
+            request.setAttribute("sitioWeb", sitioWeb);
             request.getRequestDispatcher("/altaPerfil.jsp").forward(request, response);
         }
     }

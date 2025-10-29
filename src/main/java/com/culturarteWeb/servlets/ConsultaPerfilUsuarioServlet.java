@@ -1,6 +1,7 @@
 package com.culturarteWeb.servlets;
 
 import culturarte.logica.DTs.*;
+import culturarte.logica.Fabrica;
 import culturarte.logica.controladores.IPropuestaController;
 import culturarte.logica.controladores.IUsuarioController;
 import culturarte.logica.controladores.PropuestaController;
@@ -23,9 +24,9 @@ public class ConsultaPerfilUsuarioServlet extends HttpServlet {
     @Override
     public void init() throws ServletException {
         super.init();
-
-        ICU = new UsuarioController();
-        IPC = new PropuestaController();
+        Fabrica fabrica = Fabrica.getInstance();
+        ICU = fabrica.getIUsuarioController();
+        IPC = fabrica.getIPropuestaController();
     }
 
 
@@ -56,6 +57,8 @@ public class ConsultaPerfilUsuarioServlet extends HttpServlet {
                     Map<String, Object> row = new HashMap<>();
                     row.put("id", u.getId());
                     row.put("nick", u.getNickname());
+                    row.put("nombre", u.getNombre());
+                    row.put("apellido", u.getApellido());
                     row.put("tipo", tipo);
                     usuariosCombo.add(row);
                 }
@@ -169,6 +172,14 @@ public class ConsultaPerfilUsuarioServlet extends HttpServlet {
                     if (c.getPropuesta() != null) colaboradas.add(c.getPropuesta());
                 }
             }
+
+            boolean loSigo = false;
+            if (actual != null && usuarioConsultado != null) {
+                List<String> usuariosSeguidos = ICU.devolverUsuariosSeguidos(actual.getNickname());
+                loSigo = usuariosSeguidos.contains(usuarioConsultado.getNickname());
+            }
+            req.setAttribute("loSigo", loSigo);
+
 
             // Seteo los atributos que mando al jsp
             req.setAttribute("esPropio", esPropio);

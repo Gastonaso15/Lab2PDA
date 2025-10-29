@@ -2,6 +2,7 @@ package com.culturarteWeb.servlets;
 
 import culturarte.logica.DTs.DTCategoria;
 import culturarte.logica.DTs.DTUsuario;
+import culturarte.logica.Fabrica;
 import culturarte.logica.controladores.IPropuestaController;
 import culturarte.logica.controladores.IUsuarioController;
 import culturarte.logica.controladores.PropuestaController;
@@ -26,8 +27,9 @@ public class AltaPropuestaServlet extends HttpServlet {
     public void init() throws ServletException {
         super.init();
         //Pido los controladores a las fabricas
-        ICU = new UsuarioController();
-        IPC = new PropuestaController();
+        Fabrica fabrica = Fabrica.getInstance();
+        ICU = fabrica.getIUsuarioController();
+        IPC = fabrica.getIPropuestaController();
     }
 
     @Override
@@ -111,6 +113,23 @@ public class AltaPropuestaServlet extends HttpServlet {
             LocalDate fecha = LocalDate.parse(fechaStr);
             Double precio = Double.parseDouble(precioStr);
             Double monto = Double.parseDouble(montoStr);
+
+            if (fecha.isBefore(LocalDate.now())) {
+                List<DTCategoria> categorias = IPC.devolverTodasLasCategorias();
+                req.setAttribute("categorias", categorias);
+                req.setAttribute("error", "La fecha no puede ser anterior a la actual");
+
+                req.setAttribute("categoria", categoria);
+                req.setAttribute("titulo", titulo);
+                req.setAttribute("descripcion", descripcion);
+                req.setAttribute("lugar", lugar);
+                req.setAttribute("fecha", fechaStr);
+                req.setAttribute("precioEntrada", precioStr);
+                req.setAttribute("montoNecesario", montoStr);
+                req.setAttribute("retornos", retornosArr);
+                req.getRequestDispatcher("/altaPropuesta.jsp").forward(req, resp);
+                return;
+            }
 
             List<String> retornos = (retornosArr != null)
                     ? Arrays.asList(retornosArr)

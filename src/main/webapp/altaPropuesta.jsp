@@ -11,6 +11,7 @@
 
     <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <jsp:include page="estiloCabezalComun.jsp"/>
 </head>
 <body class="bg-light">
 
@@ -20,6 +21,7 @@
 <% categorias = (categorias == null) ? (List<DTCategoria>) request.getAttribute("categorias") : categorias; %>
 
 <div class="container py-4">
+    <jsp:include page="cabezalComun.jsp"/>
     <div class="row justify-content-center">
         <div class="col-12 col-lg-10">
             <div class="card shadow-sm">
@@ -39,10 +41,12 @@
                             <div class="col-12 col-md-6">
                                 <label class="form-label">Categoría</label>
                                 <select name="categoria" class="form-select" required>
-                                    <option value="" disabled selected>Seleccionar categoría</option>
+                                    <option value="" disabled <%= request.getParameter("categoria") == null ? "selected" : "" %>>Seleccionar categoría</option>
                                     <% if (categorias != null) {
-                                        for (DTCategoria cat : categorias) { %>
-                                    <option value="<%=cat.getNombre()%>"><%=cat.getNombre()%></option>
+                                        for (DTCategoria cat : categorias) {
+                                            String selected = cat.getNombre().equals(request.getParameter("categoria")) ? "selected" : "";
+                                    %>
+                                    <option value="<%=cat.getNombre()%>" <%=selected%>><%=cat.getNombre()%></option>
                                     <%   }
                                     } %>
                                 </select>
@@ -51,40 +55,49 @@
 
                             <div class="col-12 col-md-6">
                                 <label class="form-label">Título</label>
-                                <input name="titulo" maxlength="120" required class="form-control" placeholder="Nombre de la propuesta"/>
+                                <input name="titulo" maxlength="120" required class="form-control"
+                                       placeholder="Nombre de la propuesta"
+                                       value="<%= request.getParameter("titulo") != null ? request.getParameter("titulo") : "" %>"/>
                                 <div class="invalid-feedback">Ingresá un título.</div>
                             </div>
 
                             <!-- Descripción -->
                             <div class="col-12">
                                 <label class="form-label">Descripción</label>
-                                <textarea name="descripcion" rows="4" required class="form-control" placeholder="Contanos de qué se trata..."></textarea>
+                                <textarea name="descripcion" rows="4" required class="form-control"
+                                          placeholder="Contanos de qué se trata..."><%= request.getParameter("descripcion") != null ? request.getParameter("descripcion") : "" %></textarea>
                                 <div class="invalid-feedback">Ingresá una descripción.</div>
                             </div>
 
                             <!-- Lugar / Fecha -->
                             <div class="col-12 col-md-6">
                                 <label class="form-label">Lugar</label>
-                                <input name="lugar" required class="form-control" placeholder="Ej: Teatro Unión"/>
+                                <input name="lugar" required class="form-control" placeholder="Ej: Teatro Unión"
+                                       value="<%= request.getParameter("lugar") != null ? request.getParameter("lugar") : "" %>"/>
                                 <div class="invalid-feedback">Ingresá un lugar.</div>
                             </div>
 
                             <div class="col-12 col-md-6">
                                 <label class="form-label">Fecha (AAAA-MM-DD)</label>
-                                <input type="date" name="fecha" required class="form-control"/>
+                                <input type="date" name="fecha" required class="form-control"
+                                       value="<%= request.getParameter("fecha") != null ? request.getParameter("fecha") : "" %>"/>
                                 <div class="invalid-feedback">Seleccioná una fecha.</div>
                             </div>
 
                             <!-- Precios -->
                             <div class="col-12 col-md-6">
                                 <label class="form-label">Precio de entrada</label>
-                                <input type="number" name="precioEntrada" min="1" step="0.01" required class="form-control" placeholder="0.00"/>
+                                <input type="number" name="precioEntrada" min="1" step="0.01" required class="form-control"
+                                       placeholder="0.00"
+                                       value="<%= request.getParameter("precioEntrada") != null ? request.getParameter("precioEntrada") : "" %>"/>
                                 <div class="invalid-feedback">Ingresá un precio válido.</div>
                             </div>
 
                             <div class="col-12 col-md-6">
                                 <label class="form-label">Monto necesario</label>
-                                <input type="number" name="montoNecesario" min="1" step="0.01" required class="form-control" placeholder="0.00"/>
+                                <input type="number" name="montoNecesario" min="1" step="0.01" required class="form-control"
+                                       placeholder="0.00"
+                                       value="<%= request.getParameter("montoNecesario") != null ? request.getParameter("montoNecesario") : "" %>"/>
                                 <div class="invalid-feedback">Ingresá un monto válido.</div>
                             </div>
 
@@ -92,11 +105,13 @@
                             <div class="col-12">
                                 <label class="form-label d-block">Tipos de retorno</label>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" id="ret1" type="checkbox" name="retornos" value="ENTRADAS_GRATIS">
+                                    <input class="form-check-input" id="ret1" type="checkbox" name="retornos" value="ENTRADAS_GRATIS"
+                                           <%= request.getParameterValues("retornos") != null && java.util.Arrays.asList(request.getParameterValues("retornos")).contains("ENTRADAS_GRATIS") ? "checked" : "" %>>
                                     <label class="form-check-label" for="ret1">Entradas</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" id="ret2" type="checkbox" name="retornos" value="PORCENTAJE_GANANCIAS">
+                                    <input class="form-check-input" id="ret2" type="checkbox" name="retornos" value="PORCENTAJE_GANANCIAS"
+                                           <%= request.getParameterValues("retornos") != null && java.util.Arrays.asList(request.getParameterValues("retornos")).contains("PORCENTAJE_GANANCIAS") ? "checked" : "" %>>
                                     <label class="form-check-label" for="ret2">Porcentaje</label>
                                 </div>
                             </div>

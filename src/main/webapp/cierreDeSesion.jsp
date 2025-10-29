@@ -4,22 +4,15 @@
 <head>
     <title>Cierre de Sesión - Culturarte</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <jsp:include page="estiloCabezalComun.jsp"/>
 </head>
 <body class="bg-light">
-
+<div class="container">
+    <jsp:include page="cabezalComun.jsp"/>
+</div>
 <div class="container d-flex justify-content-center py-5">
     <div class="card shadow-sm p-4" style="width: 450px;">
         <h3 class="text-center mb-3">Cierre de Sesión</h3>
-
-        <%--
-        *** ESTE CÓDIGO SE HA ELIMINADO ***
-        <%
-            String mensaje = (String) request.getAttribute("mensaje");
-            if (mensaje == null || mensaje.isEmpty()) {
-                mensaje = "Has cerrado sesión correctamente.";
-            }
-        %>
-        --%>
 
         <div class="alert alert-success text-center" role="alert">
             Has cerrado sesión correctamente.
