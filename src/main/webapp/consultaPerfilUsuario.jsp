@@ -1,3 +1,6 @@
+<%@ page import="java.time.format.DateTimeFormatter" %>
+<%@ page import="java.text.NumberFormat" %>
+<%@ page import="java.util.Locale" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.util.*" %>
 <%@ page import="culturarte.logica.DTs.*" %>
@@ -198,7 +201,7 @@
                             for (DTPropuesta p : favoritas) { %>
                         <tr>
                             <td><%=p.getTitulo()%></td>
-                            <td class="text-center"><a class="btn btn-link btn-sm" href="<%=ctx%>/consultaPropuesta?titulo=<%=p.getTitulo()%>">Ver detalle</a></td>
+                            <td class="text-center"><a class="btn btn-link btn-sm" href="<%=ctx%>/consultaPropuesta?accion=detalle&titulo=<%=p.getTitulo()%>">Ver detalle</a></td>
                         </tr>
                         <% } } else { %>
                         <tr><td colspan="2" class="text-center text-muted">(sin favoritas)</td></tr>
@@ -214,7 +217,7 @@
         <div class="col-12">
             <div class="card shadow-sm">
                 <div class="card-body">
-                    <h3 class="h5">Publicadas (no INGRESADA)</h3>
+                    <h3 class="h5">Publicadas</h3>
                     <table class="table table-sm table-bordered align-middle mb-0">
                         <thead class="table-light">
                         <tr><th>Título</th><th>Estado</th><th class="text-center">Acciones</th></tr>
@@ -225,7 +228,7 @@
                         <tr>
                             <td><%=p.getTitulo()%></td>
                             <td><span class="badge text-bg-secondary"><%=p.getEstadoActual()%></span></td>
-                            <td class="text-center"><a class="btn btn-link btn-sm" href="<%=ctx%>/consultaPropuesta?titulo=<%=p.getTitulo()%>">Ver detalle</a></td>
+                            <td class="text-center"><a class="btn btn-link btn-sm" href="<%=ctx%>/consultaPropuesta?accion=detalle&titulo=<%=p.getTitulo()%>">Ver detalle</a></td>
                         </tr>
                         <% } } else { %>
                         <tr><td colspan="3" class="text-center text-muted">(sin propuestas publicadas fuera de INGRESADA)</td></tr>
@@ -245,16 +248,31 @@
                     <h3 class="h5">Propuestas colaboradas</h3>
                     <table class="table table-sm table-bordered align-middle mb-0">
                         <thead class="table-light">
-                        <tr><th>Título</th><th class="text-center">Acciones</th></tr>
+                        <tr>
+                            <th>Título</th><th>Fecha y Hora</th><th>Monto</th><th>Acciones</th>
                         </thead>
+
+                        <%--Muestro Propuestas con las que colaboró--%>
                         <tbody>
                         <% if (colaboradas != null && !colaboradas.isEmpty()) {
-                            for (DTPropuesta p : colaboradas) { %>
+                            //Fomateo la fecha y hora para que tenga una apariencia más linda a la vista
+                            DateTimeFormatter fmtUY = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm", new Locale("es","UY"));
+                            for (DTColaboracion m : misColaboraciones){
+                                DTPropuesta prop = m.getPropuesta();
+                        %>
                         <tr>
-                            <td><%=p.getTitulo()%></td>
-                            <td class="text-center"><a class="btn btn-link btn-sm" href="<%=ctx%>/consultaPropuesta?titulo=<%=p.getTitulo()%>">Ver detalle</a></td>
-                        </tr>
-                        <% } } else { %>
+                        <td><%=prop.getTitulo()%></td>
+                            <%--si esta en su propio perfil es la unica manera de que vea el monto y fecha--%>
+                            <% if (esPropio != null && esPropio ){%>
+                        <td><%= (m.getFechaHora() != null) ? m.getFechaHora().format(fmtUY) : "-" %></td>
+                        <td><%=m.getMonto()%></td>
+                            <%}else{%>
+                            <td>- </td>
+                            <td>-</td>
+                            <%}%>
+                        <td class="text-center"><a class="btn btn-link btn-sm" href="<%=ctx%>/consultaPropuesta?accion=detalle&titulo=<%=prop.getTitulo()%>">Ver detalle</a></td>
+                    </tr>
+                        <% }}  else { %>
                         <tr><td colspan="2" class="text-center text-muted">(sin colaboraciones)</td></tr>
                         <% } %>
                         </tbody>
@@ -280,7 +298,7 @@
                         <tr>
                             <td><%=p.getTitulo()%></td>
                             <td><span class="badge text-bg-secondary"><%=p.getEstadoActual()%></span></td>
-                            <td class="text-center"><a class="btn btn-link btn-sm" href="<%=ctx%>/consultaPropuesta?titulo=<%=p.getTitulo()%>">Ver detalle</a></td>
+                            <td class="text-center"><a class="btn btn-link btn-sm" href="<%=ctx%>/consultaPropuesta?accion=detalle&titulo=<%=p.getTitulo()%>">Ver detalle</a></td>
                         </tr>
                         <% } } else { %>
                         <tr><td colspan="3" class="text-center text-muted">(sin propuestas en estado INGRESADA)</td></tr>
@@ -299,7 +317,6 @@
                 onclick="location.href='${pageContext.request.contextPath}/principal'">Volver al inicio
         </button>
 
-        <%-- Botón seguir/dejar de seguir (si aplica) --%>
         <%
             DTUsuario usuarioConsultadoBtn = (DTUsuario) request.getAttribute("usuarioConsultado");
             String nickConsultadoBtn = (usuarioConsultadoBtn != null)
