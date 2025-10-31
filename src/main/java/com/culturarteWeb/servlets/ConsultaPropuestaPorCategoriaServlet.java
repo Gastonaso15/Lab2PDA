@@ -1,38 +1,40 @@
 package com.culturarteWeb.servlets;
-import culturarte.logica.DTs.DTPropuesta;
-import culturarte.logica.DTs.DTCategoria;
-import culturarte.logica.DTs.DTEstadoPropuesta;
-import culturarte.logica.Fabrica;
-import culturarte.logica.controladores.IPropuestaController;
+import culturarte.servicios.cliente.propuestas.*;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import java.io.IOException;
+import java.lang.Exception;
 import java.util.ArrayList;
 import java.util.List;
 
 @WebServlet("/consultaPropuestaPorCategoria")
 public class ConsultaPropuestaPorCategoriaServlet extends HttpServlet {
-    private IPropuestaController IPC;
+    private IPropuestaControllerWS IPC;
 
     @Override
     public void init() throws ServletException {
-        Fabrica fabrica = Fabrica.getInstance();
-        IPC = fabrica.getIPropuestaController();
+        try {
+            PropuestaWSEndpointService propuestaServicio = new PropuestaWSEndpointService();
+            IPC = propuestaServicio.getPropuestaWSEndpointPort();
+
+        } catch (Exception e) {
+            throw new ServletException("Error al inicializar Web Services", e);
+        }
     }
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         try {
-            List<DTPropuesta> todasLasPropuestas = IPC.devolverTodasLasPropuestas();
-            List<DTPropuesta> propuestasVisibles = new ArrayList<>();
-            for (DTPropuesta propuesta : todasLasPropuestas) {
-                if (propuesta.getEstadoActual() != DTEstadoPropuesta.INGRESADA) {
+            List<DtPropuesta> todasLasPropuestas = IPC.devolverTodasLasPropuestas();
+            List<DtPropuesta> propuestasVisibles = new ArrayList<>();
+            for (DtPropuesta propuesta : todasLasPropuestas) {
+                if (propuesta.getEstadoActual() != DtEstadoPropuesta.INGRESADA) {
                     propuestasVisibles.add(propuesta);
                 }
             }
-            List<DTCategoria> categorias = extraerCategoriasReales(propuestasVisibles);
+            List<DtCategoria> categorias = extraerCategoriasReales(propuestasVisibles);
             request.setAttribute("categorias", categorias);
             request.setAttribute("propuestas", propuestasVisibles);
 
@@ -48,20 +50,20 @@ public class ConsultaPropuestaPorCategoriaServlet extends HttpServlet {
         throws ServletException, IOException {
         String[] categoriasSeleccionadas = request.getParameterValues("categoria");
         try{
-        List<DTPropuesta> todasLasPopuestas = IPC.devolverTodasLasPropuestas();
-        List<DTPropuesta> propuestasVisibles = new ArrayList<>();
+        List<DtPropuesta> todasLasPopuestas = IPC.devolverTodasLasPropuestas();
+        List<DtPropuesta> propuestasVisibles = new ArrayList<>();
 
-        for(DTPropuesta propuesta : todasLasPopuestas){
-            if (propuesta.getEstadoActual() != DTEstadoPropuesta.INGRESADA){
+        for(DtPropuesta propuesta : todasLasPopuestas){
+            if (propuesta.getEstadoActual() != DtEstadoPropuesta.INGRESADA){
                 propuestasVisibles.add(propuesta);
             }
         }
-        List<DTCategoria> todasLasCategorias = extraerCategoriasReales(propuestasVisibles);
+        List<DtCategoria> todasLasCategorias = extraerCategoriasReales(propuestasVisibles);
         request.setAttribute("categorias", todasLasCategorias);
-        List<DTPropuesta> propuestasFiltradas = new ArrayList<>();
+        List<DtPropuesta> propuestasFiltradas = new ArrayList<>();
 
         if(categoriasSeleccionadas != null && categoriasSeleccionadas.length > 0){
-            for(DTPropuesta propuesta : propuestasVisibles){
+            for(DtPropuesta propuesta : propuestasVisibles){
                 boolean perteneceACategoria = false;
 
                 try{
@@ -93,14 +95,14 @@ public class ConsultaPropuestaPorCategoriaServlet extends HttpServlet {
         }
     }
 
-    private List<DTCategoria> extraerCategoriasReales(List<DTPropuesta> propuestas) {
-        List<DTCategoria> categorias = new ArrayList<>();
-        java.util.Map<String, DTCategoria> categoriasMap = new java.util.LinkedHashMap<>();
+    private List<DtCategoria> extraerCategoriasReales(List<DtPropuesta> propuestas) {
+        List<DtCategoria> categorias = new ArrayList<>();
+        java.util.Map<String, DtCategoria> categoriasMap = new java.util.LinkedHashMap<>();
 
-        for(DTPropuesta propuesta : propuestas){
+        for(DtPropuesta propuesta : propuestas){
             try{
                 if(propuesta.getCategoria() != null){
-                    DTCategoria categoria = propuesta.getCategoria();
+                    DtCategoria categoria = propuesta.getCategoria();
                     String nombreCategoria = categoria.getNombre();
                     if(!categoriasMap.containsKey(nombreCategoria)){
                         categoriasMap.put(nombreCategoria, categoria);
@@ -117,7 +119,7 @@ public class ConsultaPropuestaPorCategoriaServlet extends HttpServlet {
             String[] categoriasDefault = {"Música", "Teatro", "Danza", "Artes Visuales", "Literatura", "Cine"};
             for(String categoriaDefault : categoriasDefault){
                 try{
-                    DTCategoria categoria = DTCategoria.class.getDeclaredConstructor(String.class).newInstance(categoriaDefault);
+                    DtCategoria categoria = DtCategoria.class.getDeclaredConstructor(String.class).newInstance(categoriaDefault);
                     categorias.add(categoria);
                 } catch (Exception e) {
                     System.out.println("No se pudo crear categoría por defecto: "+ categoriaDefault);

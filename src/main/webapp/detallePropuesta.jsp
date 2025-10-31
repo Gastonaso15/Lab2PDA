@@ -217,7 +217,6 @@
                                                  propuesta.getEstadoActual().toString().equals("EN_FINANCIACION"));
                                         if (!puedeExtender) { %>
                                             <script>
-                                                // Desactiva el botón si no se puede extender
                                                 document.addEventListener('DOMContentLoaded', () => {
                                                     const btn = document.querySelector('.btn.btn-warning');
                                                     if (btn) btn.disabled = true;

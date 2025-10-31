@@ -1,12 +1,9 @@
 package com.culturarteWeb.servlets;
 
-import culturarte.logica.DTs.DTCategoria;
-import culturarte.logica.DTs.DTUsuario;
-import culturarte.logica.Fabrica;
-import culturarte.logica.controladores.IPropuestaController;
-import culturarte.logica.controladores.IUsuarioController;
-import culturarte.logica.controladores.PropuestaController;
-import culturarte.logica.controladores.UsuarioController;
+import culturarte.servicios.cliente.propuestas.IPropuestaControllerWS;
+import culturarte.servicios.cliente.propuestas.ListaDTCategoria;
+import culturarte.servicios.cliente.propuestas.PropuestaWSEndpointService;
+import culturarte.servicios.cliente.usuario.DtUsuario;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
@@ -20,16 +17,17 @@ import java.util.*;
 @MultipartConfig // necesario para req.getPart(...)
 public class AltaPropuestaServlet extends HttpServlet {
 
-    private IUsuarioController ICU;
-    private IPropuestaController IPC;
+    private IPropuestaControllerWS IPC;
 
     @Override
     public void init() throws ServletException {
         super.init();
-        //Pido los controladores a las fabricas
-        Fabrica fabrica = Fabrica.getInstance();
-        ICU = fabrica.getIUsuarioController();
-        IPC = fabrica.getIPropuestaController();
+        try {
+            PropuestaWSEndpointService servicio = new PropuestaWSEndpointService();
+            IPC = servicio.getPropuestaWSEndpointPort();
+        } catch (Exception e) {
+            throw new ServletException("Error al inicializar Web Services", e);
+        }
     }
 
     @Override
@@ -38,16 +36,19 @@ public class AltaPropuestaServlet extends HttpServlet {
             throws ServletException, IOException {
 
         HttpSession ses = req.getSession(false);
-        DTUsuario u = (ses != null) ? (DTUsuario) ses.getAttribute("usuarioLogueado") : null;
+        DtUsuario u = (ses != null) ? (DtUsuario) ses.getAttribute("usuarioLogueado") : null;
         if (u == null) {
             resp.sendRedirect(req.getContextPath() + "/inicioDeSesion");
             return;
         }
-        //preciso conseguir las categorias desde el servidor central (sino harcordeado es una chanchada)
-        List<DTCategoria> categorias = IPC.devolverTodasLasCategorias();
 
-        //Comentario #1: al req le "pego" el atributo categorias en para mandarselo al JSP
-        req.setAttribute("categorias", categorias);
+        try {
+            ListaDTCategoria categoriasWS = IPC.devolverTodasLasCategorias();
+            req.setAttribute("categorias", categoriasWS.getLista());
+        } catch (Exception e) {
+            throw new ServletException("No se pudieron obtener las categorías", e);
+        }
+
         req.getRequestDispatcher("/altaPropuesta.jsp").forward(req, resp);
     }
 
@@ -58,7 +59,7 @@ public class AltaPropuestaServlet extends HttpServlet {
         req.setCharacterEncoding("UTF-8");
 
         HttpSession ses = req.getSession(false);
-        DTUsuario proponente = (ses != null) ? (DTUsuario) ses.getAttribute("usuarioLogueado") : null;
+        DtUsuario proponente = (ses != null) ? (DtUsuario) ses.getAttribute("usuarioLogueado") : null;
         if (proponente == null) {
             resp.sendRedirect(req.getContextPath() + "/inicioDeSesion");
             return;
@@ -115,8 +116,8 @@ public class AltaPropuestaServlet extends HttpServlet {
             Double monto = Double.parseDouble(montoStr);
 
             if (fecha.isBefore(LocalDate.now())) {
-                List<DTCategoria> categorias = IPC.devolverTodasLasCategorias();
-                req.setAttribute("categorias", categorias);
+                ListaDTCategoria categoriasWS = IPC.devolverTodasLasCategorias();
+                req.setAttribute("categorias", categoriasWS);
                 req.setAttribute("error", "La fecha no puede ser anterior a la actual");
 
                 req.setAttribute("categoria", categoria);
@@ -153,8 +154,13 @@ public class AltaPropuestaServlet extends HttpServlet {
             resp.sendRedirect(req.getContextPath() + "/");
         } catch (Exception e) {
             e.printStackTrace(); // <-- imprime el error completo en la consola del servidor
-            List<DTCategoria> categorias = IPC.devolverTodasLasCategorias();
-            req.setAttribute("categorias", categorias);
+            ListaDTCategoria categoriasWS;
+            try {
+                categoriasWS = IPC.devolverTodasLasCategorias();
+                req.setAttribute("categorias", categoriasWS.getLista());
+            } catch (Exception ex) {
+
+            }
             req.setAttribute("error", "Error al crear la propuesta: " + e.getMessage());
             req.getRequestDispatcher("/altaPropuesta.jsp").forward(req, resp);
         }

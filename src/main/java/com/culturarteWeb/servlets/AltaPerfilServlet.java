@@ -1,10 +1,10 @@
 package com.culturarteWeb.servlets;
 
-import culturarte.logica.DTs.DTUsuario;
-import culturarte.logica.DTs.DTProponente;
-import culturarte.logica.DTs.DTColaborador;
-import culturarte.logica.Fabrica;
-import culturarte.logica.controladores.IUsuarioController;
+import culturarte.servicios.cliente.usuario.DtUsuario;
+import culturarte.servicios.cliente.usuario.DtProponente;
+import culturarte.servicios.cliente.usuario.DtColaborador;
+import culturarte.servicios.cliente.usuario.IUsuarioControllerWS;
+import culturarte.servicios.cliente.usuario.UsuarioWSEndpointService;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
@@ -25,12 +25,16 @@ import java.util.Base64;
 
 public class AltaPerfilServlet extends HttpServlet {
 
-    private IUsuarioController IUC;
+    private IUsuarioControllerWS IUC;
 
     @Override
     public void init() throws ServletException {
-        Fabrica fabrica = Fabrica.getInstance();
-        IUC = fabrica.getIUsuarioController();
+        try {
+            UsuarioWSEndpointService servicio = new UsuarioWSEndpointService();
+            IUC = servicio.getUsuarioWSEndpointPort();
+        } catch (Exception e) {
+            throw new ServletException("Error al inicializar Web Services", e);
+        }
     }
 
     @Override
@@ -121,15 +125,15 @@ public class AltaPerfilServlet extends HttpServlet {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             LocalDate fechaNac = LocalDate.parse(fechaNacimiento, formatter);
 
-            DTUsuario usuario;
+            DtUsuario usuario;
             
             if ("PROPONENTE".equals(tipoUsuario)) {
-                usuario = new DTProponente(
+                usuario = new DtProponente(
                     nickname, nombre, apellido, password, email, 
                     fechaNac, imagenBase64, direccion, biografia, sitioWeb
                 );
             } else {
-                usuario = new DTColaborador(
+                usuario = new DtColaborador(
                     nickname, nombre, apellido, password, email, 
                     fechaNac, imagenBase64
                 );

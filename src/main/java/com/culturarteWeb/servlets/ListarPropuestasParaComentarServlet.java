@@ -1,26 +1,28 @@
 package com.culturarteWeb.servlets;
 
-import culturarte.logica.DTs.DTPropuesta;
-import culturarte.logica.DTs.DTUsuario;
-import culturarte.logica.DTs.DTColaboracion;
-import culturarte.logica.DTs.DTEstadoPropuesta;
-import culturarte.logica.Fabrica;
-import culturarte.logica.controladores.IPropuestaController;
+import culturarte.servicios.cliente.propuestas.*;
+import culturarte.servicios.cliente.usuario.DtUsuario;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import java.io.IOException;
+import java.lang.Exception;
 import java.util.ArrayList;
 import java.util.List;
 
 @WebServlet("/listarPropuestasParaComentar")
 public class ListarPropuestasParaComentarServlet extends HttpServlet {
-    private IPropuestaController IPC;
+    private IPropuestaControllerWS IPC;
 
     @Override
     public void init() throws ServletException {
-        Fabrica fabrica = Fabrica.getInstance();
-        IPC = fabrica.getIPropuestaController();
+        try {
+            PropuestaWSEndpointService propuestaServicio = new PropuestaWSEndpointService();
+            IPC = propuestaServicio.getPropuestaWSEndpointPort();
+
+        } catch (Exception e) {
+            throw new ServletException("Error al inicializar Web Services", e);
+        }
     }
 
     @Override
@@ -33,17 +35,17 @@ public class ListarPropuestasParaComentarServlet extends HttpServlet {
             return;
         }
 
-        DTUsuario usuario = (DTUsuario) session.getAttribute("usuarioLogueado");
+        DtUsuario usuario = (DtUsuario) session.getAttribute("usuarioLogueado");
         
         try {
-            List<DTPropuesta> todasLasPropuestas = IPC.devolverTodasLasPropuestas();
-            List<DTPropuesta> propuestasParaComentar = new ArrayList<>();
+            List<DtPropuesta> todasLasPropuestas = IPC.devolverTodasLasPropuestas();
+            List<DtPropuesta> propuestasParaComentar = new ArrayList<>();
 
-            for (DTPropuesta propuesta : todasLasPropuestas) {
-                if (propuesta.getEstadoActual() == DTEstadoPropuesta.FINANCIADA) {
+            for (DtPropuesta propuesta : todasLasPropuestas) {
+                if (propuesta.getEstadoActual() == DtEstadoPropuesta.FINANCIADA) {
                     boolean haColaborado = false;
                     if (propuesta.getColaboraciones() != null) {
-                        for (DTColaboracion colaboracion : propuesta.getColaboraciones()) {
+                        for (DtColaboracion colaboracion : propuesta.getColaboraciones()) {
                             if (colaboracion.getColaborador().getNickname().equals(usuario.getNickname())) {
                                 haColaborado = true;
                                 break;

@@ -1,19 +1,15 @@
 package com.culturarteWeb.servlets;
 
-import culturarte.logica.DTs.DTPropuesta;
-import culturarte.logica.DTs.DTUsuario;
-import culturarte.logica.DTs.DTColaboracion;
-import culturarte.logica.DTs.DTEstadoPropuesta;
-import culturarte.logica.DTs.DTComentario;
-import culturarte.logica.DTs.DTCategoria;
-import culturarte.logica.Fabrica;
-import culturarte.logica.controladores.IPropuestaController;
 
-import culturarte.logica.controladores.IUsuarioController;
+import culturarte.servicios.cliente.propuestas.*;
+import culturarte.servicios.cliente.usuario.DtUsuario;
+import culturarte.servicios.cliente.usuario.IUsuarioControllerWS;
+import culturarte.servicios.cliente.usuario.UsuarioWSEndpointService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import java.io.IOException;
+import java.lang.Exception;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -24,14 +20,21 @@ import java.util.LinkedHashMap;
 @WebServlet("/consultaPropuesta")
 public class ConsultaPropuestaServlet extends HttpServlet {
 
-    private IPropuestaController IPC;
-    private IUsuarioController ICU;
+    private IPropuestaControllerWS IPC;
+    private IUsuarioControllerWS ICU;
 
     @Override
     public void init() throws ServletException {
-        Fabrica fabrica = Fabrica.getInstance();
-        IPC = fabrica.getIPropuestaController();
-        ICU = fabrica.getIUsuarioController();
+        try {
+            PropuestaWSEndpointService propuestaServicio = new PropuestaWSEndpointService();
+            IPC = propuestaServicio.getPropuestaWSEndpointPort();
+
+            UsuarioWSEndpointService usuarioServicio = new UsuarioWSEndpointService();
+            ICU = usuarioServicio.getUsuarioWSEndpointPort();
+
+        } catch (Exception e) {
+            throw new ServletException("Error al inicializar Web Services", e);
+        }
     }
 
     @Override
@@ -56,11 +59,11 @@ public class ConsultaPropuestaServlet extends HttpServlet {
             String categoriaFiltro = request.getParameter("categoria");
             String ordenarPor = request.getParameter("ordenarPor");
             
-            List<DTPropuesta> todasLasPropuestas = IPC.devolverTodasLasPropuestas();
-            List<DTPropuesta> propuestasVisibles = new ArrayList<>();
+            List<DtPropuesta> todasLasPropuestas = IPC.devolverTodasLasPropuestas();
+            List<DtPropuesta> propuestasVisibles = new ArrayList<>();
             
-            for (DTPropuesta propuesta : todasLasPropuestas) {
-                if (propuesta.getEstadoActual() != DTEstadoPropuesta.INGRESADA) {
+            for (DtPropuesta propuesta : todasLasPropuestas) {
+                if (propuesta.getEstadoActual() != DtEstadoPropuesta.INGRESADA) {
                     boolean cumpleBusqueda = true;
                     boolean cumpleEstado = true;
                     boolean cumpleCategoria = true;
@@ -83,12 +86,12 @@ public class ConsultaPropuestaServlet extends HttpServlet {
             if (ordenarPor != null && !ordenarPor.isEmpty()) {
                 propuestasVisibles = ordenarPropuestas(propuestasVisibles, ordenarPor);
             }
-            List<DTCategoria> categorias = extraerCategoriasReales(propuestasVisibles);
+            List<DtCategoria> categorias = extraerCategoriasReales(propuestasVisibles);
             boolean esProponente = false;
             boolean esColaborador = false;
             HttpSession session = request.getSession(false);
             if (session != null && session.getAttribute("usuarioLogueado") != null) {
-                DTUsuario usuarioLogueado = (DTUsuario) session.getAttribute("usuarioLogueado");
+                DtUsuario usuarioLogueado = (DtUsuario) session.getAttribute("usuarioLogueado");
                 try {
                     ICU.devolverProponentePorNickname(usuarioLogueado.getNickname());
                     esProponente = true;
@@ -134,10 +137,10 @@ public class ConsultaPropuestaServlet extends HttpServlet {
         }
         
         try {
-            List<DTPropuesta> todasLasPropuestas = IPC.devolverTodasLasPropuestas();
-            DTPropuesta propuestaSeleccionada = null;
+            List<DtPropuesta> todasLasPropuestas = IPC.devolverTodasLasPropuestas();
+            DtPropuesta propuestaSeleccionada = null;
             
-            for (DTPropuesta propuesta : todasLasPropuestas) {
+            for (DtPropuesta propuesta : todasLasPropuestas) {
                 if (tituloPropuesta.equals(propuesta.getTitulo())) {
                     propuestaSeleccionada = propuesta;
                     break;
@@ -168,20 +171,20 @@ public class ConsultaPropuestaServlet extends HttpServlet {
             List<String> nicknamesColaboradores = new ArrayList<>();
             
             if (propuestaSeleccionada.getColaboraciones() != null) {
-                for (DTColaboracion colaboracion : propuestaSeleccionada.getColaboraciones()) {
+                for (DtColaboracion colaboracion : propuestaSeleccionada.getColaboraciones()) {
                     montoRecaudado += colaboracion.getMonto();
                     nicknamesColaboradores.add(colaboracion.getColaborador().getNickname());
                 }
             }
             HttpSession sesion = request.getSession(false);
-            DTUsuario usuarioActual = null;
+            DtUsuario usuarioActual = null;
             boolean esProponente = false;
             boolean esProponenteDeEstaPropuesta = false;
             boolean haColaborado = false;
             boolean esFavorita = false;
             
             if (sesion != null && sesion.getAttribute("usuarioLogueado") != null) {
-                usuarioActual = (DTUsuario) sesion.getAttribute("usuarioLogueado");
+                usuarioActual = (DtUsuario) sesion.getAttribute("usuarioLogueado");
                 if (propuestaSeleccionada.getDTProponente() != null && 
                     usuarioActual.getNickname().equals(propuestaSeleccionada.getDTProponente().getNickname())) {
                     esProponenteDeEstaPropuesta = true;
@@ -202,7 +205,7 @@ public class ConsultaPropuestaServlet extends HttpServlet {
                 }
             }
 
-            List<DTComentario> comentarios = IPC.obtenerComentariosPropuesta(propuestaSeleccionada.getTitulo());
+            List<DtComentario> comentarios = IPC.obtenerComentariosPropuesta(propuestaSeleccionada.getTitulo());
             request.setAttribute("propuesta", propuestaSeleccionada);
             request.setAttribute("montoRecaudado", montoRecaudado);
             request.setAttribute("nicknamesColaboradores", nicknamesColaboradores);
@@ -221,7 +224,7 @@ public class ConsultaPropuestaServlet extends HttpServlet {
         }
     }
     
-    private boolean coincideConBusqueda(DTPropuesta propuesta, String busqueda) {
+    private boolean coincideConBusqueda(DtPropuesta propuesta, String busqueda) {
         if (busqueda == null || busqueda.trim().isEmpty()) {
             return true;
         }
@@ -264,15 +267,15 @@ public class ConsultaPropuestaServlet extends HttpServlet {
     }
 
 
-    private boolean coincideConCategoriaFiltro(DTPropuesta propuesta, String filtro) {
+    private boolean coincideConCategoriaFiltro(DtPropuesta propuesta, String filtro) {
         if (filtro == null || propuesta.getCategoria() == null) {
             return false;
         }
         return filtro.equals(propuesta.getCategoria().getNombre());
     }
     
-    private List<DTPropuesta> ordenarPropuestas(List<DTPropuesta> propuestas, String criterioOrdenamiento) {
-        List<DTPropuesta> propuestasOrdenadas = new ArrayList<>(propuestas);
+    private List<DtPropuesta> ordenarPropuestas(List<DtPropuesta> propuestas, String criterioOrdenamiento) {
+        List<DtPropuesta> propuestasOrdenadas = new ArrayList<>(propuestas);
 
         switch (criterioOrdenamiento.toLowerCase()) {
             case "alfabetico":
@@ -313,14 +316,14 @@ public class ConsultaPropuestaServlet extends HttpServlet {
         return propuestasOrdenadas;
     }
     
-    private List<DTCategoria> extraerCategoriasReales(List<DTPropuesta> propuestas) {
-        List<DTCategoria> categorias = new ArrayList<>();
-        Map<String, DTCategoria> categoriasMap = new LinkedHashMap<>();
+    private List<DtCategoria> extraerCategoriasReales(List<DtPropuesta> propuestas) {
+        List<DtCategoria> categorias = new ArrayList<>();
+        Map<String, DtCategoria> categoriasMap = new LinkedHashMap<>();
 
-        for(DTPropuesta propuesta : propuestas){
+        for(DtPropuesta propuesta : propuestas){
             try{
                 if(propuesta.getCategoria() != null){
-                    DTCategoria categoria = propuesta.getCategoria();
+                    DtCategoria categoria = propuesta.getCategoria();
                     String nombreCategoria = categoria.getNombre();
                     if(!categoriasMap.containsKey(nombreCategoria)){
                         categoriasMap.put(nombreCategoria, categoria);
@@ -337,7 +340,7 @@ public class ConsultaPropuestaServlet extends HttpServlet {
             String[] categoriasDefault = {"Música", "Teatro", "Danza", "Artes Visuales", "Literatura", "Cine"};
             for(String categoriaDefault : categoriasDefault){
                 try{
-                    DTCategoria categoria = DTCategoria.class.getDeclaredConstructor(String.class).newInstance(categoriaDefault);
+                    DtCategoria categoria = DtCategoria.class.getDeclaredConstructor(String.class).newInstance(categoriaDefault);
                     categorias.add(categoria);
                 } catch (Exception e) {
                     System.out.println("No se pudo crear categoría por defecto: "+ categoriaDefault);

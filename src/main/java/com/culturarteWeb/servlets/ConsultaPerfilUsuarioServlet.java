@@ -1,32 +1,36 @@
 package com.culturarteWeb.servlets;
 
-import culturarte.logica.DTs.*;
-import culturarte.logica.Fabrica;
-import culturarte.logica.controladores.IPropuestaController;
-import culturarte.logica.controladores.IUsuarioController;
-import culturarte.logica.controladores.PropuestaController;
-import culturarte.logica.controladores.UsuarioController;
-
-import culturarte.logica.manejadores.UsuarioManejador;
-import culturarte.logica.modelos.Usuario;
+import culturarte.servicios.cliente.propuestas.DtEstadoPropuesta;
+import culturarte.servicios.cliente.propuestas.DtPropuesta;
+import culturarte.servicios.cliente.propuestas.IPropuestaControllerWS;
+import culturarte.servicios.cliente.propuestas.PropuestaWSEndpointService;
+import culturarte.servicios.cliente.usuario.*;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import java.io.IOException;
+import java.lang.Exception;
 import java.util.*;
 
 @WebServlet("/consultaPerfilUsuario")
 public class ConsultaPerfilUsuarioServlet extends HttpServlet {
 
-    private IUsuarioController ICU;
-    private IPropuestaController IPC;
+    private IPropuestaControllerWS IPC;
+    private IUsuarioControllerWS ICU;
 
     @Override
     public void init() throws ServletException {
         super.init();
-        Fabrica fabrica = Fabrica.getInstance();
-        ICU = fabrica.getIUsuarioController();
-        IPC = fabrica.getIPropuestaController();
+        try {
+            PropuestaWSEndpointService propuestaServicio = new PropuestaWSEndpointService();
+            IPC = propuestaServicio.getPropuestaWSEndpointPort();
+
+            UsuarioWSEndpointService usuarioServicio = new UsuarioWSEndpointService();
+            ICU = usuarioServicio.getUsuarioWSEndpointPort();
+
+        } catch (Exception e) {
+            throw new ServletException("Error al inicializar Web Services", e);
+        }
     }
 
 
@@ -82,12 +86,12 @@ public class ConsultaPerfilUsuarioServlet extends HttpServlet {
         try {
             //averiguo frente a que tipo de usuario estoy para saber despues que le muestro
             HttpSession ses = req.getSession(false);
-            DTUsuario actual = (ses != null) ? (DTUsuario) ses.getAttribute("usuarioLogueado") : null;
+            DtUsuario actual = (ses != null) ? (DtUsuario) ses.getAttribute("usuarioLogueado") : null;
             boolean esPropio = (actual != null && nick.equalsIgnoreCase(actual.getNickname()));
             // Intento como Proponente, si no es, lo intento como Colaborador
-            DTProponente proponente = null;
-            DTColaborador colaborador = null;
-            DTUsuario defenza; //lo uso como una defenza, para evitar errores en el caso de que no exista ninguno.
+            DtProponente proponente = null;
+            DtColaborador colaborador = null;
+            DtUsuario defenza; //lo uso como una defenza, para evitar errores en el caso de que no exista ninguno.
             try {
                 proponente = ICU.devolverProponentePorNickname(nick); // si no existe tira Exception
                 defenza = proponente;
@@ -103,7 +107,7 @@ public class ConsultaPerfilUsuarioServlet extends HttpServlet {
                 return;
             }
 
-            DTUsuario usuarioConsultado = (proponente != null) ? proponente : colaborador;
+            DtUsuario usuarioConsultado = (proponente != null) ? proponente : colaborador;
             req.setAttribute("usuarioConsultado", usuarioConsultado);
 
             //<-- PROCEDO A RECOLECTAR LA INFO QUE VOY A MOSTRAR -->
@@ -140,9 +144,9 @@ public class ConsultaPerfilUsuarioServlet extends HttpServlet {
 
 
             // <-- 3: Armo lista de Propuestas Favoritas -->
-            List<DTPropuesta> todasLasProp = IPC.devolverTodasLasPropuestas();
-            List<DTPropuesta> favoritas = new ArrayList<>();
-            for (DTPropuesta propuesta : todasLasProp) {
+            List<DtPropuesta> todasLasProp = IPC.devolverTodasLasPropuestas();
+            List<DtPropuesta> favoritas = new ArrayList<>();
+            for (DtPropuesta propuesta : todasLasProp) {
                 boolean esFav = ICU.UsuarioYaTienePropuestaFavorita(nick, propuesta.getTitulo());
                 if (esFav) {
                     favoritas.add(propuesta);
@@ -151,14 +155,14 @@ public class ConsultaPerfilUsuarioServlet extends HttpServlet {
 
             // <-- 4: Armo lista de todas las Propuestas que el Proponente registrado publicó menos las que están en estado INGREADAS, y otra en que solo están las que esten en estado INGRESADA-->
             //<--Separo Propuestas entre INGRESADAS y todos los demas estados; La unica forma de ver las INGRESADAS es si un Proponente entra a su propio perfil -->
-            List<DTPropuesta> publicadasNoIngresada = new ArrayList<>();
-            List<DTPropuesta> creadasIngresadas = new ArrayList<>();
+            List<DtPropuesta> publicadasNoIngresada = new ArrayList<>();
+            List<DtPropuesta> creadasIngresadas = new ArrayList<>();
             if (proponente != null && proponente.getPropuestas() != null) {
-                for (DTPropuesta p : proponente.getPropuestas()) {
-                    DTEstadoPropuesta est = p.getEstadoActual();
+                for (DtPropuesta p : proponente.getPropuestas()) {
+                    DtEstadoPropuesta est = p.getEstadoActual();
                     if (est != null) {
-                        if (est != DTEstadoPropuesta.INGRESADA) publicadasNoIngresada.add(p);
-                        if (esPropio && est == DTEstadoPropuesta.INGRESADA) creadasIngresadas.add(p);
+                        if (est != DtEstadoPropuesta.INGRESADA) publicadasNoIngresada.add(p);
+                        if (esPropio && est == DtEstadoPropuesta.INGRESADA) creadasIngresadas.add(p);
                     }
                 }
             }

@@ -1,9 +1,9 @@
 package com.culturarteWeb.servlets;
 
-import culturarte.logica.DTs.DTUsuario;
-import culturarte.logica.Fabrica;
-import culturarte.logica.controladores.ISesionController;
 
+import culturarte.servicios.cliente.usuario.DtUsuario;
+import culturarte.servicios.cliente.usuario.IUsuarioControllerWS;
+import culturarte.servicios.cliente.usuario.UsuarioWSEndpointService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
@@ -12,12 +12,17 @@ import java.io.IOException;
 @WebServlet("/inicioDeSesion")
 public class InicioDeSesionServlet extends HttpServlet {
 
-    private ISesionController ICS;
+    private IUsuarioControllerWS ICU;
 
     @Override
     public void init() throws ServletException {
-        Fabrica fabrica = Fabrica.getInstance();
-        ICS = fabrica.getISesionController();
+        try {
+            UsuarioWSEndpointService usuarioServicio = new UsuarioWSEndpointService();
+            ICU = usuarioServicio.getUsuarioWSEndpointPort();
+
+        } catch (Exception e) {
+            throw new ServletException("Error al inicializar Web Services", e);
+        }
     }
 
     @Override
@@ -34,7 +39,7 @@ public class InicioDeSesionServlet extends HttpServlet {
         String password = request.getParameter("password");
 
         try {
-            DTUsuario usu = ICS.login(usuario, password);
+            DtUsuario usu = ICU.login(usuario, password);
             if (usu != null) {
                 HttpSession anterior = request.getSession(false);
                 if (anterior != null) anterior.invalidate();

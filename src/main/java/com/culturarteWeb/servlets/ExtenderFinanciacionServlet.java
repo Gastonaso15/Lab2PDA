@@ -1,13 +1,11 @@
 package com.culturarteWeb.servlets;
 
-import culturarte.logica.DTs.DTPropuesta;
-import culturarte.logica.DTs.DTUsuario;
-import culturarte.logica.Fabrica;
-import culturarte.logica.controladores.IPropuestaController;
-
-import culturarte.logica.controladores.IUsuarioController;
-import culturarte.logica.manejadores.PropuestaManejador;
-import culturarte.logica.modelos.Propuesta;
+import culturarte.servicios.cliente.propuestas.DtPropuesta;
+import culturarte.servicios.cliente.propuestas.IPropuestaControllerWS;
+import culturarte.servicios.cliente.propuestas.PropuestaWSEndpointService;
+import culturarte.servicios.cliente.usuario.DtUsuario;
+import culturarte.servicios.cliente.usuario.IUsuarioControllerWS;
+import culturarte.servicios.cliente.usuario.UsuarioWSEndpointService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
@@ -21,14 +19,21 @@ import java.util.List;
 
 public class ExtenderFinanciacionServlet extends HttpServlet {
 
-    private IPropuestaController IPC;
-    private IUsuarioController ICU;
+    private IPropuestaControllerWS IPC;
+    private IUsuarioControllerWS ICU;
 
     @Override
     public void init() throws ServletException {
-        Fabrica fabrica = Fabrica.getInstance();
-        ICU = fabrica.getIUsuarioController();
-        IPC = fabrica.getIPropuestaController();
+        try {
+            PropuestaWSEndpointService propuestaServicio = new PropuestaWSEndpointService();
+            IPC = propuestaServicio.getPropuestaWSEndpointPort();
+
+            UsuarioWSEndpointService usuarioServicio = new UsuarioWSEndpointService();
+            ICU = usuarioServicio.getUsuarioWSEndpointPort();
+
+        } catch (Exception e) {
+            throw new ServletException("Error al inicializar Web Services", e);
+        }
     }
 
     @Override
@@ -36,10 +41,10 @@ public class ExtenderFinanciacionServlet extends HttpServlet {
             throws ServletException, IOException {
         //averiguo si es proponente o no
         boolean esProponente = false;
-        DTUsuario userProponente = null;
+        DtUsuario userProponente = null;
         HttpSession session = request.getSession(false);
         if (session != null && session.getAttribute("usuarioLogueado") != null) {
-            DTUsuario user = (DTUsuario) session.getAttribute("usuarioLogueado");
+            DtUsuario user = (DtUsuario) session.getAttribute("usuarioLogueado");
             try {
                 userProponente= ICU.devolverProponentePorNickname(user.getNickname());
                 esProponente = true;
@@ -49,9 +54,9 @@ public class ExtenderFinanciacionServlet extends HttpServlet {
         }
 
 
-        List<DTPropuesta> propuestas = IPC.devolverTodasLasPropuestas();
+        List<DtPropuesta> propuestas = IPC.devolverTodasLasPropuestas();
 
-        List<DTPropuesta> propuestasActivas = new ArrayList<>();
+        List<DtPropuesta> propuestasActivas = new ArrayList<>();
 
         if (!esProponente || userProponente == null) {
             request.setAttribute("error", "Solo los proponentes pueden extender la financiacion de sus propuestas.");
@@ -59,7 +64,7 @@ public class ExtenderFinanciacionServlet extends HttpServlet {
             return;
         }
 
-        for (DTPropuesta p : propuestas) {
+        for (DtPropuesta p : propuestas) {
             if(p.getProponente().equals(userProponente.getNickname())) {
                 if ((p.getEstadoActual().toString().equals("EN_FINANCIACION")
                         || p.getEstadoActual().toString().equals("PUBLICADA"))) {
@@ -85,7 +90,7 @@ public class ExtenderFinanciacionServlet extends HttpServlet {
             //<-- Obtengo el usuario actual para poder trabajar con él -->
             HttpSession session = request.getSession(false);
             session.getAttribute("usuarioLogueado"); //esto funciona porque está codeado en InicioDeSesionServlet
-            DTUsuario user = (DTUsuario) session.getAttribute("usuarioLogueado");
+            DtUsuario user = (DtUsuario) session.getAttribute("usuarioLogueado");
 
 
 

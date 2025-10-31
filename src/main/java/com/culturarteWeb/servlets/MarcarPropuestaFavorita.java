@@ -1,8 +1,8 @@
 package com.culturarteWeb.servlets;
 
-import culturarte.logica.DTs.DTUsuario;
-import culturarte.logica.Fabrica;
-import culturarte.logica.controladores.IUsuarioController;
+import culturarte.servicios.cliente.usuario.DtUsuario;
+import culturarte.servicios.cliente.usuario.IUsuarioControllerWS;
+import culturarte.servicios.cliente.usuario.UsuarioWSEndpointService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -16,19 +16,24 @@ import static java.net.URLEncoder.encode;
 
 @WebServlet("/marcarPropuestaFavorita")
 public class MarcarPropuestaFavorita extends HttpServlet {
-    private IUsuarioController ICU;
+    private IUsuarioControllerWS ICU;
 
     @Override
     public void init() throws ServletException {
-        Fabrica fabrica = Fabrica.getInstance();
-        ICU = fabrica.getIUsuarioController();
+        try {
+            UsuarioWSEndpointService usuarioServicio = new UsuarioWSEndpointService();
+            ICU = usuarioServicio.getUsuarioWSEndpointPort();
+
+        } catch (Exception e) {
+            throw new ServletException("Error al inicializar Web Services", e);
+        }
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession sesion = request.getSession(false);
-        DTUsuario usuarioActual = (DTUsuario) sesion.getAttribute("usuarioLogueado");
+        DtUsuario usuarioActual = (DtUsuario) sesion.getAttribute("usuarioLogueado");
 
         if (usuarioActual == null) {
             response.sendRedirect(request.getContextPath() + "/inicioDeSesion.jsp");

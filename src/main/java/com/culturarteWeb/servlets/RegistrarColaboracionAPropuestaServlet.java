@@ -1,11 +1,7 @@
 package com.culturarteWeb.servlets;
 
-import culturarte.logica.DTs.DTPropuesta;
-import culturarte.logica.DTs.DTUsuario;
-import culturarte.logica.Fabrica;
-import culturarte.logica.controladores.IPropuestaController;
-import culturarte.logica.manejadores.PropuestaManejador;
-import culturarte.logica.modelos.Propuesta;
+import culturarte.servicios.cliente.propuestas.DtPropuesta;
+import culturarte.servicios.cliente.usuario.DtUsuario;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -53,7 +49,7 @@ public class RegistrarColaboracionAPropuestaServlet extends HttpServlet {
             String montoStr = request.getParameter("monto");
             String tipoRetorno = request.getParameter("tipoRetorno");
 
-            DTUsuario usuarioActual = (DTUsuario) session.getAttribute("usuarioLogueado");
+            DtUsuario usuarioActual = (DtUsuario) session.getAttribute("usuarioLogueado");
 
             if (usuarioActual == null) {
                 request.setAttribute("error", "Debes iniciar sesión para poder colaborar.");
@@ -103,7 +99,7 @@ public class RegistrarColaboracionAPropuestaServlet extends HttpServlet {
 
     private void cargarDatosParaLaVista(HttpServletRequest request, String tituloSeleccionado) {
         PropuestaManejador pm = PropuestaManejador.getInstance();
-        List<DTPropuesta> propuestas = pm.obtenerTodasLasPropuestas();
+        List<DtPropuesta> propuestas = pm.obtenerTodasLasPropuestas();
         request.setAttribute("propuestas", propuestas);
 
         if (tituloSeleccionado != null && !tituloSeleccionado.isEmpty()) {

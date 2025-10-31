@@ -1,28 +1,28 @@
 package com.culturarteWeb.servlets;
 
-import culturarte.logica.DTs.DTPropuesta;
-import culturarte.logica.DTs.DTUsuario;
-import culturarte.logica.DTs.DTColaboracion;
-import culturarte.logica.DTs.DTEstadoPropuesta;
-import culturarte.logica.DTs.DTComentario;
-import culturarte.logica.Fabrica;
-import culturarte.logica.controladores.IPropuestaController;
-import culturarte.logica.controladores.PropuestaController;
+import culturarte.servicios.cliente.propuestas.*;
+import culturarte.servicios.cliente.usuario.DtUsuario;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import java.io.IOException;
+import java.lang.Exception;
 import java.util.List;
 
 @WebServlet("/comentario")
 public class ComentarioServlet extends HttpServlet {
-    private IPropuestaController IPC;
+    private IPropuestaControllerWS IPC;
 
     @Override
     public void init() throws ServletException {
         super.init();
-        Fabrica fabrica = Fabrica.getInstance();
-        IPC = fabrica.getIPropuestaController();
+        try {
+            PropuestaWSEndpointService propuestaServicio = new PropuestaWSEndpointService();
+            IPC = propuestaServicio.getPropuestaWSEndpointPort();
+
+        } catch (Exception e) {
+            throw new ServletException("Error al inicializar Web Services", e);
+        }
     }
 
     @Override
@@ -46,7 +46,7 @@ public class ComentarioServlet extends HttpServlet {
             return;
         }
 
-        DTUsuario usuario = (DTUsuario) session.getAttribute("usuarioLogueado");
+        DtUsuario usuario = (DtUsuario) session.getAttribute("usuarioLogueado");
         String tituloPropuesta = request.getParameter("titulo");
         
         if (tituloPropuesta == null || tituloPropuesta.trim().isEmpty()) {
@@ -63,10 +63,10 @@ public class ComentarioServlet extends HttpServlet {
                 request.getRequestDispatcher("/formularioComentario.jsp").forward(request, response);
                 return;
             }
-            DTPropuesta propuesta = validation.getPropuesta();
-            List<DTComentario> comentariosExistentes = IPC.obtenerComentariosPropuesta(propuesta.getTitulo());
+            DtPropuesta propuesta = validation.getPropuesta();
+            List<DtComentario> comentariosExistentes = IPC.obtenerComentariosPropuesta(propuesta.getTitulo());
             boolean yaComento = false;
-            for (DTComentario comentarioExistente : comentariosExistentes) {
+            for (DtComentario comentarioExistente : comentariosExistentes) {
                 if (comentarioExistente.getUsuarioNickname() != null && 
                     comentarioExistente.getUsuarioNickname().equals(usuario.getNickname())) {
                     yaComento = true;
@@ -99,7 +99,7 @@ public class ComentarioServlet extends HttpServlet {
             return;
         }
 
-        DTUsuario usuario = (DTUsuario) session.getAttribute("usuarioLogueado");
+        DtUsuario usuario = (DtUsuario) session.getAttribute("usuarioLogueado");
         String tituloPropuesta = request.getParameter("tituloPropuesta");
         String comentario = request.getParameter("comentario");
 
@@ -130,11 +130,11 @@ public class ComentarioServlet extends HttpServlet {
                 return;
             }
             
-            DTPropuesta propuesta = validation.getPropuesta();
+            DtPropuesta propuesta = validation.getPropuesta();
             
-            List<DTComentario> comentariosExistentes = IPC.obtenerComentariosPropuesta(propuesta.getTitulo());
+            List<DtComentario> comentariosExistentes = IPC.obtenerComentariosPropuesta(propuesta.getTitulo());
             boolean yaComento = false;
-            for (DTComentario comentarioExistente : comentariosExistentes) {
+            for (DtComentario comentarioExistente : comentariosExistentes) {
                 if (comentarioExistente.getUsuarioNickname() != null && 
                     comentarioExistente.getUsuarioNickname().equals(usuario.getNickname())) {
                     yaComento = true;
@@ -184,12 +184,12 @@ public class ComentarioServlet extends HttpServlet {
     }
 
 
-    private ValidationResult validarPropuestaParaComentario(String tituloPropuesta, DTUsuario usuario) {
+    private ValidationResult validarPropuestaParaComentario(String tituloPropuesta, DtUsuario usuario) {
         try {
-            List<DTPropuesta> todasLasPropuestas = IPC.devolverTodasLasPropuestas();
-            DTPropuesta propuesta = null;
+            List<DtPropuesta> todasLasPropuestas = IPC.devolverTodasLasPropuestas();
+            DtPropuesta propuesta = null;
             
-            for (DTPropuesta p : todasLasPropuestas) {
+            for (DtPropuesta p : todasLasPropuestas) {
                 if (p.getTitulo().equals(tituloPropuesta)) {
                     propuesta = p;
                     break;
@@ -200,13 +200,13 @@ public class ComentarioServlet extends HttpServlet {
                 return new ValidationResult(false, "Propuesta no encontrada", null);
             }
 
-            if (propuesta.getEstadoActual() != DTEstadoPropuesta.FINANCIADA) {
+            if (propuesta.getEstadoActual() != DtEstadoPropuesta.FINANCIADA) {
                 return new ValidationResult(false, "Esta propuesta no está financiada", null);
             }
 
             boolean haColaborado = false;
             if (propuesta.getColaboraciones() != null) {
-                for (DTColaboracion colaboracion : propuesta.getColaboraciones()) {
+                for (DtColaboracion colaboracion : propuesta.getColaboraciones()) {
                     if (colaboracion.getColaborador().getNickname().equals(usuario.getNickname())) {
                         haColaborado = true;
                         break;
@@ -228,9 +228,9 @@ public class ComentarioServlet extends HttpServlet {
     private static class ValidationResult {
         private final boolean valid;
         private final String errorMessage;
-        private final DTPropuesta propuesta;
+        private final DtPropuesta propuesta;
 
-        public ValidationResult(boolean valid, String errorMessage, DTPropuesta propuesta) {
+        public ValidationResult(boolean valid, String errorMessage, DtPropuesta propuesta) {
             this.valid = valid;
             this.errorMessage = errorMessage;
             this.propuesta = propuesta;
@@ -244,7 +244,7 @@ public class ComentarioServlet extends HttpServlet {
             return errorMessage;
         }
 
-        public DTPropuesta getPropuesta() {
+        public DtPropuesta getPropuesta() {
             return propuesta;
         }
     }

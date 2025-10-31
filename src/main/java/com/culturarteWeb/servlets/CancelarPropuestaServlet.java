@@ -1,11 +1,8 @@
 package com.culturarteWeb.servlets;
 
-import culturarte.logica.DTs.DTUsuario;
-import culturarte.logica.manejadores.PropuestaManejador;
-import culturarte.logica.modelos.Propuesta;
-import culturarte.logica.modelos.EstadoPropuesta;
-import culturarte.logica.DTs.DTPropuesta;
 
+import culturarte.servicios.cliente.propuestas.DtPropuesta;
+import culturarte.servicios.cliente.usuario.DtUsuario;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -28,7 +25,7 @@ public class CancelarPropuestaServlet extends HttpServlet {
             throws ServletException, IOException {
 
         HttpSession session = request.getSession();
-        DTUsuario usuarioActual = (DTUsuario) session.getAttribute("usuarioLogueado");
+        DtUsuario usuarioActual = (DtUsuario) session.getAttribute("usuarioLogueado");
 
         if (usuarioActual == null) {
             response.sendRedirect(request.getContextPath() + "/inicioDeSesion.jsp");
@@ -43,7 +40,7 @@ public class CancelarPropuestaServlet extends HttpServlet {
         }
 
         PropuestaManejador pm = PropuestaManejador.getInstance();
-        List<DTPropuesta> propuestasFinanciadas = pm.obtenerTodasLasPropuestas()
+        List<DtPropuesta> propuestasFinanciadas = pm.obtenerTodasLasPropuestas()
                 .stream()
                 .filter(p -> p.getDTProponente() != null
                         && nickname.equals(p.getDTProponente().getNickname())
@@ -61,7 +58,7 @@ public class CancelarPropuestaServlet extends HttpServlet {
 
         HttpSession session = request.getSession();
 
-        DTUsuario usuarioActual = (DTUsuario) session.getAttribute("usuarioLogueado");
+        DtUsuario usuarioActual = (DtUsuario) session.getAttribute("usuarioLogueado");
 
         if (usuarioActual == null) {
             response.sendRedirect(request.getContextPath() + "/inicioDeSesion.jsp");

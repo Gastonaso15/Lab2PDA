@@ -1,10 +1,7 @@
 package com.culturarteWeb.servlets;
 
-import culturarte.logica.DTs.DTUsuario;
-import culturarte.logica.manejadores.PropuestaManejador;
-import culturarte.logica.modelos.Propuesta;
-import culturarte.logica.modelos.EstadoPropuesta;
 
+import culturarte.servicios.cliente.usuario.DtUsuario;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -25,7 +22,7 @@ public class EjecutarPropuestaServlet extends HttpServlet {
             throws ServletException, IOException {
 
         HttpSession session = request.getSession();
-        DTUsuario usuarioActual = (DTUsuario) session.getAttribute("usuarioLogueado");
+        DtUsuario usuarioActual = (DtUsuario) session.getAttribute("usuarioLogueado");
 
         if (usuarioActual == null) {
             response.sendRedirect(request.getContextPath() + "/inicioDeSesion.jsp");
@@ -58,7 +55,7 @@ public class EjecutarPropuestaServlet extends HttpServlet {
             throws ServletException, IOException {
 
         HttpSession session = request.getSession();
-        DTUsuario usuarioActual = (DTUsuario) session.getAttribute("usuarioLogueado");
+        DtUsuario usuarioActual = (DtUsuario) session.getAttribute("usuarioLogueado");
 
         if (usuarioActual == null) {
             response.sendRedirect(request.getContextPath() + "/inicioDeSesion.jsp");
