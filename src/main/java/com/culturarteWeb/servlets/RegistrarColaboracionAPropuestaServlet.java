@@ -1,6 +1,8 @@
 package com.culturarteWeb.servlets;
 
 import culturarte.servicios.cliente.propuestas.DtPropuesta;
+import culturarte.servicios.cliente.propuestas.IPropuestaControllerWS;
+import culturarte.servicios.cliente.propuestas.PropuestaWSEndpointService;
 import culturarte.servicios.cliente.usuario.DtUsuario;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -59,7 +61,9 @@ public class RegistrarColaboracionAPropuestaServlet extends HttpServlet {
 
             try {
                 double monto = Double.parseDouble(montoStr);
-                IPropuestaController pc = Fabrica.getInstance().getIPropuestaController();
+
+                PropuestaWSEndpointService propuestaServicio = new PropuestaWSEndpointService();
+                IPropuestaControllerWS pc = propuestaServicio.getPropuestaWSEndpointPort();
 
                 PropuestaManejador pm = PropuestaManejador.getInstance();
                 Propuesta propuesta = pm.obtenerPropuestaPorTitulo(titulo);

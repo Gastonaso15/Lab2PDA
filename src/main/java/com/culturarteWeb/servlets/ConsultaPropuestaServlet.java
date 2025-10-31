@@ -1,6 +1,7 @@
 package com.culturarteWeb.servlets;
 
 
+import com.culturarteWeb.util.WSFechaUsuario;
 import culturarte.servicios.cliente.propuestas.*;
 import culturarte.servicios.cliente.usuario.DtUsuario;
 import culturarte.servicios.cliente.usuario.IUsuarioControllerWS;
@@ -58,8 +59,10 @@ public class ConsultaPropuestaServlet extends HttpServlet {
             String estadoFiltro = request.getParameter("estado");
             String categoriaFiltro = request.getParameter("categoria");
             String ordenarPor = request.getParameter("ordenarPor");
-            
-            List<DtPropuesta> todasLasPropuestas = IPC.devolverTodasLasPropuestas();
+
+            ListaDTPropuesta propuestasWS = IPC.devolverTodasLasPropuestas();
+            List<DtPropuesta> todasLasPropuestas = propuestasWS.getPropuesta();
+
             List<DtPropuesta> propuestasVisibles = new ArrayList<>();
             
             for (DtPropuesta propuesta : todasLasPropuestas) {
@@ -137,7 +140,9 @@ public class ConsultaPropuestaServlet extends HttpServlet {
         }
         
         try {
-            List<DtPropuesta> todasLasPropuestas = IPC.devolverTodasLasPropuestas();
+            ListaDTPropuesta propuestasWS = IPC.devolverTodasLasPropuestas();
+            List<DtPropuesta> todasLasPropuestas = propuestasWS.getPropuesta();
+
             DtPropuesta propuestaSeleccionada = null;
             
             for (DtPropuesta propuesta : todasLasPropuestas) {
@@ -155,6 +160,7 @@ public class ConsultaPropuestaServlet extends HttpServlet {
 
             long diasRestantes = 0;
             if (propuestaSeleccionada.getFechaPublicacion() != null) {
+
                 LocalDate fechaPublicacion = propuestaSeleccionada.getFechaPublicacion();
                 LocalDate fechaActual = LocalDate.now();
 
@@ -200,12 +206,14 @@ public class ConsultaPropuestaServlet extends HttpServlet {
                 if (nicknamesColaboradores.contains(usuarioActual.getNickname())) {
                     haColaborado = true;
                 }
-                if (ICU.UsuarioYaTienePropuestaFavorita(usuarioActual.getNickname(), propuestaSeleccionada.getTitulo())){
+                if (ICU.usuarioYaTienePropuestaFavorita(usuarioActual.getNickname(), propuestaSeleccionada.getTitulo())){
                     esFavorita = true;
                 }
             }
 
-            List<DtComentario> comentarios = IPC.obtenerComentariosPropuesta(propuestaSeleccionada.getTitulo());
+            ListaDTComentario comentariosWS = IPC.obtenerComentariosPropuesta(propuestaSeleccionada.getTitulo());
+            List<DtComentario> comentarios = comentariosWS.getComentario();
+
             request.setAttribute("propuesta", propuestaSeleccionada);
             request.setAttribute("montoRecaudado", montoRecaudado);
             request.setAttribute("nicknamesColaboradores", nicknamesColaboradores);

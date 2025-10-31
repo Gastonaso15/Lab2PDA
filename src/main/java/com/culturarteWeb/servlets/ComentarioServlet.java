@@ -64,7 +64,10 @@ public class ComentarioServlet extends HttpServlet {
                 return;
             }
             DtPropuesta propuesta = validation.getPropuesta();
-            List<DtComentario> comentariosExistentes = IPC.obtenerComentariosPropuesta(propuesta.getTitulo());
+
+            ListaDTComentario comentariosWS = IPC.obtenerComentariosPropuesta(propuesta.getTitulo());
+            List<DtComentario> comentariosExistentes = comentariosWS.getComentario();
+
             boolean yaComento = false;
             for (DtComentario comentarioExistente : comentariosExistentes) {
                 if (comentarioExistente.getUsuarioNickname() != null && 
@@ -131,8 +134,10 @@ public class ComentarioServlet extends HttpServlet {
             }
             
             DtPropuesta propuesta = validation.getPropuesta();
-            
-            List<DtComentario> comentariosExistentes = IPC.obtenerComentariosPropuesta(propuesta.getTitulo());
+
+            ListaDTComentario comentariosWS = IPC.obtenerComentariosPropuesta(propuesta.getTitulo());
+            List<DtComentario> comentariosExistentes = comentariosWS.getComentario();
+
             boolean yaComento = false;
             for (DtComentario comentarioExistente : comentariosExistentes) {
                 if (comentarioExistente.getUsuarioNickname() != null && 
@@ -186,7 +191,10 @@ public class ComentarioServlet extends HttpServlet {
 
     private ValidationResult validarPropuestaParaComentario(String tituloPropuesta, DtUsuario usuario) {
         try {
-            List<DtPropuesta> todasLasPropuestas = IPC.devolverTodasLasPropuestas();
+
+            ListaDTPropuesta propuestasWS = IPC.devolverTodasLasPropuestas();
+            List<DtPropuesta> todasLasPropuestas = propuestasWS.getPropuesta();
+
             DtPropuesta propuesta = null;
             
             for (DtPropuesta p : todasLasPropuestas) {

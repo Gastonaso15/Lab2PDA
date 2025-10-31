@@ -44,7 +44,7 @@ public class MarcarPropuestaFavorita extends HttpServlet {
         String tituloPropuesta = request.getParameter("titulo");
 
         try{
-            if(ICU.UsuarioYaTienePropuestaFavorita(nickUsuario, tituloPropuesta)){
+            if(ICU.usuarioYaTienePropuestaFavorita(nickUsuario, tituloPropuesta)){
                 ICU.quitarPropuestaFavorita(nickUsuario, tituloPropuesta);
             }else{
                 ICU.marcarPropuestaFavorita(nickUsuario,tituloPropuesta);

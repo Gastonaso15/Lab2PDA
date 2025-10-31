@@ -39,7 +39,10 @@ public class PrincipalServlet extends HttpServlet {
             
             String estadoFiltro = request.getParameter("estado");
             String busqueda = request.getParameter("busqueda");
-            List<DtPropuesta> todasLasPropuestas = IPC.devolverTodasLasPropuestas();
+
+            ListaDTPropuesta propuestasWS = IPC.devolverTodasLasPropuestas();
+            List<DtPropuesta> todasLasPropuestas = propuestasWS.getPropuesta();
+
             List<DtPropuesta> propuestasVisibles = new ArrayList<>();
 
             for (DtPropuesta propuesta : todasLasPropuestas) {

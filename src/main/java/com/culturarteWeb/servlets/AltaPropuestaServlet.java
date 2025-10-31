@@ -1,7 +1,9 @@
 package com.culturarteWeb.servlets;
 
+import com.culturarteWeb.util.WSFechaPropuesta;
 import culturarte.servicios.cliente.propuestas.IPropuestaControllerWS;
 import culturarte.servicios.cliente.propuestas.ListaDTCategoria;
+import culturarte.servicios.cliente.propuestas.ListaStrings;
 import culturarte.servicios.cliente.propuestas.PropuestaWSEndpointService;
 import culturarte.servicios.cliente.usuario.DtUsuario;
 import jakarta.servlet.ServletException;
@@ -9,7 +11,6 @@ import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import java.io.*;
-import java.time.LocalDate;
 import java.util.*;
 
 @WebServlet("/altaPropuesta")
@@ -44,7 +45,7 @@ public class AltaPropuestaServlet extends HttpServlet {
 
         try {
             ListaDTCategoria categoriasWS = IPC.devolverTodasLasCategorias();
-            req.setAttribute("categorias", categoriasWS.getLista());
+            req.setAttribute("categorias", categoriasWS.getCategoria());
         } catch (Exception e) {
             throw new ServletException("No se pudieron obtener las categorías", e);
         }
@@ -111,13 +112,15 @@ public class AltaPropuestaServlet extends HttpServlet {
         String[] retornosArr = req.getParameterValues("retornos");
 
         try {
-            LocalDate fecha = LocalDate.parse(fechaStr);
+            java.time.LocalDate fecha = java.time.LocalDate.parse(fechaStr);
             Double precio = Double.parseDouble(precioStr);
             Double monto = Double.parseDouble(montoStr);
 
-            if (fecha.isBefore(LocalDate.now())) {
+
+
+            if (fecha.isBefore(java.time.LocalDate.now())) {
                 ListaDTCategoria categoriasWS = IPC.devolverTodasLasCategorias();
-                req.setAttribute("categorias", categoriasWS);
+                req.setAttribute("categorias", categoriasWS.getCategoria());
                 req.setAttribute("error", "La fecha no puede ser anterior a la actual");
 
                 req.setAttribute("categoria", categoria);
@@ -132,9 +135,11 @@ public class AltaPropuestaServlet extends HttpServlet {
                 return;
             }
 
-            List<String> retornos = (retornosArr != null)
-                    ? Arrays.asList(retornosArr)
-                    : new ArrayList<>();
+            List<String> retornos = (retornosArr != null) ? Arrays.asList(retornosArr) : new ArrayList<>();
+            ListaStrings listaRetornos = new ListaStrings();
+            listaRetornos.getItem().addAll(retornos);
+
+
             /*  Estuve debuggeando y lo dejo por si lo preciso de nuevo
             System.out.println("Titulo: " + titulo);
             System.out.println("Descripcion: " + descripcion);
@@ -148,8 +153,9 @@ public class AltaPropuestaServlet extends HttpServlet {
             System.out.println("Retornos: " + retornos);
             */
             //Creo la propuesta
-            IPC.crearPropuesta(titulo, descripcion, lugar, fecha, precio, monto, imagen,
-                    proponente.getNickname(), categoria, retornos);
+
+            IPC.crearPropuesta(titulo, descripcion, lugar, WSFechaPropuesta.toWSLocalDate(fecha), precio, monto, imagen,
+                    proponente.getNickname(), categoria, listaRetornos);
 
             resp.sendRedirect(req.getContextPath() + "/");
         } catch (Exception e) {
@@ -157,7 +163,7 @@ public class AltaPropuestaServlet extends HttpServlet {
             ListaDTCategoria categoriasWS;
             try {
                 categoriasWS = IPC.devolverTodasLasCategorias();
-                req.setAttribute("categorias", categoriasWS.getLista());
+                req.setAttribute("categorias", categoriasWS.getCategoria());
             } catch (Exception ex) {
 
             }

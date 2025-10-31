@@ -1,5 +1,6 @@
 package com.culturarteWeb.servlets;
 
+import com.culturarteWeb.util.WSFechaUsuario;
 import culturarte.servicios.cliente.usuario.DtUsuario;
 import culturarte.servicios.cliente.usuario.DtProponente;
 import culturarte.servicios.cliente.usuario.DtColaborador;
@@ -14,7 +15,6 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.Base64;
 
 @WebServlet("/altaPerfil")
 @MultipartConfig(
@@ -128,15 +128,26 @@ public class AltaPerfilServlet extends HttpServlet {
             DtUsuario usuario;
             
             if ("PROPONENTE".equals(tipoUsuario)) {
-                usuario = new DtProponente(
-                    nickname, nombre, apellido, password, email, 
-                    fechaNac, imagenBase64, direccion, biografia, sitioWeb
-                );
+                usuario = new DtProponente();
+                usuario.setNickname(nickname);
+                usuario.setNombre(nombre);
+                usuario.setApellido(apellido);
+                usuario.setPassword(password);
+                usuario.setCorreo(email);
+                usuario.setFechaNacimiento(WSFechaUsuario.toWSLocalDate(fechaNac));
+                usuario.setImagen(imagenBase64);
+                ((DtProponente) usuario).setDireccion(direccion);
+                ((DtProponente) usuario).setBio(biografia);
+                ((DtProponente) usuario).setSitioWeb(sitioWeb);
             } else {
-                usuario = new DtColaborador(
-                    nickname, nombre, apellido, password, email, 
-                    fechaNac, imagenBase64
-                );
+                usuario = new DtColaborador();
+                usuario.setNickname(nickname);
+                usuario.setNombre(nombre);
+                usuario.setApellido(apellido);
+                usuario.setPassword(password);
+                usuario.setCorreo(email);
+                usuario.setFechaNacimiento(WSFechaUsuario.toWSLocalDate(fechaNac));
+                usuario.setImagen(imagenBase64);
             }
 
             IUC.crearUsuario(usuario);

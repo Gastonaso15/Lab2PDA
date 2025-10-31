@@ -27,7 +27,9 @@ public class ConsultaPropuestaPorCategoriaServlet extends HttpServlet {
             throws ServletException, IOException {
 
         try {
-            List<DtPropuesta> todasLasPropuestas = IPC.devolverTodasLasPropuestas();
+            ListaDTPropuesta propuestasWS = IPC.devolverTodasLasPropuestas();
+            List<DtPropuesta> todasLasPropuestas = propuestasWS.getPropuesta();
+
             List<DtPropuesta> propuestasVisibles = new ArrayList<>();
             for (DtPropuesta propuesta : todasLasPropuestas) {
                 if (propuesta.getEstadoActual() != DtEstadoPropuesta.INGRESADA) {
@@ -50,7 +52,9 @@ public class ConsultaPropuestaPorCategoriaServlet extends HttpServlet {
         throws ServletException, IOException {
         String[] categoriasSeleccionadas = request.getParameterValues("categoria");
         try{
-        List<DtPropuesta> todasLasPopuestas = IPC.devolverTodasLasPropuestas();
+        ListaDTPropuesta propuestasWS = IPC.devolverTodasLasPropuestas();
+        List<DtPropuesta> todasLasPopuestas = propuestasWS.getPropuesta();
+
         List<DtPropuesta> propuestasVisibles = new ArrayList<>();
 
         for(DtPropuesta propuesta : todasLasPopuestas){

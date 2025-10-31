@@ -38,7 +38,9 @@ public class ListarPropuestasParaComentarServlet extends HttpServlet {
         DtUsuario usuario = (DtUsuario) session.getAttribute("usuarioLogueado");
         
         try {
-            List<DtPropuesta> todasLasPropuestas = IPC.devolverTodasLasPropuestas();
+            ListaDTPropuesta propuestasWS = IPC.devolverTodasLasPropuestas();
+            List<DtPropuesta> todasLasPropuestas = propuestasWS.getPropuesta();
+
             List<DtPropuesta> propuestasParaComentar = new ArrayList<>();
 
             for (DtPropuesta propuesta : todasLasPropuestas) {

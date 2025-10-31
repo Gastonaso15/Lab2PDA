@@ -1,10 +1,15 @@
 package com.culturarteWeb.servlets;
 
-import culturarte.servicios.cliente.propuestas.DtEstadoPropuesta;
+import culturarte.servicios.cliente.propuestas.*;
+import culturarte.servicios.cliente.usuario.DtColaboracion;
+import culturarte.servicios.cliente.propuestas.DtComentario;
+import culturarte.servicios.cliente.usuario.DtEstadoPropuesta;
 import culturarte.servicios.cliente.propuestas.DtPropuesta;
-import culturarte.servicios.cliente.propuestas.IPropuestaControllerWS;
-import culturarte.servicios.cliente.propuestas.PropuestaWSEndpointService;
+import culturarte.servicios.cliente.usuario.ListaStrings;
 import culturarte.servicios.cliente.usuario.*;
+import culturarte.servicios.cliente.usuario.DtColaborador;
+import culturarte.servicios.cliente.usuario.DtProponente;
+import culturarte.servicios.cliente.usuario.DtUsuario;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
@@ -41,7 +46,8 @@ public class ConsultaPerfilUsuarioServlet extends HttpServlet {
         //Muestro la lista de usuarios disponibles a consultar
         if (nick == null || nick.isBlank()) {
             try {
-                List<String> nicks = ICU.devolverNicknamesUsuarios();
+                ListaStrings nicksWS = ICU.devolverNicknamesUsuarios();
+                List<String> nicks = nicksWS.getItem();
 
                 UsuarioManejador UM = UsuarioManejador.getInstance();
                 List<Map<String, Object>> usuariosCombo = new ArrayList<>();
@@ -115,7 +121,9 @@ public class ConsultaPerfilUsuarioServlet extends HttpServlet {
             // <-- 1: Armo lista de "siguiendo" (a quién sigue 'nick') -->
             List<String> siguiendoProponentes = new ArrayList<>();
             List<String> siguiendoColaboradores = new ArrayList<>();
-            List<String> siguiendoNicks = ICU.devolverUsuariosSeguidos(nick);
+
+            ListaStrings nicksWS = ICU.devolverUsuariosSeguidos(nick);
+            List<String> siguiendoNicks = nicksWS.getItem();
 
             for (String s : siguiendoNicks) {
                 boolean esProp = false;
@@ -144,10 +152,12 @@ public class ConsultaPerfilUsuarioServlet extends HttpServlet {
 
 
             // <-- 3: Armo lista de Propuestas Favoritas -->
-            List<DtPropuesta> todasLasProp = IPC.devolverTodasLasPropuestas();
+            ListaDTPropuesta propuestasWS = IPC.devolverTodasLasPropuestas();
+            List<DtPropuesta> todasLasProp = propuestasWS.getPropuesta();
+
             List<DtPropuesta> favoritas = new ArrayList<>();
             for (DtPropuesta propuesta : todasLasProp) {
-                boolean esFav = ICU.UsuarioYaTienePropuestaFavorita(nick, propuesta.getTitulo());
+                boolean esFav = ICU.usuarioYaTienePropuestaFavorita(nick, propuesta.getTitulo());
                 if (esFav) {
                     favoritas.add(propuesta);
                 }
@@ -158,7 +168,7 @@ public class ConsultaPerfilUsuarioServlet extends HttpServlet {
             List<DtPropuesta> publicadasNoIngresada = new ArrayList<>();
             List<DtPropuesta> creadasIngresadas = new ArrayList<>();
             if (proponente != null && proponente.getPropuestas() != null) {
-                for (DtPropuesta p : proponente.getPropuestas()) {
+                for (culturarte.servicios.cliente.usuario.DtPropuesta p : proponente.getPropuestas()) {
                     DtEstadoPropuesta est = p.getEstadoActual();
                     if (est != null) {
                         if (est != DtEstadoPropuesta.INGRESADA) publicadasNoIngresada.add(p);
@@ -168,18 +178,20 @@ public class ConsultaPerfilUsuarioServlet extends HttpServlet {
             }
 
             //  <-- 5: Armo lista de Propuestas en que el Colaborador colaboró -->
-            List<DTPropuesta> colaboradas = new ArrayList<>();
-            List<DTColaboracion> misColaboraciones = new ArrayList<>();
+            List<DtPropuesta> colaboradas = new ArrayList<>();
+            List<DtColaboracion> misColaboraciones = new ArrayList<>();
             if (colaborador != null && colaborador.getColaboraciones() != null) {
                 misColaboraciones = colaborador.getColaboraciones();
-                for (DTColaboracion c : misColaboraciones) {
+                for (DtColaboracion c : misColaboraciones) {
                     if (c.getPropuesta() != null) colaboradas.add(c.getPropuesta());
                 }
             }
 
             boolean loSigo = false;
             if (actual != null && usuarioConsultado != null) {
-                List<String> usuariosSeguidos = ICU.devolverUsuariosSeguidos(actual.getNickname());
+                ListaStrings usuariosWS = ICU.devolverUsuariosSeguidos(actual.getNickname());
+                List<String> usuariosSeguidos  = usuariosWS.getItem();
+
                 loSigo = usuariosSeguidos.contains(usuarioConsultado.getNickname());
             }
             req.setAttribute("loSigo", loSigo);

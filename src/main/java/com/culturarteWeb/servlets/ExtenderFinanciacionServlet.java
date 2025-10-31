@@ -2,8 +2,10 @@ package com.culturarteWeb.servlets;
 
 import culturarte.servicios.cliente.propuestas.DtPropuesta;
 import culturarte.servicios.cliente.propuestas.IPropuestaControllerWS;
+import culturarte.servicios.cliente.propuestas.ListaDTPropuesta;
 import culturarte.servicios.cliente.propuestas.PropuestaWSEndpointService;
-import culturarte.servicios.cliente.usuario.DtUsuario;
+import culturarte.servicios.cliente.propuestas.DtUsuario;
+import culturarte.servicios.cliente.usuario.DtProponente;
 import culturarte.servicios.cliente.usuario.IUsuarioControllerWS;
 import culturarte.servicios.cliente.usuario.UsuarioWSEndpointService;
 import jakarta.servlet.ServletException;
@@ -41,7 +43,7 @@ public class ExtenderFinanciacionServlet extends HttpServlet {
             throws ServletException, IOException {
         //averiguo si es proponente o no
         boolean esProponente = false;
-        DtUsuario userProponente = null;
+        DtProponente userProponente = null;
         HttpSession session = request.getSession(false);
         if (session != null && session.getAttribute("usuarioLogueado") != null) {
             DtUsuario user = (DtUsuario) session.getAttribute("usuarioLogueado");
@@ -53,8 +55,8 @@ public class ExtenderFinanciacionServlet extends HttpServlet {
             }
         }
 
-
-        List<DtPropuesta> propuestas = IPC.devolverTodasLasPropuestas();
+        ListaDTPropuesta propuestasWS = IPC.devolverTodasLasPropuestas();
+        List<DtPropuesta> propuestas = propuestasWS.getPropuesta();
 
         List<DtPropuesta> propuestasActivas = new ArrayList<>();
 
