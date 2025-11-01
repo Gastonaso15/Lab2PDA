@@ -1,3 +1,4 @@
+/*
 package com.culturarteWeb.servlets;
 
 import culturarte.servicios.cliente.propuestas.DtPropuesta;
@@ -114,3 +115,4 @@ public class RegistrarColaboracionAPropuestaServlet extends HttpServlet {
         }
     }
 }
+*/

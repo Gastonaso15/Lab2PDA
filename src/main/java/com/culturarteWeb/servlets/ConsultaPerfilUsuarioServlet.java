@@ -1,3 +1,4 @@
+/*
 package com.culturarteWeb.servlets;
 
 import culturarte.servicios.cliente.propuestas.*;
@@ -129,7 +130,7 @@ public class ConsultaPerfilUsuarioServlet extends HttpServlet {
                 boolean esProp = false;
                 try {
                     esProp = (ICU.devolverProponentePorNickname(s) != null);
-                } catch (Exception ignore) { /* no es proponente */ }
+                } catch (Exception ignore) { }
 
                 if (esProp) siguiendoProponentes.add(s);
                 else        siguiendoColaboradores.add(s);
@@ -223,3 +224,4 @@ public class ConsultaPerfilUsuarioServlet extends HttpServlet {
     }
 
 }
+*/

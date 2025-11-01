@@ -1,5 +1,9 @@
-<%@ page import="java.util.*, culturarte.logica.DTs.DTPropuesta, culturarte.logica.DTs.DTCategoria, culturarte.logica.DTs.DTUsuario" %>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html; charset=UTF-8" language="java" %>
+<%@ page import="java.util.*" %>
+<%@ page import="com.culturarteWeb.ws.propuestas.DtPropuesta" %>
+<%@ page import="com.culturarteWeb.ws.propuestas.DtCategoria" %>
+<%@ page import="com.culturarteWeb.ws.usuarios.DtUsuario" %>
+<%@ page import="com.culturarteWeb.servlets.PrincipalServlet.PropuestaConDatos" %>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -248,7 +252,8 @@
 </head>
 <body>
     <div class="container">
-        <jsp:include page="cabezalComun.jsp"/>
+        <%-- Lo comento porque cabezalComun.jsp tiene errores que hay que solucionar --%>
+        <%--<jsp:include page="/cabezalComun.jsp" /> --%>
 
         <% String busquedaActual = (String) request.getAttribute("busqueda"); %>
         <% if (busquedaActual != null && !busquedaActual.isEmpty()) { %>
@@ -258,8 +263,11 @@
                         <strong>🔍 Búsqueda activa:</strong> "<%= busquedaActual %>"
                         <br>
                         <small style="color: #666;">
-                            Mostrando <%= ((List<DTPropuesta>) request.getAttribute("propuestas")).size() %> resultado(s)
-                        </small>
+                            Mostrando <%List<PropuestaConDatos> _props = (List<PropuestaConDatos>) request.getAttribute("propuestas");
+                                        int _total = (_props != null) ? _props.size() : 0;%>
+                            <small style="color: #666;">
+                                Mostrando <%= _total %> resultado(s)
+                            </small>
                     </div>
                     <a href="<%= request.getContextPath() %>/principal" 
                        style="background-color: #f44336; color: white; padding: 8px 12px; text-decoration: none; border-radius: 4px; font-size: 14px;">
@@ -281,7 +289,7 @@
         <%List<com.culturarteWeb.servlets.PrincipalServlet.PropuestaConDatos> propuestas = (List<com.culturarteWeb.servlets.PrincipalServlet.PropuestaConDatos>) request.getAttribute("propuestas");
             if (propuestas != null) {
                 for (com.culturarteWeb.servlets.PrincipalServlet.PropuestaConDatos propuestaConDatos : propuestas) {
-                    culturarte.logica.DTs.DTPropuesta p = propuestaConDatos.getPropuesta();
+                    DtPropuesta p = propuestaConDatos.getPropuesta();
                     String imagen = (p.getImagen() != null && !p.getImagen().isEmpty()) ? p.getImagen() : "imagenes/propuestaDefault.png";
                     double porcentajeProgreso = p.getMontoNecesario() > 0 ? (propuestaConDatos.getMontoRecaudado() / p.getMontoNecesario()) * 100 : 0;
                     if (porcentajeProgreso > 100) porcentajeProgreso = 100;%>
@@ -331,10 +339,10 @@
                 <h3>CATEGORÍAS</h3>
                 <form id="filtroCategorias" method="post" action="consultaPropuestaPorCategoria">
                    <div class="listaCategorias">
-                        <%List<DTCategoria> categorias = (List<DTCategoria>) request.getAttribute("categorias");
-                       String[] categoriasSeleccionadas = (String[]) request.getAttribute("categoriasSeleccionadas");
+                        <%List<DtCategoria> categorias = (List<DtCategoria>) request.getAttribute("categorias");
+                            String[] categoriasSeleccionadas = (String[]) request.getAttribute("categoriasSeleccionadas");
                         if (categorias != null) {
-                            for (DTCategoria categ : categorias) {
+                            for (DtCategoria categ : categorias) {
                                 boolean estaSeleccionada = false;
                                 if (categoriasSeleccionadas != null) {
                                     for (String catSel : categoriasSeleccionadas) {

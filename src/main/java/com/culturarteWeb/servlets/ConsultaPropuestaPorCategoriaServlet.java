@@ -1,3 +1,4 @@
+/*
 package com.culturarteWeb.servlets;
 import culturarte.servicios.cliente.propuestas.*;
 import jakarta.servlet.ServletException;
@@ -133,3 +134,4 @@ public class ConsultaPropuestaPorCategoriaServlet extends HttpServlet {
         return categorias;
     }
 }
+*/

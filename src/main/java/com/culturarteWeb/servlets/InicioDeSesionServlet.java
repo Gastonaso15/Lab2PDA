@@ -1,3 +1,4 @@
+/*
 package com.culturarteWeb.servlets;
 
 
@@ -59,3 +60,4 @@ public class InicioDeSesionServlet extends HttpServlet {
         }
     }
 }
+*/

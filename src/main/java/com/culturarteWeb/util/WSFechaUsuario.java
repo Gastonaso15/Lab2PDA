@@ -1,3 +1,4 @@
+/*
 package com.culturarteWeb.util;
 
 import culturarte.servicios.cliente.usuario.LocalDate;
@@ -13,3 +14,4 @@ public class WSFechaUsuario {
         return wsFecha;
     }
 }
+*/

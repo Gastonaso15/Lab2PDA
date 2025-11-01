@@ -1,3 +1,4 @@
+/*
 package com.culturarteWeb.servlets;
 
 
@@ -358,3 +359,4 @@ public class ConsultaPropuestaServlet extends HttpServlet {
         return categorias;
     }
 }
+*/

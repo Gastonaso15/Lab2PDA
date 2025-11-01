@@ -1,3 +1,4 @@
+/*
 package com.culturarteWeb.servlets;
 
 import com.culturarteWeb.util.WSFechaUsuario;
@@ -233,3 +234,4 @@ public class AltaPerfilServlet extends HttpServlet {
         return null;
     }
 }
+*/

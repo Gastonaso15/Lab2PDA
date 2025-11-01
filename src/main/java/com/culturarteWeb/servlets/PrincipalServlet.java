@@ -1,8 +1,8 @@
 package com.culturarteWeb.servlets;
-import culturarte.servicios.cliente.propuestas.*;
-import culturarte.servicios.cliente.usuario.DtUsuario;
-import culturarte.servicios.cliente.usuario.IUsuarioControllerWS;
-import culturarte.servicios.cliente.usuario.UsuarioWSEndpointService;
+import com.culturarteWeb.util.WSConsumer;
+import com.culturarteWeb.ws.propuestas.*;
+import com.culturarteWeb.ws.usuarios.IUsuarioControllerWS;
+import com.culturarteWeb.ws.usuarios.UsuarioWSEndpointService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
@@ -15,8 +15,8 @@ import java.util.List;
 
 @WebServlet("/principal")
 public class PrincipalServlet extends HttpServlet {
-    private IPropuestaControllerWS IPC;
-    private IUsuarioControllerWS ICU;
+    IPropuestaControllerWS IPC = WSConsumer.get().propuestas();
+    IUsuarioControllerWS ICU = WSConsumer.get().usuarios();
 
     @Override
     public void init() throws  ServletException {
@@ -35,7 +35,7 @@ public class PrincipalServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try{
-            verificarVencimientosAutomaticamente();
+            //verificarVencimientosAutomaticamente();
             
             String estadoFiltro = request.getParameter("estado");
             String busqueda = request.getParameter("busqueda");
@@ -206,7 +206,7 @@ public class PrincipalServlet extends HttpServlet {
             }
             totalColaboradores = propuesta.getColaboraciones().size();
         }
-
+/*
         try {
             if (propuesta.getFechaPublicacion() != null) {
                 LocalDate fechaPublicacion = propuesta.getFechaPublicacion();
@@ -223,7 +223,7 @@ public class PrincipalServlet extends HttpServlet {
             System.out.println("Error al calcular días restantes: " + e.getMessage());
             diasRestantes = 0;
         }
-        
+     */
         return new PropuestaConDatos(propuesta, montoRecaudado, totalColaboradores, diasRestantes);
     }
 
@@ -246,15 +246,19 @@ public class PrincipalServlet extends HttpServlet {
         public long getDiasRestantes() { return diasRestantes; }
     }
 
+/*
     private void verificarVencimientosAutomaticamente() {
         try {
-            culturarte.logica.manejadores.PropuestaManejador pm = culturarte.logica.manejadores.PropuestaManejador.getInstance();
-            List<DtPropuesta> todasLasPropuestas = IPC.devolverTodasLasPropuestas();
+            PropuestaManejador pm = IPC.getPropuestaManejador()
+            //com.culturarte.logica.manejadores.PropuestaManejador pm = culturarte.logica.manejadores.PropuestaManejador.getInstance();
+            ListaDTPropuesta todasLasPropuestas = IPC.devolverTodasLasPropuestas();
             
             java.time.LocalDate fechaActual = java.time.LocalDate.now();
             
             for (DtPropuesta dtPropuesta : todasLasPropuestas) {
-                culturarte.logica.modelos.Propuesta propuesta = pm.obtenerPropuestaPorTitulo(dtPropuesta.getTitulo());
+                PropuestaManejador pm = IPC.getPropuestaManejador();
+                DtPropuesta propuesta = pm.obtenerPropuestaPorTitulo()
+                //culturarte.logica.modelos.Propuesta propuesta = pm.obtenerPropuestaPorTitulo(dtPropuesta.getTitulo());
                 
                 if (propuesta != null && 
                     (propuesta.getEstadoActual() == culturarte.logica.modelos.EstadoPropuesta.PUBLICADA || 
@@ -297,7 +301,7 @@ public class PrincipalServlet extends HttpServlet {
             e.printStackTrace();
         }
     }
-
+*/
     private double calcularMontoRecaudado(DtPropuesta propuesta) {
         double montoTotal = 0.0;
         
