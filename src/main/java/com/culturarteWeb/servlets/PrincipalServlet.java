@@ -1,4 +1,5 @@
 package com.culturarteWeb.servlets;
+import com.culturarteWeb.util.LocalDateAdaptor;
 import com.culturarteWeb.util.WSConsumer;
 import com.culturarteWeb.ws.propuestas.*;
 import com.culturarteWeb.ws.usuarios.IUsuarioControllerWS;
@@ -206,10 +207,11 @@ public class PrincipalServlet extends HttpServlet {
             }
             totalColaboradores = propuesta.getColaboraciones().size();
         }
-/*
+
         try {
             if (propuesta.getFechaPublicacion() != null) {
-                LocalDate fechaPublicacion = propuesta.getFechaPublicacion();
+                var fechaString = propuesta.getFechaPublicacion();                          // String del tipo "02-11-2025"
+                LocalDate fechaPublicacion = LocalDateAdaptor.parseOrNull(fechaString);     //Ahora sí en formato LocalDate
                 LocalDate fechaActual = LocalDate.now();
 
                 LocalDate fechaLimite = fechaPublicacion.plusDays(30);
@@ -223,7 +225,7 @@ public class PrincipalServlet extends HttpServlet {
             System.out.println("Error al calcular días restantes: " + e.getMessage());
             diasRestantes = 0;
         }
-     */
+
         return new PropuestaConDatos(propuesta, montoRecaudado, totalColaboradores, diasRestantes);
     }
 
@@ -249,20 +251,19 @@ public class PrincipalServlet extends HttpServlet {
 /*
     private void verificarVencimientosAutomaticamente() {
         try {
-            PropuestaManejador pm = IPC.getPropuestaManejador()
+            //PropuestaManejador pm = IPC.getPropuestaManejador()
             //com.culturarte.logica.manejadores.PropuestaManejador pm = culturarte.logica.manejadores.PropuestaManejador.getInstance();
-            ListaDTPropuesta todasLasPropuestas = IPC.devolverTodasLasPropuestas();
-            
+            ListaDTPropuesta ListaPropWS = IPC.devolverTodasLasPropuestas();
+            List<DtPropuesta> todasLasPropuestas = ListaPropWS.getPropuesta();
+
             java.time.LocalDate fechaActual = java.time.LocalDate.now();
             
             for (DtPropuesta dtPropuesta : todasLasPropuestas) {
-                PropuestaManejador pm = IPC.getPropuestaManejador();
-                DtPropuesta propuesta = pm.obtenerPropuestaPorTitulo()
-                //culturarte.logica.modelos.Propuesta propuesta = pm.obtenerPropuestaPorTitulo(dtPropuesta.getTitulo());
-                
-                if (propuesta != null && 
-                    (propuesta.getEstadoActual() == culturarte.logica.modelos.EstadoPropuesta.PUBLICADA || 
-                     propuesta.getEstadoActual() == culturarte.logica.modelos.EstadoPropuesta.EN_FINANCIACION)) {
+                DtPropuesta propuesta = IPC.obtenerPropuestaPorTitulo(dtPropuesta.getTitulo());
+                if (propuesta != null &&
+
+                    (propuesta.getEstadoActual() == DtEstadoPropuesta.PUBLICADA ||
+                     propuesta.getEstadoActual() == DtEstadoPropuesta.EN_FINANCIACION)) {
 
                     if (propuesta.getFechaPublicacion() != null) {
                         java.time.LocalDate fechaVencimiento = propuesta.getFechaPublicacion().plusDays(30);
@@ -272,7 +273,7 @@ public class PrincipalServlet extends HttpServlet {
                             double montoNecesario = dtPropuesta.getMontoNecesario();
                             
                             if (montoRecaudado >= montoNecesario) {
-                                propuesta.setEstadoActual(culturarte.logica.modelos.EstadoPropuesta.FINANCIADA);
+                                propuesta.setEstadoActual(DtEstadoPropuesta.FINANCIADA);
                                 propuesta.agregarPropuestaEstado(new culturarte.logica.modelos.PropuestaEstado(
                                     propuesta, culturarte.logica.modelos.EstadoPropuesta.FINANCIADA, fechaActual));
                                 

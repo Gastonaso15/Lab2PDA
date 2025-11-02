@@ -3,7 +3,12 @@
 <%@ page import="java.util.Locale" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.util.*" %>
-<%@ page import="culturarte.logica.DTs.*" %>
+
+<%-- ==== IMPORTS CORRECTOS DE LOS STUBS WS ==== --%>
+<%@ page import="com.culturarteWeb.ws.usuarios.DtUsuario" %>
+<%@ page import="com.culturarteWeb.ws.propuestas.DtPropuesta" %>
+<%@ page import="com.culturarteWeb.ws.usuarios.DtColaboracion" %>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -12,13 +17,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Bootstrap 5 (CDN) -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <jsp:include page="estiloCabezalComun.jsp"/>
+    <%--LO COMENTO PORQUE CABEZAL COMUN NO FUNCIONA TODAVIA --%>
+    <%--<jsp:include page="estiloCabezalComun.jsp"/>--%>
+    <%----%>
 </head>
 <body class="bg-light">
 <% String ctx = request.getContextPath(); %>
 
 <div class="container py-4">
-    <jsp:include page="cabezalComun.jsp"/>
+    <%--LO COMENTO PORQUE CABEZAL COMUN NO FUNCIONA TODAVIA --%>
+    <%-- <jsp:include page="cabezalComun.jsp"/>--%>
     <h1 class="h3 mb-4">Consulta de Perfil de Usuario</h1>
 
     <%-- Mensaje de error si llegó algo desde el servlet --%>
@@ -34,7 +42,7 @@
         List<Map<String, Object>> usuariosCombo =
                 (List<Map<String, Object>>) request.getAttribute("usuariosCombo");
 
-        DTUsuario usuario = null;
+        DtUsuario usuario = null;     // <== cambiado tipo
         boolean esProponente = false;
         Boolean esPropio = null;
         boolean esColaborador = false;
@@ -66,7 +74,7 @@
     <%
     } else {
         // PANTALLA 2: vista de perfil
-        usuario = (DTUsuario) request.getAttribute("usuarioConsultado");
+        usuario = (DtUsuario) request.getAttribute("usuarioConsultado");  // <== casteo correcto
         esPropio = (Boolean) request.getAttribute("esPropio");
         esProponente = request.getAttribute("esProponente") != null && (Boolean) request.getAttribute("esProponente");
         esColaborador = request.getAttribute("esColaborador") != null && (Boolean) request.getAttribute("esColaborador");
@@ -76,11 +84,11 @@
         List<String> followersProponentes = (List<String>) request.getAttribute("followersProponentes");
         List<String> followersColaboradores = (List<String>) request.getAttribute("followersColaboradores");
 
-        List<DTPropuesta> favoritas = (List<DTPropuesta>) request.getAttribute("favoritas");
-        List<DTPropuesta> publicadasNoIngresada = (List<DTPropuesta>) request.getAttribute("publicadasNoIngresada");
-        List<DTPropuesta> colaboradas = (List<DTPropuesta>) request.getAttribute("colaboradas");
-        List<DTPropuesta> creadasIngresadas = (List<DTPropuesta>) request.getAttribute("creadasIngresadas");
-        List<DTColaboracion> misColaboraciones = (List<DTColaboracion>) request.getAttribute("misColaboraciones");
+        List<DtPropuesta> favoritas = (List<DtPropuesta>) request.getAttribute("favoritas");  // <== tipo correcto
+        List<DtPropuesta> publicadasNoIngresada = (List<DtPropuesta>) request.getAttribute("publicadasNoIngresada"); // si lo usás como usuarios.DtPropuesta cámbialo allí
+        List<DtPropuesta> colaboradas = (List<DtPropuesta>) request.getAttribute("colaboradas");
+        List<DtPropuesta> creadasIngresadas = (List<DtPropuesta>) request.getAttribute("creadasIngresadas");
+        List<DtColaboracion> misColaboraciones = (List<DtColaboracion>) request.getAttribute("misColaboraciones"); // <== tipo correcto
     %>
 
     <!-- Cabecera de perfil -->
@@ -89,13 +97,13 @@
             <h2 class="h4 mb-3">Perfil de <%= (usuario != null ? usuario.getNickname() : request.getParameter("nick")) %></h2>
             <div class="d-flex gap-3 align-items-start">
 
-               <%String rutaImagen = (usuario != null) ? usuario.getImagen() : null;
-                   if (rutaImagen == null || rutaImagen.isBlank()) {
-                       rutaImagen = ctx + "/imagenes/usuarioDefault.png";
-                   } else {
-                       rutaImagen = ctx + "/" + rutaImagen;
-                   }%>
-               <img alt="avatar" src="<%= rutaImagen %>" class="rounded-circle border" style="width:96px;height:96px;object-fit:cover">
+                <%String rutaImagen = (usuario != null) ? usuario.getImagen() : null;
+                    if (rutaImagen == null || rutaImagen.isBlank()) {
+                        rutaImagen = ctx + "/imagenes/usuarioDefault.png";
+                    } else {
+                        rutaImagen = ctx + "/" + rutaImagen;
+                    }%>
+                <img alt="avatar" src="<%= rutaImagen %>" class="rounded-circle border" style="width:96px;height:96px;object-fit:cover">
                 <div>
                     <div class="mb-1">
                         <span class="badge <%= esProponente ? "text-bg-primary" : (esColaborador ? "text-bg-success" : "text-bg-secondary") %>">
@@ -198,7 +206,7 @@
                         </thead>
                         <tbody>
                         <% if (favoritas != null && !favoritas.isEmpty()) {
-                            for (DTPropuesta p : favoritas) { %>
+                            for (DtPropuesta p : favoritas) { %>
                         <tr>
                             <td><%=p.getTitulo()%></td>
                             <td class="text-center"><a class="btn btn-link btn-sm" href="<%=ctx%>/consultaPropuesta?accion=detalle&titulo=<%=p.getTitulo()%>">Ver detalle</a></td>
@@ -224,7 +232,7 @@
                         </thead>
                         <tbody>
                         <% if (publicadasNoIngresada != null && !publicadasNoIngresada.isEmpty()) {
-                            for (DTPropuesta p : publicadasNoIngresada) { %>
+                            for (DtPropuesta p : publicadasNoIngresada) { %>
                         <tr>
                             <td><%=p.getTitulo()%></td>
                             <td><span class="badge text-bg-secondary"><%=p.getEstadoActual()%></span></td>
@@ -250,6 +258,7 @@
                         <thead class="table-light">
                         <tr>
                             <th>Título</th><th>Fecha y Hora</th><th>Monto</th><th>Acciones</th>
+                        </tr> <%-- <== CIERRE DE TR FALTANTE --%>
                         </thead>
 
                         <%--Muestro Propuestas con las que colaboró--%>
@@ -257,21 +266,21 @@
                         <% if (colaboradas != null && !colaboradas.isEmpty()) {
                             //Fomateo la fecha y hora para que tenga una apariencia más linda a la vista
                             DateTimeFormatter fmtUY = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm", new Locale("es","UY"));
-                            for (DTColaboracion m : misColaboraciones){
-                                DTPropuesta prop = m.getPropuesta();
+                            for (DtColaboracion m : misColaboraciones){
+                                com.culturarteWeb.ws.usuarios.DtPropuesta prop = m.getPropuesta();
                         %>
                         <tr>
-                        <td><%=prop.getTitulo()%></td>
+                            <td><%=prop.getTitulo()%></td>
                             <%--si esta en su propio perfil es la unica manera de que vea el monto y fecha--%>
                             <% if (esPropio != null && esPropio ){%>
-                        <td><%= (m.getFechaHora() != null) ? m.getFechaHora().format(fmtUY) : "-" %></td>
-                        <td><%=m.getMonto()%></td>
+                            <td><%= (m.getFechaHora() != null) ? m.getFechaHora() : "-" %></td>
+                            <td><%=m.getMonto()%></td>
                             <%}else{%>
                             <td>- </td>
                             <td>-</td>
                             <%}%>
-                        <td class="text-center"><a class="btn btn-link btn-sm" href="<%=ctx%>/consultaPropuesta?accion=detalle&titulo=<%=prop.getTitulo()%>">Ver detalle</a></td>
-                    </tr>
+                            <td class="text-center"><a class="btn btn-link btn-sm" href="<%=ctx%>/consultaPropuesta?accion=detalle&titulo=<%=prop.getTitulo()%>">Ver detalle</a></td>
+                        </tr>
                         <% }}  else { %>
                         <tr><td colspan="2" class="text-center text-muted">(sin colaboraciones)</td></tr>
                         <% } %>
@@ -294,7 +303,7 @@
                         </thead>
                         <tbody>
                         <% if (creadasIngresadas != null && !creadasIngresadas.isEmpty()) {
-                            for (DTPropuesta p : creadasIngresadas) { %>
+                            for (DtPropuesta p : creadasIngresadas) { %>
                         <tr>
                             <td><%=p.getTitulo()%></td>
                             <td><span class="badge text-bg-secondary"><%=p.getEstadoActual()%></span></td>
@@ -318,12 +327,12 @@
         </button>
 
         <%
-            DTUsuario usuarioConsultadoBtn = (DTUsuario) request.getAttribute("usuarioConsultado");
+            DtUsuario usuarioConsultadoBtn = (DtUsuario) request.getAttribute("usuarioConsultado");  // <== tipo correcto
             String nickConsultadoBtn = (usuarioConsultadoBtn != null)
                     ? usuarioConsultadoBtn.getNickname()
                     : request.getParameter("nick");
 
-            DTUsuario usuarioActualBtn = (DTUsuario) session.getAttribute("usuarioLogueado");
+            DtUsuario usuarioActualBtn = (DtUsuario) session.getAttribute("usuarioLogueado");       // <== tipo correcto
             Boolean esPropioBtn = (Boolean) request.getAttribute("esPropio");
             boolean puedeSeguir = (usuarioActualBtn != null) && Boolean.FALSE.equals(esPropioBtn);
             boolean loSigo = Boolean.TRUE.equals(request.getAttribute("loSigo"));

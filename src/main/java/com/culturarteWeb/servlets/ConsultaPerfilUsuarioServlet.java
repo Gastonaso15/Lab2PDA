@@ -1,16 +1,13 @@
-/*
 package com.culturarteWeb.servlets;
-
-import culturarte.servicios.cliente.propuestas.*;
-import culturarte.servicios.cliente.usuario.DtColaboracion;
-import culturarte.servicios.cliente.propuestas.DtComentario;
-import culturarte.servicios.cliente.usuario.DtEstadoPropuesta;
-import culturarte.servicios.cliente.propuestas.DtPropuesta;
-import culturarte.servicios.cliente.usuario.ListaStrings;
-import culturarte.servicios.cliente.usuario.*;
-import culturarte.servicios.cliente.usuario.DtColaborador;
-import culturarte.servicios.cliente.usuario.DtProponente;
-import culturarte.servicios.cliente.usuario.DtUsuario;
+import com.culturarteWeb.util.WSConsumer;
+import com.culturarteWeb.ws.propuestas.*;
+import com.culturarteWeb.ws.usuarios.DtProponente;
+import com.culturarteWeb.ws.propuestas.DtPropuesta;
+import com.culturarteWeb.ws.usuarios.DtColaborador;
+import com.culturarteWeb.ws.usuarios.DtUsuario;
+import com.culturarteWeb.ws.usuarios.IUsuarioControllerWS;
+import com.culturarteWeb.ws.usuarios.ListaStrings;
+import com.culturarteWeb.ws.usuarios.UsuarioWSEndpointService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
@@ -21,8 +18,8 @@ import java.util.*;
 @WebServlet("/consultaPerfilUsuario")
 public class ConsultaPerfilUsuarioServlet extends HttpServlet {
 
-    private IPropuestaControllerWS IPC;
-    private IUsuarioControllerWS ICU;
+    IPropuestaControllerWS IPC = WSConsumer.get().propuestas();
+    IUsuarioControllerWS IUC = WSConsumer.get().usuarios();
 
     @Override
     public void init() throws ServletException {
@@ -32,7 +29,7 @@ public class ConsultaPerfilUsuarioServlet extends HttpServlet {
             IPC = propuestaServicio.getPropuestaWSEndpointPort();
 
             UsuarioWSEndpointService usuarioServicio = new UsuarioWSEndpointService();
-            ICU = usuarioServicio.getUsuarioWSEndpointPort();
+            IUC = usuarioServicio.getUsuarioWSEndpointPort();
 
         } catch (Exception e) {
             throw new ServletException("Error al inicializar Web Services", e);
@@ -47,26 +44,22 @@ public class ConsultaPerfilUsuarioServlet extends HttpServlet {
         //Muestro la lista de usuarios disponibles a consultar
         if (nick == null || nick.isBlank()) {
             try {
-                ListaStrings nicksWS = ICU.devolverNicknamesUsuarios();
+                ListaStrings nicksWS = IUC.devolverNicknamesUsuarios();
                 List<String> nicks = nicksWS.getItem();
-
-                UsuarioManejador UM = UsuarioManejador.getInstance();
                 List<Map<String, Object>> usuariosCombo = new ArrayList<>();
-
                 for (String n : nicks) {
-                    Usuario u = UM.obtenerUsuarioPorNickname(n);
+                    DtUsuario u = IUC.obtenerUsuarioPorNickname(n);
                     if (u == null) continue;
 
                     String tipo;
                     try {
-                        ICU.devolverProponentePorNickname(n);
+                        IUC.devolverProponentePorNickname(n);
                         tipo = "Proponente";
                     } catch (Exception ex) {
                         tipo = "Colaborador";
                     }
 
                     Map<String, Object> row = new HashMap<>();
-                    row.put("id", u.getId());
                     row.put("nick", u.getNickname());
                     row.put("nombre", u.getNombre());
                     row.put("apellido", u.getApellido());
@@ -75,8 +68,9 @@ public class ConsultaPerfilUsuarioServlet extends HttpServlet {
                 }
 
                 // ordenado por id ascendente
-                usuariosCombo.sort(Comparator.comparingLong(m -> (Long) m.get("id")));
-
+                //usuariosCombo.sort(Comparator.comparingLong(m -> (Long) m.get("id")));
+                // Opción A: usa un valor por defecto cuando no haya "id"
+                usuariosCombo.sort(Comparator.comparingLong(m -> ((Number) m.getOrDefault("id", Long.MAX_VALUE)).longValue()));
                 // Seteo la lista enriquecida para el JSP
                 req.setAttribute("usuariosCombo", usuariosCombo);
 
@@ -100,11 +94,11 @@ public class ConsultaPerfilUsuarioServlet extends HttpServlet {
             DtColaborador colaborador = null;
             DtUsuario defenza; //lo uso como una defenza, para evitar errores en el caso de que no exista ninguno.
             try {
-                proponente = ICU.devolverProponentePorNickname(nick); // si no existe tira Exception
+                proponente = IUC.devolverProponentePorNickname(nick); // si no existe tira Exception
                 defenza = proponente;
             } catch (Exception ex) {
                 // no era proponente, pruebo colaborador
-                colaborador = ICU.devolverColaboradorPorNickname(nick);
+                colaborador = IUC.devolverColaboradorPorNickname(nick);
                 defenza = colaborador;
             }
 
@@ -123,13 +117,13 @@ public class ConsultaPerfilUsuarioServlet extends HttpServlet {
             List<String> siguiendoProponentes = new ArrayList<>();
             List<String> siguiendoColaboradores = new ArrayList<>();
 
-            ListaStrings nicksWS = ICU.devolverUsuariosSeguidos(nick);
+            ListaStrings nicksWS = IUC.devolverUsuariosSeguidos(nick);
             List<String> siguiendoNicks = nicksWS.getItem();
 
             for (String s : siguiendoNicks) {
                 boolean esProp = false;
                 try {
-                    esProp = (ICU.devolverProponentePorNickname(s) != null);
+                    esProp = (IUC.devolverProponentePorNickname(s) != null);
                 } catch (Exception ignore) { }
 
                 if (esProp) siguiendoProponentes.add(s);
@@ -137,15 +131,13 @@ public class ConsultaPerfilUsuarioServlet extends HttpServlet {
             }
 
             // <-- 2: Armo lista de seguidores -->
-            UsuarioManejador mu = UsuarioManejador.getInstance();
-            List<String> followers = mu.obtenerFollowers(nick);
-
+            List<String> followers = (List<String>) IUC.obtenerFollowers(nick);
             List<String> followersProponentes = new ArrayList<>();
             List<String> followersColaboradores = new ArrayList<>();
             for (String f : followers) {
                 boolean esProp = false;
                 try {
-                    esProp = (ICU.devolverProponentePorNickname(f) != null);
+                    esProp = (IUC.devolverProponentePorNickname(f) != null);
                 } catch (Exception ignore) { }
                 if (esProp) followersProponentes.add(f);
                 else        followersColaboradores.add(f);
@@ -158,7 +150,7 @@ public class ConsultaPerfilUsuarioServlet extends HttpServlet {
 
             List<DtPropuesta> favoritas = new ArrayList<>();
             for (DtPropuesta propuesta : todasLasProp) {
-                boolean esFav = ICU.usuarioYaTienePropuestaFavorita(nick, propuesta.getTitulo());
+                boolean esFav = IUC.usuarioYaTienePropuestaFavorita(nick, propuesta.getTitulo());
                 if (esFav) {
                     favoritas.add(propuesta);
                 }
@@ -166,31 +158,32 @@ public class ConsultaPerfilUsuarioServlet extends HttpServlet {
 
             // <-- 4: Armo lista de todas las Propuestas que el Proponente registrado publicó menos las que están en estado INGREADAS, y otra en que solo están las que esten en estado INGRESADA-->
             //<--Separo Propuestas entre INGRESADAS y todos los demas estados; La unica forma de ver las INGRESADAS es si un Proponente entra a su propio perfil -->
-            List<DtPropuesta> publicadasNoIngresada = new ArrayList<>();
-            List<DtPropuesta> creadasIngresadas = new ArrayList<>();
+            List<com.culturarteWeb.ws.usuarios.DtPropuesta> publicadasNoIngresada = new ArrayList<>();
+            List<com.culturarteWeb.ws.usuarios.DtPropuesta> creadasIngresadas = new ArrayList<>();
+            List<com.culturarteWeb.ws.usuarios.DtPropuesta> porpuestasProponente = proponente.getPropuestas();
             if (proponente != null && proponente.getPropuestas() != null) {
-                for (culturarte.servicios.cliente.usuario.DtPropuesta p : proponente.getPropuestas()) {
-                    DtEstadoPropuesta est = p.getEstadoActual();
+                for (com.culturarteWeb.ws.usuarios.DtPropuesta p : proponente.getPropuestas()) {
+                    com.culturarteWeb.ws.usuarios.DtEstadoPropuesta est = p.getEstadoActual();
                     if (est != null) {
-                        if (est != DtEstadoPropuesta.INGRESADA) publicadasNoIngresada.add(p);
-                        if (esPropio && est == DtEstadoPropuesta.INGRESADA) creadasIngresadas.add(p);
+                        if (est != com.culturarteWeb.ws.usuarios.DtEstadoPropuesta.INGRESADA) publicadasNoIngresada.add(p);
+                        if (esPropio && est == com.culturarteWeb.ws.usuarios.DtEstadoPropuesta.INGRESADA) creadasIngresadas.add(p);
                     }
                 }
             }
 
             //  <-- 5: Armo lista de Propuestas en que el Colaborador colaboró -->
-            List<DtPropuesta> colaboradas = new ArrayList<>();
-            List<DtColaboracion> misColaboraciones = new ArrayList<>();
+            List<com.culturarteWeb.ws.usuarios.DtPropuesta> colaboradas = new ArrayList<>();
+            List<com.culturarteWeb.ws.usuarios.DtColaboracion> misColaboraciones = new ArrayList<>();
             if (colaborador != null && colaborador.getColaboraciones() != null) {
                 misColaboraciones = colaborador.getColaboraciones();
-                for (DtColaboracion c : misColaboraciones) {
+                for (com.culturarteWeb.ws.usuarios.DtColaboracion c : misColaboraciones) {
                     if (c.getPropuesta() != null) colaboradas.add(c.getPropuesta());
                 }
             }
 
             boolean loSigo = false;
             if (actual != null && usuarioConsultado != null) {
-                ListaStrings usuariosWS = ICU.devolverUsuariosSeguidos(actual.getNickname());
+                ListaStrings usuariosWS = IUC.devolverUsuariosSeguidos(actual.getNickname());
                 List<String> usuariosSeguidos  = usuariosWS.getItem();
 
                 loSigo = usuariosSeguidos.contains(usuarioConsultado.getNickname());
@@ -224,4 +217,3 @@ public class ConsultaPerfilUsuarioServlet extends HttpServlet {
     }
 
 }
-*/
