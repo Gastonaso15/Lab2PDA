@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="culturarte.logica.DTs.DTPropuesta, culturarte.logica.DTs.DTUsuario, culturarte.logica.DTs.DTComentario, java.util.List, java.time.format.DateTimeFormatter" %>
+<%@ page import="culturarte.servicios.cliente.propuestas.DtPropuesta, culturarte.servicios.cliente.propuestas.DtUsuario, culturarte.servicios.cliente.propuestas.DtComentario, java.util.List, java.time.format.DateTimeFormatter" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -27,14 +27,14 @@
                             <%= request.getAttribute("error") %>
                         </div>
                     <% } else {
-                        DTPropuesta propuesta = (DTPropuesta) request.getAttribute("propuesta");
+                        DtPropuesta propuesta = (DtPropuesta) request.getAttribute("propuesta");
                         Double montoRecaudado = (Double) request.getAttribute("montoRecaudado");
                         List<String> nicknamesColaboradores = (List<String>) request.getAttribute("nicknamesColaboradores");
                         Boolean esProponente = (Boolean) request.getAttribute("esProponente");
                         Boolean haColaborado = (Boolean) request.getAttribute("haColaborado");
-                        DTUsuario usuarioActual = (DTUsuario) request.getAttribute("usuarioActual");
+                        DtUsuario usuarioActual = (DtUsuario) request.getAttribute("usuarioActual");
                         Boolean esFavorita = (Boolean) request.getAttribute("esFavorita");
-                        List<DTComentario> comentarios = (List<DTComentario>) request.getAttribute("comentarios");
+                        List<DtComentario> comentarios = (List<DtComentario>) request.getAttribute("comentarios");
                     %>
 
                         <%
@@ -140,7 +140,7 @@
 
                             <% if (comentarios != null && !comentarios.isEmpty()) { %>
                                 <div class="row">
-                                    <% for (DTComentario comentario : comentarios) { %>
+                                    <% for (DtComentario comentario : comentarios) { %>
                                         <div class="col-12 mb-3">
                                             <div class="card border-start border-info border-4">
                                                 <div class="card-body">
@@ -192,7 +192,7 @@
 
                                             <%
                                                 String _tituloSel = null;
-                                                DTPropuesta _prop = (DTPropuesta) request.getAttribute("propuesta");
+                                                DtPropuesta _prop = (DtPropuesta) request.getAttribute("propuesta");
                                                 if (_prop != null) _tituloSel = _prop.getTitulo();
                                                 if (_tituloSel == null) _tituloSel = request.getParameter("titulo");
                                                 String _tituloEnc = (_tituloSel != null)

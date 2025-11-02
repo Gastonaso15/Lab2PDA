@@ -1,4 +1,4 @@
-<%@ page import="java.util.*, culturarte.logica.DTs.DTPropuesta, culturarte.logica.DTs.DTCategoria, culturarte.logica.DTs.DTUsuario" %>
+<%@ page import="java.util.*, culturarte.servicios.cliente.propuestas.DtPropuesta, culturarte.servicios.cliente.propuestas.DtCategoria, culturarte.servicios.cliente.propuestas.DtUsuario" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
 <html lang="es">
@@ -258,7 +258,7 @@
                         <strong>🔍 Búsqueda activa:</strong> "<%= busquedaActual %>"
                         <br>
                         <small style="color: #666;">
-                            Mostrando <%= ((List<DTPropuesta>) request.getAttribute("propuestas")).size() %> resultado(s)
+                            Mostrando <%= ((List<DtPropuesta>) request.getAttribute("propuestas")).size() %> resultado(s)
                         </small>
                     </div>
                     <a href="<%= request.getContextPath() %>/principal" 
@@ -281,7 +281,7 @@
         <%List<com.culturarteWeb.servlets.PrincipalServlet.PropuestaConDatos> propuestas = (List<com.culturarteWeb.servlets.PrincipalServlet.PropuestaConDatos>) request.getAttribute("propuestas");
             if (propuestas != null) {
                 for (com.culturarteWeb.servlets.PrincipalServlet.PropuestaConDatos propuestaConDatos : propuestas) {
-                    culturarte.logica.DTs.DTPropuesta p = propuestaConDatos.getPropuesta();
+                    DtPropuesta p = propuestaConDatos.getPropuesta();
                     String imagen = (p.getImagen() != null && !p.getImagen().isEmpty()) ? p.getImagen() : "imagenes/propuestaDefault.png";
                     double porcentajeProgreso = p.getMontoNecesario() > 0 ? (propuestaConDatos.getMontoRecaudado() / p.getMontoNecesario()) * 100 : 0;
                     if (porcentajeProgreso > 100) porcentajeProgreso = 100;%>
@@ -331,10 +331,10 @@
                 <h3>CATEGORÍAS</h3>
                 <form id="filtroCategorias" method="post" action="consultaPropuestaPorCategoria">
                    <div class="listaCategorias">
-                        <%List<DTCategoria> categorias = (List<DTCategoria>) request.getAttribute("categorias");
+                        <%List<DtCategoria> categorias = (List<DtCategoria>) request.getAttribute("categorias");
                        String[] categoriasSeleccionadas = (String[]) request.getAttribute("categoriasSeleccionadas");
                         if (categorias != null) {
-                            for (DTCategoria categ : categorias) {
+                            for (DtCategoria categ : categorias) {
                                 boolean estaSeleccionada = false;
                                 if (categoriasSeleccionadas != null) {
                                     for (String catSel : categoriasSeleccionadas) {

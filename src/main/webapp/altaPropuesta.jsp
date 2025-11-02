@@ -1,6 +1,6 @@
-<%@ page import="culturarte.logica.DTs.DTPropuesta" %>
+<%@ page import="culturarte.servicios.cliente.propuestas.DtPropuesta" %>
 <%@ page import="java.util.List" %>
-<%@ page import="culturarte.logica.DTs.DTCategoria" %>
+<%@ page import="culturarte.servicios.cliente.propuestas.DtCategoria;" %>
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
 <!doctype html>
 <html lang="es">
@@ -17,8 +17,8 @@
 
 <%-- Comentario #1: MIRA BRO; ACA LO RESIVO, fijate en ese request.getAttribute, viste que se llama "categorias" tambien
  tremenda casualidad no?...o quizas no sea casualidad...--%>
-<% List<DTCategoria> categorias = (List<DTCategoria>) request.getAttribute("categororias"); %>
-<% categorias = (categorias == null) ? (List<DTCategoria>) request.getAttribute("categorias") : categorias; %>
+<% List<DtCategoria> categorias = (List<DtCategoria>) request.getAttribute("categororias"); %>
+<% categorias = (categorias == null) ? (List<DtCategoria>) request.getAttribute("categorias") : categorias; %>
 
 <div class="container py-4">
     <jsp:include page="cabezalComun.jsp"/>
@@ -43,7 +43,7 @@
                                 <select name="categoria" class="form-select" required>
                                     <option value="" disabled <%= request.getParameter("categoria") == null ? "selected" : "" %>>Seleccionar categoría</option>
                                     <% if (categorias != null) {
-                                        for (DTCategoria cat : categorias) {
+                                        for (DtCategoria cat : categorias) {
                                             String selected = cat.getNombre().equals(request.getParameter("categoria")) ? "selected" : "";
                                     %>
                                     <option value="<%=cat.getNombre()%>" <%=selected%>><%=cat.getNombre()%></option>

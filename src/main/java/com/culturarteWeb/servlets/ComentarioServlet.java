@@ -70,8 +70,8 @@ public class ComentarioServlet extends HttpServlet {
 
             boolean yaComento = false;
             for (DtComentario comentarioExistente : comentariosExistentes) {
-                if (comentarioExistente.getUsuarioNickname() != null && 
-                    comentarioExistente.getUsuarioNickname().equals(usuario.getNickname())) {
+                if (comentarioExistente.getUsuario().getNickname() != null &&
+                    comentarioExistente.getUsuario().getNickname().equals(usuario.getNickname())) {
                     yaComento = true;
                     break;
                 }
@@ -140,8 +140,8 @@ public class ComentarioServlet extends HttpServlet {
 
             boolean yaComento = false;
             for (DtComentario comentarioExistente : comentariosExistentes) {
-                if (comentarioExistente.getUsuarioNickname() != null && 
-                    comentarioExistente.getUsuarioNickname().equals(usuario.getNickname())) {
+                if (comentarioExistente.getUsuario().getNickname() != null &&
+                    comentarioExistente.getUsuario().getNickname().equals(usuario.getNickname())) {
                     yaComento = true;
                     break;
                 }

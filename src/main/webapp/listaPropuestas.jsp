@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="java.util.List, culturarte.logica.DTs.DTPropuesta" %>
+<%@ page import="java.util.List, culturarte.servicios.cliente.propuestas.DtPropuesta, culturarte.servicios.cliente.propuestas.DtCategoria" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -60,9 +60,9 @@
                                                 <select class="form-select" id="categoria" name="categoria">
                                                     <option value="todas" <%= "todas".equals(request.getAttribute("categoriaFiltro")) ? "selected" : "" %>>Todas</option>
                                                     <% 
-                                                    List<culturarte.logica.DTs.DTCategoria> categorias = (List<culturarte.logica.DTs.DTCategoria>) request.getAttribute("categorias");
+                                                    List<DtCategoria> categorias = (List<DtCategoria>) request.getAttribute("categorias");
                                                     if (categorias != null) {
-                                                        for (culturarte.logica.DTs.DTCategoria categoria : categorias) {
+                                                        for (DtCategoria categoria : categorias) {
                                                             String nombreCategoria = categoria.getNombre();
                                                             boolean selected = nombreCategoria.equals(request.getAttribute("categoriaFiltro"));
                                                     %>
@@ -114,11 +114,11 @@
                         </div>
                     </div>
                     
-                    <% List<DTPropuesta> propuestas = (List<DTPropuesta>) request.getAttribute("propuestas");
+                    <% List<DtPropuesta> propuestas = (List<DtPropuesta>) request.getAttribute("propuestas");
                     if (propuestas != null && !propuestas.isEmpty()) { %>
                         
                         <div class="row">
-                            <% for (DTPropuesta propuesta : propuestas) { %>
+                            <% for (DtPropuesta propuesta : propuestas) { %>
                                 <div class="col-md-6 mb-4">
                                     <div class="card h-100">
                                         <% 

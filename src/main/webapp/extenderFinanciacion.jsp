@@ -1,4 +1,4 @@
-<%@ page import="culturarte.logica.DTs.DTPropuesta" %>
+<%@ page import="culturarte.servicios.cliente.propuestas.DtPropuesta" %>
 <%@ page import="java.util.List" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
@@ -16,7 +16,7 @@
 <%-- uso este objeto para ver la sesion del usuario activo que tipo de usuario es --%>
 
 <%
-    List<DTPropuesta> propuestas = (List<DTPropuesta>) request.getAttribute("propuestas");
+    List<DtPropuesta> propuestas = (List<DtPropuesta>) request.getAttribute("propuestas");
 %>
 
 <div class="container py-4">
@@ -38,7 +38,7 @@
                     <option value="" disabled selected>Seleccionar propuesta</option>
                     <%
                         if (propuestas != null) {
-                            for (DTPropuesta prop : propuestas) {
+                            for (DtPropuesta prop : propuestas) {
                     %>
                     <%--La opcion que elige el usuario es lo que mando en value--%>
                     <option value="<%=prop.getTitulo()%>"><%=prop.getTitulo()%></option>

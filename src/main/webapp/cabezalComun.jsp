@@ -1,4 +1,4 @@
-<%@ page import="culturarte.logica.DTs.DTUsuario" %>
+<%@ page import="culturarte.servicios.cliente.usuario.DtUsuario" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <header>
     <div class="logo">
@@ -40,7 +40,7 @@
      <div class="Botones-Menu-Superior">
             <%Object usuarioObj = session.getAttribute("usuarioLogueado");
             if(usuarioObj != null) {
-                DTUsuario usuario = (DTUsuario) usuarioObj;%>
+                DtUsuario usuario = (DtUsuario) usuarioObj;%>
                 <div style="display:flex; align-items:center; gap:10px;">
                    <%
                        String rutaImagen = usuario.getImagen();

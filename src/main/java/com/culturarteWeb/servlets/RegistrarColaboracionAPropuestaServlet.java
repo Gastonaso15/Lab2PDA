@@ -1,8 +1,7 @@
 package com.culturarteWeb.servlets;
 
-import culturarte.servicios.cliente.propuestas.DtPropuesta;
-import culturarte.servicios.cliente.propuestas.IPropuestaControllerWS;
-import culturarte.servicios.cliente.propuestas.PropuestaWSEndpointService;
+import com.culturarteWeb.util.WSFechaPropuesta;
+import culturarte.servicios.cliente.propuestas.*;
 import culturarte.servicios.cliente.usuario.DtUsuario;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -12,6 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
+import java.lang.Exception;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -20,6 +20,20 @@ import static java.net.URLEncoder.encode;
 
 @WebServlet("/registrarColaboracion")
 public class RegistrarColaboracionAPropuestaServlet extends HttpServlet {
+
+    private IPropuestaControllerWS IPC;
+
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        try {
+            PropuestaWSEndpointService propuestaServicio = new PropuestaWSEndpointService();
+            IPC = propuestaServicio.getPropuestaWSEndpointPort();
+
+        } catch (Exception e) {
+            throw new ServletException("Error al inicializar Web Services", e);
+        }
+    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -62,27 +76,28 @@ public class RegistrarColaboracionAPropuestaServlet extends HttpServlet {
             try {
                 double monto = Double.parseDouble(montoStr);
 
-                PropuestaWSEndpointService propuestaServicio = new PropuestaWSEndpointService();
-                IPropuestaControllerWS pc = propuestaServicio.getPropuestaWSEndpointPort();
-
-                PropuestaManejador pm = PropuestaManejador.getInstance();
-                Propuesta propuesta = pm.obtenerPropuestaPorTitulo(titulo);
+                DtPropuesta propuesta = IPC.getDTPropuesta(titulo);
                 
                 boolean esPrimeraColaboracion = false;
                 if (propuesta != null && propuesta.getColaboraciones() != null && propuesta.getColaboraciones().isEmpty()) {
                     esPrimeraColaboracion = true;
                 }
-                
-                pc.registrarColaboracion(titulo,usuarioActual.getNickname(), monto, tipoRetorno);
+
+                IPC.registrarColaboracion(titulo,usuarioActual.getNickname(), monto, tipoRetorno);
 
                 if (esPrimeraColaboracion && propuesta != null && 
                     propuesta.getEstadoActual().toString().equals("PUBLICADA")) {
                     
-                    propuesta.setEstadoActual(culturarte.logica.modelos.EstadoPropuesta.EN_FINANCIACION);
-                    propuesta.agregarPropuestaEstado(new culturarte.logica.modelos.PropuestaEstado(
-                        propuesta, culturarte.logica.modelos.EstadoPropuesta.EN_FINANCIACION, 
-                        java.time.LocalDate.now()));
-                    pm.actualizarPropuesta(propuesta);
+                    propuesta.setEstadoActual(DtEstadoPropuesta.EN_FINANCIACION);
+
+                    DtPropuestaEstado propEstado = new DtPropuestaEstado();
+                    propEstado.setPropuesta(propuesta);
+                    propEstado.setEstado(DtEstadoPropuesta.EN_FINANCIACION);
+                    propEstado.setFechaCambio(WSFechaPropuesta.toWSLocalDate(java.time.LocalDate.now()));
+
+                    propuesta.getHistorial().add(propEstado);
+
+                    IPC.modificarHistorialYEstadoPropuesta(propuesta);
                 }
                 
                 session.setAttribute("mensajeGlobal", "¡Tu colaboración ha sido registrada con éxito!");
@@ -102,14 +117,17 @@ public class RegistrarColaboracionAPropuestaServlet extends HttpServlet {
     }
 
     private void cargarDatosParaLaVista(HttpServletRequest request, String tituloSeleccionado) {
-        PropuestaManejador pm = PropuestaManejador.getInstance();
-        List<DtPropuesta> propuestas = pm.obtenerTodasLasPropuestas();
+
+        ListaDTPropuesta propuestasWS = IPC.devolverTodasLasPropuestas();
+        List<DtPropuesta> propuestas = propuestasWS.getPropuesta();
+
         request.setAttribute("propuestas", propuestas);
 
         if (tituloSeleccionado != null && !tituloSeleccionado.isEmpty()) {
-            Propuesta propuesta = pm.obtenerPropuestaPorTitulo(tituloSeleccionado);
+            DtPropuesta propuesta = IPC.getDTPropuesta(tituloSeleccionado);
+
             if (propuesta != null) {
-                request.setAttribute("propuestaSeleccionada", propuesta.getDataType());
+                request.setAttribute("propuestaSeleccionada", propuesta);
             }
         }
     }

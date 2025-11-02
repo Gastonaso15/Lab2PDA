@@ -49,11 +49,10 @@ public class ConsultaPerfilUsuarioServlet extends HttpServlet {
                 ListaStrings nicksWS = ICU.devolverNicknamesUsuarios();
                 List<String> nicks = nicksWS.getItem();
 
-                UsuarioManejador UM = UsuarioManejador.getInstance();
                 List<Map<String, Object>> usuariosCombo = new ArrayList<>();
 
                 for (String n : nicks) {
-                    Usuario u = UM.obtenerUsuarioPorNickname(n);
+                    DtUsuario u = ICU.getDTUsuario(n);
                     if (u == null) continue;
 
                     String tipo;
@@ -136,8 +135,10 @@ public class ConsultaPerfilUsuarioServlet extends HttpServlet {
             }
 
             // <-- 2: Armo lista de seguidores -->
-            UsuarioManejador mu = UsuarioManejador.getInstance();
-            List<String> followers = mu.obtenerFollowers(nick);
+
+            ListaStrings nicks2WS = ICU.devolverUsuariosSeguidores(nick);
+            List<String> followers = nicks2WS.getItem();
+
 
             List<String> followersProponentes = new ArrayList<>();
             List<String> followersColaboradores = new ArrayList<>();
@@ -165,8 +166,8 @@ public class ConsultaPerfilUsuarioServlet extends HttpServlet {
 
             // <-- 4: Armo lista de todas las Propuestas que el Proponente registrado publicó menos las que están en estado INGREADAS, y otra en que solo están las que esten en estado INGRESADA-->
             //<--Separo Propuestas entre INGRESADAS y todos los demas estados; La unica forma de ver las INGRESADAS es si un Proponente entra a su propio perfil -->
-            List<DtPropuesta> publicadasNoIngresada = new ArrayList<>();
-            List<DtPropuesta> creadasIngresadas = new ArrayList<>();
+            List<culturarte.servicios.cliente.usuario.DtPropuesta> publicadasNoIngresada = new ArrayList<>();
+            List<culturarte.servicios.cliente.usuario.DtPropuesta> creadasIngresadas = new ArrayList<>();
             if (proponente != null && proponente.getPropuestas() != null) {
                 for (culturarte.servicios.cliente.usuario.DtPropuesta p : proponente.getPropuestas()) {
                     DtEstadoPropuesta est = p.getEstadoActual();
@@ -178,7 +179,7 @@ public class ConsultaPerfilUsuarioServlet extends HttpServlet {
             }
 
             //  <-- 5: Armo lista de Propuestas en que el Colaborador colaboró -->
-            List<DtPropuesta> colaboradas = new ArrayList<>();
+            List<culturarte.servicios.cliente.usuario.DtPropuesta> colaboradas = new ArrayList<>();
             List<DtColaboracion> misColaboraciones = new ArrayList<>();
             if (colaborador != null && colaborador.getColaboraciones() != null) {
                 misColaboraciones = colaborador.getColaboraciones();

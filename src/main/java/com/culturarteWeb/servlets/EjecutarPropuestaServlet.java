@@ -1,6 +1,8 @@
 package com.culturarteWeb.servlets;
 
 
+import com.culturarteWeb.util.WSFechaPropuesta;
+import culturarte.servicios.cliente.propuestas.*;
 import culturarte.servicios.cliente.usuario.DtUsuario;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -10,12 +12,27 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
+import java.lang.Exception;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @WebServlet("/ejecutarPropuesta")
 public class EjecutarPropuestaServlet extends HttpServlet {
+
+    private IPropuestaControllerWS IPC;
+
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        try {
+            PropuestaWSEndpointService propuestaServicio = new PropuestaWSEndpointService();
+            IPC = propuestaServicio.getPropuestaWSEndpointPort();
+
+        } catch (Exception e) {
+            throw new ServletException("Error al inicializar Web Services", e);
+        }
+    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -36,13 +53,13 @@ public class EjecutarPropuestaServlet extends HttpServlet {
             session.removeAttribute("mensaje");
         }
 
-        PropuestaManejador pm = PropuestaManejador.getInstance();
-        List<Propuesta> propuestasFinanciadas = pm.obtenerTodasLasPropuestas()
+        ListaDTPropuesta propuestasWS = IPC.devolverTodasLasPropuestas();
+        List<DtPropuesta> propuestasFinanciadas = propuestasWS.getPropuesta()
                 .stream()
-                .filter(p -> p.getProponente() != null
-                        && nickname.equals(p.getProponente())
+                .filter(p -> p.getDTProponente().getNickname() != null
+                        && nickname.equals(p.getDTProponente().getNickname())
                         && p.getEstadoActual().toString().equals("FINANCIADA"))
-                .map(p -> pm.obtenerPropuestaPorTitulo(p.getTitulo()))
+                .map(p -> IPC.getDTPropuesta(p.getTitulo()))
                 .filter(p -> p != null)
                 .collect(Collectors.toList());
 
@@ -72,18 +89,22 @@ public class EjecutarPropuestaServlet extends HttpServlet {
             return;
         }
 
-        PropuestaManejador pm = PropuestaManejador.getInstance();
-        Propuesta propuesta = pm.obtenerPropuestaPorTitulo(titulo);
+        DtPropuesta propuesta = IPC.getDTPropuesta(titulo);
         String mensaje;
 
         if (propuesta != null
-                && propuesta.getProponente() != null
-                && nickname.equals(propuesta.getProponente().getNickname())
-                && propuesta.getEstadoActual() == EstadoPropuesta.FINANCIADA) {
+                && propuesta.getDTProponente().getNickname() != null
+                && nickname.equals(propuesta.getDTProponente().getNickname())
+                && propuesta.getEstadoActual() == DtEstadoPropuesta.FINANCIADA) {
 
-            propuesta.agregarPropuestaEstado(new culturarte.logica.modelos.PropuestaEstado(
-                propuesta, EstadoPropuesta.FINANCIADA, LocalDate.now()));
-            pm.actualizarPropuesta(propuesta);
+            DtPropuestaEstado propEstado = new DtPropuestaEstado();
+            propEstado.setPropuesta(propuesta);
+            propEstado.setEstado(DtEstadoPropuesta.FINANCIADA);
+            propEstado.setFechaCambio(WSFechaPropuesta.toWSLocalDate(java.time.LocalDate.now()));
+
+            propuesta.getHistorial().add(propEstado);
+
+            IPC.modificarHistorialYEstadoPropuesta(propuesta);
 
             mensaje = "Propuesta '" + titulo + "' marcada como ejecutada correctamente.";
         } else {

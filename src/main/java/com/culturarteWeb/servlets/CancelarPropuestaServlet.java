@@ -1,7 +1,8 @@
 package com.culturarteWeb.servlets;
 
 
-import culturarte.servicios.cliente.propuestas.DtPropuesta;
+import com.culturarteWeb.util.WSFechaPropuesta;
+import culturarte.servicios.cliente.propuestas.*;
 import culturarte.servicios.cliente.usuario.DtUsuario;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -11,6 +12,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
+import java.lang.Exception;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,6 +21,20 @@ import static java.net.URLEncoder.encode;
 
 @WebServlet("/cancelarPropuesta")
 public class CancelarPropuestaServlet extends HttpServlet {
+
+    private IPropuestaControllerWS IPC;
+
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        try {
+            PropuestaWSEndpointService propuestaServicio = new PropuestaWSEndpointService();
+            IPC = propuestaServicio.getPropuestaWSEndpointPort();
+
+        } catch (Exception e) {
+            throw new ServletException("Error al inicializar Web Services", e);
+        }
+    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -39,8 +55,9 @@ public class CancelarPropuestaServlet extends HttpServlet {
             session.removeAttribute("mensaje");
         }
 
-        PropuestaManejador pm = PropuestaManejador.getInstance();
-        List<DtPropuesta> propuestasFinanciadas = pm.obtenerTodasLasPropuestas()
+
+        ListaDTPropuesta propuestasWS = IPC.devolverTodasLasPropuestas();
+        List<DtPropuesta> propuestasFinanciadas = propuestasWS.getPropuesta()
                 .stream()
                 .filter(p -> p.getDTProponente() != null
                         && nickname.equals(p.getDTProponente().getNickname())
@@ -76,18 +93,25 @@ public class CancelarPropuestaServlet extends HttpServlet {
             return;
         }
 
-        PropuestaManejador pm = PropuestaManejador.getInstance();
-        Propuesta propuesta = pm.obtenerPropuestaPorTitulo(titulo);
+        DtPropuesta propuesta = IPC.getDTPropuesta(titulo);
         String mensaje;
 
         if (propuesta != null
-                && propuesta.getProponente() != null
-                && nickname.equals(propuesta.getProponente().getNickname())
-                && propuesta.getEstadoActual() == EstadoPropuesta.FINANCIADA) {
+                && propuesta.getDTProponente().getNickname() != null
+                && nickname.equals(propuesta.getDTProponente().getNickname())
+                && propuesta.getEstadoActual() == DtEstadoPropuesta.FINANCIADA) {
 
-            propuesta.setEstadoActual(EstadoPropuesta.CANCELADA);
-            propuesta.agregarPropuestaEstado(new culturarte.logica.modelos.PropuestaEstado(propuesta, EstadoPropuesta.CANCELADA, LocalDate.now()));
-            pm.actualizarPropuesta(propuesta);
+
+            propuesta.setEstadoActual(DtEstadoPropuesta.CANCELADA);
+
+            DtPropuestaEstado propEstado = new DtPropuestaEstado();
+            propEstado.setPropuesta(propuesta);
+            propEstado.setEstado(DtEstadoPropuesta.CANCELADA);
+            propEstado.setFechaCambio(WSFechaPropuesta.toWSLocalDate(java.time.LocalDate.now()));
+
+            propuesta.getHistorial().add(propEstado);
+
+            IPC.modificarHistorialYEstadoPropuesta(propuesta);
 
             mensaje = "Propuesta '" + titulo + "' cancelada correctamente.";
         } else {

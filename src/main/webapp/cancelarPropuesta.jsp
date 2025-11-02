@@ -1,8 +1,8 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="culturarte.logica.DTs.DTPropuesta" %>
+<%@ page import="culturarte.servicios.cliente.propuestas.DtPropuesta" %>
 <%@ page import="java.util.List" %>
 <%
-    List<DTPropuesta> propuestas = (List<DTPropuesta>) request.getAttribute("propuestas");
+    List<DtPropuesta> propuestas = (List<DtPropuesta>) request.getAttribute("propuestas");
     String mensaje = (String) request.getAttribute("mensaje");
     String nickname = (String) session.getAttribute("usuario");
 %>
@@ -46,7 +46,7 @@
                 </tr>
             </thead>
             <tbody>
-                <% for (DTPropuesta p : propuestas) { %>
+                <% for (DtPropuesta p : propuestas) { %>
                     <tr>
                         <td><%= p.getTitulo() %></td>
                         <td><%= p.getDescripcion() %></td>

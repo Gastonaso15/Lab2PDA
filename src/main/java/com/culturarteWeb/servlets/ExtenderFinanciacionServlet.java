@@ -67,7 +67,7 @@ public class ExtenderFinanciacionServlet extends HttpServlet {
         }
 
         for (DtPropuesta p : propuestas) {
-            if(p.getProponente().equals(userProponente.getNickname())) {
+            if(p.getDTProponente().getNickname().equals(userProponente.getNickname())) {
                 if ((p.getEstadoActual().toString().equals("EN_FINANCIACION")
                         || p.getEstadoActual().toString().equals("PUBLICADA"))) {
                     boolean activa = p.getFechaPublicacion().atStartOfDay()

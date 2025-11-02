@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="culturarte.logica.DTs.DTPropuesta, culturarte.logica.DTs.DTUsuario" %>
+<%@ page import="culturarte.servicios.cliente.propuestas.DtPropuesta, culturarte.servicios.cliente.propuestas.DtUsuario" %>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -58,8 +58,8 @@
                         <% } %>
                         
                         <% 
-                        DTPropuesta propuesta = (DTPropuesta) request.getAttribute("propuesta");
-                        DTUsuario usuario = (DTUsuario) request.getAttribute("usuario");
+                        DtPropuesta propuesta = (DtPropuesta) request.getAttribute("propuesta");
+                        DtUsuario usuario = (DtUsuario) request.getAttribute("usuario");
                         %>
                         
                         <% if (propuesta != null && usuario != null) { %>

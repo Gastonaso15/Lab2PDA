@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="java.util.List, culturarte.logica.DTs.DTPropuesta, culturarte.logica.DTs.DTUsuario" %>
+<%@ page import="java.util.List, culturarte.servicios.cliente.propuestas.DtPropuesta, culturarte.servicios.cliente.propuestas.DtUsuario" %>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -50,8 +50,8 @@
                         <% } %>
                         
                         <% 
-                        List<DTPropuesta> propuestas = (List<DTPropuesta>) request.getAttribute("propuestasParaComentar");
-                        DTUsuario usuario = (DTUsuario) request.getAttribute("usuario");
+                        List<DtPropuesta> propuestas = (List<DtPropuesta>) request.getAttribute("propuestasParaComentar");
+                        DtUsuario usuario = (DtUsuario) request.getAttribute("usuario");
                         %>
                         
                         <% if (propuestas != null && !propuestas.isEmpty()) { %>
@@ -62,7 +62,7 @@
                             </div>
                             
                             <div class="row">
-                                <% for (DTPropuesta propuesta : propuestas) { %>
+                                <% for (DtPropuesta propuesta : propuestas) { %>
                                     <div class="col-md-6 mb-4">
                                         <div class="card propuesta-card h-100">
                                             <% 

@@ -1,6 +1,5 @@
 package com.culturarteWeb.servlets;
 
-
 import com.culturarteWeb.util.WSFechaUsuario;
 import culturarte.servicios.cliente.propuestas.*;
 import culturarte.servicios.cliente.usuario.DtUsuario;

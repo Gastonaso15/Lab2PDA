@@ -3,7 +3,7 @@
 <%@ page import="java.util.Locale" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.util.*" %>
-<%@ page import="culturarte.logica.DTs.*" %>
+<%@ page import="culturarte.servicios.cliente.usuario.*" %>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -34,7 +34,7 @@
         List<Map<String, Object>> usuariosCombo =
                 (List<Map<String, Object>>) request.getAttribute("usuariosCombo");
 
-        DTUsuario usuario = null;
+        DtUsuario usuario = null;
         boolean esProponente = false;
         Boolean esPropio = null;
         boolean esColaborador = false;
@@ -66,7 +66,7 @@
     <%
     } else {
         // PANTALLA 2: vista de perfil
-        usuario = (DTUsuario) request.getAttribute("usuarioConsultado");
+        usuario = (DtUsuario) request.getAttribute("usuarioConsultado");
         esPropio = (Boolean) request.getAttribute("esPropio");
         esProponente = request.getAttribute("esProponente") != null && (Boolean) request.getAttribute("esProponente");
         esColaborador = request.getAttribute("esColaborador") != null && (Boolean) request.getAttribute("esColaborador");
@@ -76,11 +76,11 @@
         List<String> followersProponentes = (List<String>) request.getAttribute("followersProponentes");
         List<String> followersColaboradores = (List<String>) request.getAttribute("followersColaboradores");
 
-        List<DTPropuesta> favoritas = (List<DTPropuesta>) request.getAttribute("favoritas");
-        List<DTPropuesta> publicadasNoIngresada = (List<DTPropuesta>) request.getAttribute("publicadasNoIngresada");
-        List<DTPropuesta> colaboradas = (List<DTPropuesta>) request.getAttribute("colaboradas");
-        List<DTPropuesta> creadasIngresadas = (List<DTPropuesta>) request.getAttribute("creadasIngresadas");
-        List<DTColaboracion> misColaboraciones = (List<DTColaboracion>) request.getAttribute("misColaboraciones");
+        List<DtPropuesta> favoritas = (List<DtPropuesta>) request.getAttribute("favoritas");
+        List<DtPropuesta> publicadasNoIngresada = (List<DtPropuesta>) request.getAttribute("publicadasNoIngresada");
+        List<DtPropuesta> colaboradas = (List<DtPropuesta>) request.getAttribute("colaboradas");
+        List<DtPropuesta> creadasIngresadas = (List<DtPropuesta>) request.getAttribute("creadasIngresadas");
+        List<DtColaboracion> misColaboraciones = (List<DtColaboracion>) request.getAttribute("misColaboraciones");
     %>
 
     <!-- Cabecera de perfil -->
@@ -198,7 +198,7 @@
                         </thead>
                         <tbody>
                         <% if (favoritas != null && !favoritas.isEmpty()) {
-                            for (DTPropuesta p : favoritas) { %>
+                            for (DtPropuesta p : favoritas) { %>
                         <tr>
                             <td><%=p.getTitulo()%></td>
                             <td class="text-center"><a class="btn btn-link btn-sm" href="<%=ctx%>/consultaPropuesta?accion=detalle&titulo=<%=p.getTitulo()%>">Ver detalle</a></td>
@@ -224,7 +224,7 @@
                         </thead>
                         <tbody>
                         <% if (publicadasNoIngresada != null && !publicadasNoIngresada.isEmpty()) {
-                            for (DTPropuesta p : publicadasNoIngresada) { %>
+                            for (DtPropuesta p : publicadasNoIngresada) { %>
                         <tr>
                             <td><%=p.getTitulo()%></td>
                             <td><span class="badge text-bg-secondary"><%=p.getEstadoActual()%></span></td>
@@ -257,8 +257,8 @@
                         <% if (colaboradas != null && !colaboradas.isEmpty()) {
                             //Fomateo la fecha y hora para que tenga una apariencia más linda a la vista
                             DateTimeFormatter fmtUY = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm", new Locale("es","UY"));
-                            for (DTColaboracion m : misColaboraciones){
-                                DTPropuesta prop = m.getPropuesta();
+                            for (DtColaboracion m : misColaboraciones){
+                                DtPropuesta prop = m.getPropuesta();
                         %>
                         <tr>
                         <td><%=prop.getTitulo()%></td>
@@ -294,7 +294,7 @@
                         </thead>
                         <tbody>
                         <% if (creadasIngresadas != null && !creadasIngresadas.isEmpty()) {
-                            for (DTPropuesta p : creadasIngresadas) { %>
+                            for (DtPropuesta p : creadasIngresadas) { %>
                         <tr>
                             <td><%=p.getTitulo()%></td>
                             <td><span class="badge text-bg-secondary"><%=p.getEstadoActual()%></span></td>
@@ -318,12 +318,12 @@
         </button>
 
         <%
-            DTUsuario usuarioConsultadoBtn = (DTUsuario) request.getAttribute("usuarioConsultado");
+            DtUsuario usuarioConsultadoBtn = (DtUsuario) request.getAttribute("usuarioConsultado");
             String nickConsultadoBtn = (usuarioConsultadoBtn != null)
                     ? usuarioConsultadoBtn.getNickname()
                     : request.getParameter("nick");
 
-            DTUsuario usuarioActualBtn = (DTUsuario) session.getAttribute("usuarioLogueado");
+            DtUsuario usuarioActualBtn = (DtUsuario) session.getAttribute("usuarioLogueado");
             Boolean esPropioBtn = (Boolean) request.getAttribute("esPropio");
             boolean puedeSeguir = (usuarioActualBtn != null) && Boolean.FALSE.equals(esPropioBtn);
             boolean loSigo = Boolean.TRUE.equals(request.getAttribute("loSigo"));

@@ -1,4 +1,5 @@
 package com.culturarteWeb.servlets;
+import com.culturarteWeb.util.WSFechaPropuesta;
 import culturarte.servicios.cliente.propuestas.*;
 import culturarte.servicios.cliente.usuario.DtUsuario;
 import culturarte.servicios.cliente.usuario.IUsuarioControllerWS;
@@ -248,17 +249,17 @@ public class PrincipalServlet extends HttpServlet {
 
     private void verificarVencimientosAutomaticamente() {
         try {
-            culturarte.logica.manejadores.PropuestaManejador pm = culturarte.logica.manejadores.PropuestaManejador.getInstance();
-            List<DtPropuesta> todasLasPropuestas = IPC.devolverTodasLasPropuestas();
+            ListaDTPropuesta propuestasWS = IPC.devolverTodasLasPropuestas();
+            List<DtPropuesta> todasLasPropuestas = propuestasWS.getPropuesta();
             
             java.time.LocalDate fechaActual = java.time.LocalDate.now();
             
             for (DtPropuesta dtPropuesta : todasLasPropuestas) {
-                culturarte.logica.modelos.Propuesta propuesta = pm.obtenerPropuestaPorTitulo(dtPropuesta.getTitulo());
+                DtPropuesta propuesta = IPC.getDTPropuesta(dtPropuesta.getTitulo());
                 
                 if (propuesta != null && 
-                    (propuesta.getEstadoActual() == culturarte.logica.modelos.EstadoPropuesta.PUBLICADA || 
-                     propuesta.getEstadoActual() == culturarte.logica.modelos.EstadoPropuesta.EN_FINANCIACION)) {
+                    (propuesta.getEstadoActual() == DtEstadoPropuesta.PUBLICADA ||
+                     propuesta.getEstadoActual() == DtEstadoPropuesta.EN_FINANCIACION)) {
 
                     if (propuesta.getFechaPublicacion() != null) {
                         java.time.LocalDate fechaVencimiento = propuesta.getFechaPublicacion().plusDays(30);
@@ -268,25 +269,36 @@ public class PrincipalServlet extends HttpServlet {
                             double montoNecesario = dtPropuesta.getMontoNecesario();
                             
                             if (montoRecaudado >= montoNecesario) {
-                                propuesta.setEstadoActual(culturarte.logica.modelos.EstadoPropuesta.FINANCIADA);
-                                propuesta.agregarPropuestaEstado(new culturarte.logica.modelos.PropuestaEstado(
-                                    propuesta, culturarte.logica.modelos.EstadoPropuesta.FINANCIADA, fechaActual));
-                                
+                                propuesta.setEstadoActual(DtEstadoPropuesta.FINANCIADA);
+
+                                DtPropuestaEstado propEstado = new DtPropuestaEstado();
+                                propEstado.setPropuesta(propuesta);
+                                propEstado.setEstado(DtEstadoPropuesta.FINANCIADA);
+                                propEstado.setFechaCambio(WSFechaPropuesta.toWSLocalDate(fechaActual));
+
+                                propuesta.getHistorial().add(propEstado);
+
+
                                 System.out.println("Propuesta '" + propuesta.getTitulo() + 
                                     "' transicionada a FINANCIADA automáticamente (monto recaudado: $" + montoRecaudado + 
                                     ", monto necesario: $" + montoNecesario + ")");
                                 
                             } else {
-                                propuesta.setEstadoActual(culturarte.logica.modelos.EstadoPropuesta.NO_FINANCIADA);
-                                propuesta.agregarPropuestaEstado(new culturarte.logica.modelos.PropuestaEstado(
-                                    propuesta, culturarte.logica.modelos.EstadoPropuesta.NO_FINANCIADA, fechaActual));
-                                
+                                propuesta.setEstadoActual(DtEstadoPropuesta.NO_FINANCIADA);
+
+                                DtPropuestaEstado propEstado = new DtPropuestaEstado();
+                                propEstado.setPropuesta(propuesta);
+                                propEstado.setEstado(DtEstadoPropuesta.NO_FINANCIADA);
+                                propEstado.setFechaCambio(WSFechaPropuesta.toWSLocalDate(fechaActual));
+
+                                propuesta.getHistorial().add(propEstado);
+
                                 System.out.println("Propuesta '" + propuesta.getTitulo() + 
                                     "' transicionada a NO_FINANCIADA automáticamente (monto recaudado: $" + montoRecaudado + 
                                     ", monto necesario: $" + montoNecesario + ")");
                             }
-                            
-                            pm.actualizarPropuesta(propuesta);
+
+                            IPC.modificarHistorialYEstadoPropuesta(propuesta);
                         }
                     }
                 }

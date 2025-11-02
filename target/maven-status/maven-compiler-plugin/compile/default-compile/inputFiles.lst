@@ -15,7 +15,8 @@ C:\Users\agusm\IdeaProjects\Lab2PDA\src\main\java\com\culturarteWeb\servlets\Pri
 C:\Users\agusm\IdeaProjects\Lab2PDA\src\main\java\com\culturarteWeb\servlets\RegistrarColaboracionAPropuestaServlet.java
 C:\Users\agusm\IdeaProjects\Lab2PDA\src\main\java\com\culturarteWeb\servlets\SeguimientoDeUsuarioServlet.java
 C:\Users\agusm\IdeaProjects\Lab2PDA\src\main\java\com\culturarteWeb\util\AdaptadorLocalDate.java
-C:\Users\agusm\IdeaProjects\Lab2PDA\src\main\java\com\culturarteWeb\util\WSUtil.java
+C:\Users\agusm\IdeaProjects\Lab2PDA\src\main\java\com\culturarteWeb\util\WSFechaPropuesta.java
+C:\Users\agusm\IdeaProjects\Lab2PDA\src\main\java\com\culturarteWeb\util\WSFechaUsuario.java
 C:\Users\agusm\IdeaProjects\Lab2PDA\target\generated-sources\wsimport\culturarte\servicios\cliente\propuestas\DtCategoria.java
 C:\Users\agusm\IdeaProjects\Lab2PDA\target\generated-sources\wsimport\culturarte\servicios\cliente\propuestas\DtColaboracion.java
 C:\Users\agusm\IdeaProjects\Lab2PDA\target\generated-sources\wsimport\culturarte\servicios\cliente\propuestas\DtColaborador.java
