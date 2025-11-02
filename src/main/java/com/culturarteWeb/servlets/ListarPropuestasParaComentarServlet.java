@@ -1,3 +1,4 @@
+/*
 package com.culturarteWeb.servlets;
 
 import culturarte.servicios.cliente.propuestas.*;
@@ -81,3 +82,4 @@ public class ListarPropuestasParaComentarServlet extends HttpServlet {
         }
     }
 }
+*/

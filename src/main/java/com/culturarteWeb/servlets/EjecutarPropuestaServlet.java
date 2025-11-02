@@ -1,3 +1,4 @@
+/*
 package com.culturarteWeb.servlets;
 
 
@@ -121,3 +122,4 @@ public class EjecutarPropuestaServlet extends HttpServlet {
         }
     }
 }
+*/

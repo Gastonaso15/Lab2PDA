@@ -1,3 +1,4 @@
+/*
 package com.culturarteWeb.util;
 
 import culturarte.servicios.cliente.propuestas.LocalDate;
@@ -14,3 +15,4 @@ public class WSFechaPropuesta {
     }
 
 }
+*/
