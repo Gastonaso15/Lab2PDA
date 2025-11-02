@@ -8,156 +8,127 @@
     <groupId>com.mycompany.lab2pda</groupId>
     <artifactId>LabPDAWeb</artifactId>
     <version>1.0-SNAPSHOT</version>
+
     <packaging>war</packaging>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <jakarta.version>3.0.1</jakarta.version>
-        <jaxws.version>4.0.1</jaxws.version>
     </properties>
 
     <dependencies>
-        <!-- Jakarta Servlet API -->
         <dependency>
             <groupId>jakarta.servlet</groupId>
             <artifactId>jakarta.servlet-api</artifactId>
-            <version>6.0.0</version>
+            <version>5.0.0</version>
             <scope>provided</scope>
         </dependency>
-
-        <!-- Jakarta JSTL -->
         <dependency>
             <groupId>jakarta.servlet.jsp.jstl</groupId>
             <artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
-            <version>3.0.0</version>
+            <version>2.0.0</version>
         </dependency>
         <dependency>
             <groupId>org.glassfish.web</groupId>
             <artifactId>jakarta.servlet.jsp.jstl</artifactId>
-            <version>3.0.1</version>
+            <version>2.0.0</version>
         </dependency>
 
-        <!-- Jakarta XML Web Services (JAX-WS) -->
         <dependency>
-            <groupId>jakarta.xml.ws</groupId>
-            <artifactId>jakarta.xml.ws-api</artifactId>
-            <version>${jakarta.version}</version>
+            <groupId>javax.jws</groupId>
+            <artifactId>javax.jws-api</artifactId>
+            <version>1.1</version>
         </dependency>
 
-        <!-- Jakarta XML Binding (JAXB) -->
         <dependency>
-            <groupId>jakarta.xml.bind</groupId>
-            <artifactId>jakarta.xml.bind-api</artifactId>
-            <version>${jakarta.version}</version>
+            <groupId>javax.xml.ws</groupId>
+            <artifactId>jaxws-api</artifactId>
+            <version>2.3.1</version>
         </dependency>
 
-        <!-- JAX-WS Runtime Implementation -->
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>2.3.1</version>
+        </dependency>
+
         <dependency>
             <groupId>com.sun.xml.ws</groupId>
             <artifactId>jaxws-rt</artifactId>
-            <version>${jaxws.version}</version>
+            <version>2.3.2</version>
             <scope>runtime</scope>
         </dependency>
 
-        <!-- JAXB Runtime Implementation -->
         <dependency>
             <groupId>com.sun.xml.bind</groupId>
             <artifactId>jaxb-impl</artifactId>
-            <version>${jakarta.version}</version>
+            <version>2.3.2</version>
             <scope>runtime</scope>
         </dependency>
 
-        <!-- Jakarta Annotations -->
-        <dependency>
-            <groupId>jakarta.annotation</groupId>
-            <artifactId>jakarta.annotation-api</artifactId>
-            <version>2.1.1</version>
-        </dependency>
     </dependencies>
 
     <build>
-        <finalName>${project.artifactId}</finalName>
         <plugins>
-            <!-- Maven Compiler Plugin -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.11.0</version>
-                <configuration>
-                    <source>21</source>
-                    <target>21</target>
-                    <encoding>UTF-8</encoding>
-                </configuration>
-            </plugin>
-
-            <!-- Maven WAR Plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
-                <version>3.4.0</version>
-                <configuration>
-                    <failOnMissingWebXml>false</failOnMissingWebXml>
-                </configuration>
+                <version>3.3.2</version>
             </plugin>
 
-            <!-- JAX-WS Maven Plugin para generar stubs -->
             <plugin>
-                <groupId>com.sun.xml.ws</groupId>
-                <artifactId>jaxws-maven-plugin</artifactId>
-                <version>4.0.1</version>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-codegen-plugin</artifactId>
+                <version>3.5.5</version>
                 <executions>
-                    <!-- Generar stubs de Usuarios -->
                     <execution>
-                        <id>wsimport-usuarios</id>
+                        <id>wsimport-users</id>
                         <phase>generate-sources</phase>
                         <goals>
-                            <goal>wsimport</goal>
+                            <goal>wsdl2java</goal>
                         </goals>
                         <configuration>
-                            <wsdlUrls>
-                                <wsdlUrl>http://localhost:9128/culturarteWS/usuarios?wsdl</wsdlUrl>
-                            </wsdlUrls>
-                            <packageName>com.culturarteWeb.ws.usuarios</packageName>
-                            <sourceDestDir>${project.build.directory}/generated-sources/jaxws</sourceDestDir>
-                            <keep>true</keep>
-                            <verbose>true</verbose>
+                            <sourceRoot>${project.build.directory}/generated-sources/wsimport</sourceRoot>
+                            <wsdlOptions>
+                                <wsdlOption>
+                                    <wsdl>http://localhost:9128/culturarteWS/usuarios?wsdl</wsdl>
+                                    <extraargs>
+                                        <extraarg>-p</extraarg>
+                                        <extraarg>culturarte.servicios.cliente.usuario</extraarg>
+                                        <extraarg>-client</extraarg>
+                                    </extraargs>
+                                </wsdlOption>
+                            </wsdlOptions>
                         </configuration>
                     </execution>
-
-                    <!-- Generar stubs de Propuestas -->
                     <execution>
                         <id>wsimport-propuestas</id>
                         <phase>generate-sources</phase>
                         <goals>
-                            <goal>wsimport</goal>
+                            <goal>wsdl2java</goal>
                         </goals>
                         <configuration>
-                            <wsdlUrls>
-                                <wsdlUrl>http://localhost:9128/culturarteWS/propuestas?wsdl</wsdlUrl>
-                            </wsdlUrls>
-                            <packageName>com.culturarteWeb.ws.propuestas</packageName>
-                            <sourceDestDir>${project.build.directory}/generated-sources/jaxws</sourceDestDir>
-                            <keep>true</keep>
-                            <verbose>true</verbose>
+                            <sourceRoot>${project.build.directory}/generated-sources/wsimport</sourceRoot>
+                            <wsdlOptions>
+                                <wsdlOption>
+                                    <wsdl>http://localhost:9128/culturarteWS/propuestas?wsdl</wsdl>
+                                    <extraargs>
+                                        <extraarg>-p</extraarg>
+                                        <extraarg>culturarte.servicios.cliente.propuestas</extraarg>
+                                        <extraarg>-client</extraarg>
+                                    </extraargs>
+                                </wsdlOption>
+                            </wsdlOptions>
                         </configuration>
                     </execution>
                 </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>com.sun.xml.ws</groupId>
-                        <artifactId>jaxws-rt</artifactId>
-                        <version>${jaxws.version}</version>
-                    </dependency>
-                </dependencies>
             </plugin>
 
-            <!-- Build Helper Maven Plugin para agregar sources generados -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
-                <version>3.5.0</version>
+                <version>3.4.0</version>
                 <executions>
                     <execution>
                         <id>add-source</id>
@@ -167,7 +138,7 @@
                         </goals>
                         <configuration>
                             <sources>
-                                <source>${project.build.directory}/generated-sources/jaxws</source>
+                                <source>${project.build.directory}/generated-sources/wsimport</source>
                             </sources>
                         </configuration>
                     </execution>

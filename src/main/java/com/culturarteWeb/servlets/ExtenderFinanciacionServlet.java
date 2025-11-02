@@ -1,4 +1,3 @@
-/*
 package com.culturarteWeb.servlets;
 
 import culturarte.servicios.cliente.propuestas.DtPropuesta;
@@ -120,4 +119,3 @@ public class ExtenderFinanciacionServlet extends HttpServlet {
         doGet(request, response);
     }
 }
-*/

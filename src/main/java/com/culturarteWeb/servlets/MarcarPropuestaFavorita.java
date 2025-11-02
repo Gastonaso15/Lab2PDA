@@ -1,4 +1,3 @@
-/*
 package com.culturarteWeb.servlets;
 
 import culturarte.servicios.cliente.usuario.DtUsuario;
@@ -58,4 +57,3 @@ public class MarcarPropuestaFavorita extends HttpServlet {
     }
 
 }
-*/

@@ -1,4 +1,3 @@
-/*
 package com.culturarteWeb.servlets;
 
 import com.culturarteWeb.util.WSFechaPropuesta;
@@ -140,6 +139,21 @@ public class AltaPropuestaServlet extends HttpServlet {
             ListaStrings listaRetornos = new ListaStrings();
             listaRetornos.getItem().addAll(retornos);
 
+
+            /*  Estuve debuggeando y lo dejo por si lo preciso de nuevo
+            System.out.println("Titulo: " + titulo);
+            System.out.println("Descripcion: " + descripcion);
+            System.out.println("Lugar: " + lugar);
+            System.out.println("Fecha string: " + fechaStr); // Debugging line
+            System.out.println("Precio: " + precio);
+            System.out.println("Monto: " + monto);
+            System.out.println("Imagen: " + imagen);
+            System.out.println("Proponente: " + proponente.getNickname());
+            System.out.println("Categoria: " + categoria);
+            System.out.println("Retornos: " + retornos);
+            */
+            //Creo la propuesta
+
             IPC.crearPropuesta(titulo, descripcion, lugar, WSFechaPropuesta.toWSLocalDate(fecha), precio, monto, imagen,
                     proponente.getNickname(), categoria, listaRetornos);
 
@@ -158,4 +172,3 @@ public class AltaPropuestaServlet extends HttpServlet {
         }
     }
 }
-*/

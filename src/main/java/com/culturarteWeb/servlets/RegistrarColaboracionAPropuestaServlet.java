@@ -1,4 +1,3 @@
-/*
 package com.culturarteWeb.servlets;
 
 import com.culturarteWeb.util.WSFechaPropuesta;
@@ -133,4 +132,3 @@ public class RegistrarColaboracionAPropuestaServlet extends HttpServlet {
         }
     }
 }
-*/

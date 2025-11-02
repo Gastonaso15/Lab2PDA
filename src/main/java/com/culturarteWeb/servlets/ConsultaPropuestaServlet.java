@@ -1,4 +1,3 @@
-/*
 package com.culturarteWeb.servlets;
 
 import com.culturarteWeb.util.WSFechaUsuario;
@@ -358,4 +357,3 @@ public class ConsultaPropuestaServlet extends HttpServlet {
         return categorias;
     }
 }
-*/
