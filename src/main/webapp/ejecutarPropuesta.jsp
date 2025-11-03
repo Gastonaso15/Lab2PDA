@@ -1,7 +1,8 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.util.List" %>
-<%@ page import="culturarte.logica.modelos.Propuesta" %>
-<%@ page import="culturarte.logica.DTs.DTUsuario" %>
+<%@ page import="culturarte.servicios.cliente.propuestas.DtPropuesta" %>
+<%@ page import="culturarte.servicios.cliente.usuario.DtUsuario" %>
+<%@ page import="com.culturarteWeb.util.WSFechaPropuesta" %>
 
 <!DOCTYPE html>
 <html lang="es">
@@ -45,7 +46,7 @@
                 <% } %>
 
                 <%
-                    List<Propuesta> propuestas = (List<Propuesta>) request.getAttribute("propuestas");
+                    List<DtPropuesta> propuestas = (List<DtPropuesta>) request.getAttribute("propuestas");
                     if (propuestas == null || propuestas.isEmpty()) {
                 %>
                     <div class="alert alert-info">
@@ -55,13 +56,13 @@
                 <% } else { %>
                     
                     <div class="row">
-                        <% for (Propuesta propuesta : propuestas) { %>
+                        <% for (DtPropuesta propuesta : propuestas) { %>
                             <div class="col-md-6 col-lg-4">
                                 <div class="card propuesta-card">
                                     <div class="card-header d-flex justify-content-between align-items-center">
                                         <h6 class="mb-0"><%= propuesta.getTitulo() %></h6>
                                         <span class="badge bg-success estado-badge">
-                                            <%= propuesta.getEstadoActual().toString() %>
+                                            <%= propuesta.getEstadoActual() != null ? propuesta.getEstadoActual().toString() : "Sin estado" %>
                                         </span>
                                     </div>
                                     
@@ -78,7 +79,14 @@
                                                 <i class="bi bi-geo-alt"></i> <%= propuesta.getLugar() %>
                                             </div>
                                             <div class="col-6">
-                                                <i class="bi bi-calendar"></i> <%= propuesta.getFechaPrevista() != null ? propuesta.getFechaPrevista() : "No especificada" %>
+                                                <i class="bi bi-calendar"></i> <% 
+                                                    if (propuesta.getFechaPrevista() != null) {
+                                                        java.time.LocalDate fechaPrevista = WSFechaPropuesta.toJavaLocalDate(propuesta.getFechaPrevista());
+                                                        out.print(fechaPrevista != null ? fechaPrevista.toString() : "No especificada");
+                                                    } else {
+                                                        out.print("No especificada");
+                                                    }
+                                                %>
                                             </div>
                                         </div>
                                         

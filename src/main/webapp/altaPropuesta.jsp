@@ -1,6 +1,6 @@
 <%@ page import="culturarte.servicios.cliente.propuestas.DtPropuesta" %>
 <%@ page import="java.util.List" %>
-<%@ page import="culturarte.servicios.cliente.propuestas.DtCategoria;" %>
+<%@ page import="culturarte.servicios.cliente.propuestas.DtCategoria" %>
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
 <!doctype html>
 <html lang="es">

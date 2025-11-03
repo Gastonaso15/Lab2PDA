@@ -4,6 +4,9 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.util.*" %>
 <%@ page import="culturarte.servicios.cliente.usuario.*" %>
+<%@ page import="culturarte.servicios.cliente.propuestas.DtPropuesta" %>
+<%@ page import="culturarte.servicios.cliente.propuestas.DtColaboracion" %>
+<%@ page import="com.culturarteWeb.util.WSFechaPropuesta" %>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -77,9 +80,9 @@
         List<String> followersColaboradores = (List<String>) request.getAttribute("followersColaboradores");
 
         List<DtPropuesta> favoritas = (List<DtPropuesta>) request.getAttribute("favoritas");
-        List<DtPropuesta> publicadasNoIngresada = (List<DtPropuesta>) request.getAttribute("publicadasNoIngresada");
-        List<DtPropuesta> colaboradas = (List<DtPropuesta>) request.getAttribute("colaboradas");
-        List<DtPropuesta> creadasIngresadas = (List<DtPropuesta>) request.getAttribute("creadasIngresadas");
+        List<culturarte.servicios.cliente.usuario.DtPropuesta> publicadasNoIngresada = (List<culturarte.servicios.cliente.usuario.DtPropuesta>) request.getAttribute("publicadasNoIngresada");
+        List<culturarte.servicios.cliente.usuario.DtPropuesta> colaboradas = (List<culturarte.servicios.cliente.usuario.DtPropuesta>) request.getAttribute("colaboradas");
+        List<culturarte.servicios.cliente.usuario.DtPropuesta> creadasIngresadas = (List<culturarte.servicios.cliente.usuario.DtPropuesta>) request.getAttribute("creadasIngresadas");
         List<DtColaboracion> misColaboraciones = (List<DtColaboracion>) request.getAttribute("misColaboraciones");
     %>
 
@@ -224,10 +227,10 @@
                         </thead>
                         <tbody>
                         <% if (publicadasNoIngresada != null && !publicadasNoIngresada.isEmpty()) {
-                            for (DtPropuesta p : publicadasNoIngresada) { %>
+                            for (culturarte.servicios.cliente.usuario.DtPropuesta p : publicadasNoIngresada) { %>
                         <tr>
                             <td><%=p.getTitulo()%></td>
-                            <td><span class="badge text-bg-secondary"><%=p.getEstadoActual()%></span></td>
+                            <td><span class="badge text-bg-secondary"><%=p.getEstadoActual() != null ? p.getEstadoActual().toString() : ""%></span></td>
                             <td class="text-center"><a class="btn btn-link btn-sm" href="<%=ctx%>/consultaPropuesta?accion=detalle&titulo=<%=p.getTitulo()%>">Ver detalle</a></td>
                         </tr>
                         <% } } else { %>
@@ -264,7 +267,14 @@
                         <td><%=prop.getTitulo()%></td>
                             <%--si esta en su propio perfil es la unica manera de que vea el monto y fecha--%>
                             <% if (esPropio != null && esPropio ){%>
-                        <td><%= (m.getFechaHora() != null) ? m.getFechaHora().format(fmtUY) : "-" %></td>
+                        <td><% 
+                                if (m.getFechaHora() != null) {
+                                    java.time.LocalDateTime fechaHora = WSFechaPropuesta.toJavaLocalDateTime(m.getFechaHora());
+                                    out.print(fechaHora != null ? fechaHora.format(fmtUY) : "-");
+                                } else {
+                                    out.print("-");
+                                }
+                            %></td>
                         <td><%=m.getMonto()%></td>
                             <%}else{%>
                             <td>- </td>
@@ -294,10 +304,10 @@
                         </thead>
                         <tbody>
                         <% if (creadasIngresadas != null && !creadasIngresadas.isEmpty()) {
-                            for (DtPropuesta p : creadasIngresadas) { %>
+                            for (culturarte.servicios.cliente.usuario.DtPropuesta p : creadasIngresadas) { %>
                         <tr>
                             <td><%=p.getTitulo()%></td>
-                            <td><span class="badge text-bg-secondary"><%=p.getEstadoActual()%></span></td>
+                            <td><span class="badge text-bg-secondary"><%=p.getEstadoActual() != null ? p.getEstadoActual().toString() : ""%></span></td>
                             <td class="text-center"><a class="btn btn-link btn-sm" href="<%=ctx%>/consultaPropuesta?accion=detalle&titulo=<%=p.getTitulo()%>">Ver detalle</a></td>
                         </tr>
                         <% } } else { %>

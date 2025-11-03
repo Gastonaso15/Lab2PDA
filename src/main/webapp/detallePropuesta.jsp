@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="culturarte.servicios.cliente.propuestas.DtPropuesta, culturarte.servicios.cliente.propuestas.DtUsuario, culturarte.servicios.cliente.propuestas.DtComentario, java.util.List, java.time.format.DateTimeFormatter" %>
+<%@ page import="culturarte.servicios.cliente.propuestas.DtPropuesta, culturarte.servicios.cliente.propuestas.DtUsuario, culturarte.servicios.cliente.propuestas.DtComentario, java.util.List, java.time.format.DateTimeFormatter, com.culturarteWeb.util.WSFechaPropuesta" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -148,20 +148,34 @@
                                                         <div>
                                                             <h6 class="card-title mb-1">
                                                                 <i class="bi bi-person-circle text-info"></i>
-                                                                <%= comentario.getUsuarioNickname() != null ? comentario.getUsuarioNickname() : "Usuario Anónimo" %>
+                                                                <% 
+                                                                    String nickname = "Usuario Anónimo";
+                                                                    if (comentario.getUsuario() != null && comentario.getUsuario().getNickname() != null) {
+                                                                        nickname = comentario.getUsuario().getNickname();
+                                                                    }
+                                                                    out.print(nickname);
+                                                                %>
                                                             </h6>
-                                                            <% if (comentario.getUsuarioNombreCompleto() != null && !comentario.getUsuarioNombreCompleto().isEmpty()) { %>
+                                                            <% if (comentario.getUsuario() != null && comentario.getUsuario().getNombre() != null) { %>
                                                                 <small class="text-muted">
-                                                                    <%= comentario.getUsuarioNombreCompleto() %>
+                                                                    <%= comentario.getUsuario().getNombre() %> 
+                                                                    <%= comentario.getUsuario().getApellido() != null ? comentario.getUsuario().getApellido() : "" %>
                                                                 </small>
                                                             <% } %>
                                                         </div>
                                                         <small class="text-muted">
-                                                            <% if (comentario.getFechaHora() != null) { %>
-                                                                <%= comentario.getFechaHora().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")) %>
-                                                            <% } else { %>
-                                                                Fecha no disponible
-                                                            <% } %>
+                                                            <% 
+                                                                if (comentario.getFechaHora() != null) {
+                                                                    java.time.LocalDateTime fechaHora = WSFechaPropuesta.toJavaLocalDateTime(comentario.getFechaHora());
+                                                                    if (fechaHora != null) {
+                                                                        out.print(fechaHora.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
+                                                                    } else {
+                                                                        out.print("Fecha no disponible");
+                                                                    }
+                                                                } else {
+                                                                    out.print("Fecha no disponible");
+                                                                }
+                                                            %>
                                                         </small>
                                                     </div>
                                                     <p class="card-text">

@@ -160,15 +160,17 @@ public class ConsultaPropuestaServlet extends HttpServlet {
 
             long diasRestantes = 0;
             if (propuestaSeleccionada.getFechaPublicacion() != null) {
-
                 java.time.LocalDate fechaPublicacion = WSFechaPropuesta.toJavaLocalDate(propuestaSeleccionada.getFechaPublicacion());
-                java.time.LocalDate fechaActual = java.time.LocalDate.now();
+                
+                if (fechaPublicacion != null) {
+                    java.time.LocalDate fechaActual = java.time.LocalDate.now();
 
-                java.time.LocalDate fechaLimite = fechaPublicacion.plusDays(30);
+                    java.time.LocalDate fechaLimite = fechaPublicacion.plusDays(30);
 
-                diasRestantes = ChronoUnit.DAYS.between(fechaActual, fechaLimite);
-                if (diasRestantes < 0) {
-                    diasRestantes = 0;
+                    diasRestantes = ChronoUnit.DAYS.between(fechaActual, fechaLimite);
+                    if (diasRestantes < 0) {
+                        diasRestantes = 0;
+                    }
                 }
             }
             request.setAttribute("diasRestantes", diasRestantes);

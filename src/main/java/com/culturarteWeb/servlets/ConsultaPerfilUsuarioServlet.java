@@ -64,7 +64,8 @@ public class ConsultaPerfilUsuarioServlet extends HttpServlet {
                     }
 
                     Map<String, Object> row = new HashMap<>();
-                    row.put("id", u.getId());
+                    Long id = u.getId();
+                    row.put("id", id != null ? id : 0L);
                     row.put("nick", u.getNickname());
                     row.put("nombre", u.getNombre());
                     row.put("apellido", u.getApellido());
@@ -72,8 +73,12 @@ public class ConsultaPerfilUsuarioServlet extends HttpServlet {
                     usuariosCombo.add(row);
                 }
 
-                // ordenado por id ascendente
-                usuariosCombo.sort(Comparator.comparingLong(m -> (Long) m.get("id")));
+                usuariosCombo.sort(Comparator.comparingLong(m -> {
+                    Object idObj = m.get("id");
+                    if (idObj == null) return 0L;
+                    if (idObj instanceof Long) return (Long) idObj;
+                    return 0L;
+                }));
 
                 // Seteo la lista enriquecida para el JSP
                 req.setAttribute("usuariosCombo", usuariosCombo);

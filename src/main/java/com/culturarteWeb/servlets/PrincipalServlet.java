@@ -211,13 +211,16 @@ public class PrincipalServlet extends HttpServlet {
         try {
             if (propuesta.getFechaPublicacion() != null) {
                 java.time.LocalDate fechaPublicacion = WSFechaPropuesta.toJavaLocalDate(propuesta.getFechaPublicacion());
-                java.time.LocalDate fechaActual = java.time.LocalDate.now();
-
-                java.time.LocalDate fechaLimite = fechaPublicacion.plusDays(30);
                 
-                diasRestantes = ChronoUnit.DAYS.between(fechaActual, fechaLimite);
-                if (diasRestantes < 0) {
-                    diasRestantes = 0;
+                if (fechaPublicacion != null) {
+                    java.time.LocalDate fechaActual = java.time.LocalDate.now();
+
+                    java.time.LocalDate fechaLimite = fechaPublicacion.plusDays(30);
+                    
+                    diasRestantes = ChronoUnit.DAYS.between(fechaActual, fechaLimite);
+                    if (diasRestantes < 0) {
+                        diasRestantes = 0;
+                    }
                 }
             }
         } catch (Exception e) {
@@ -263,9 +266,11 @@ public class PrincipalServlet extends HttpServlet {
 
                     if (propuesta.getFechaPublicacion() != null) {
                         java.time.LocalDate fechaPublicacion = WSFechaPropuesta.toJavaLocalDate(propuesta.getFechaPublicacion());
-                        java.time.LocalDate fechaVencimiento = fechaPublicacion.plusDays(30);
                         
-                        if (fechaActual.isAfter(fechaVencimiento)) {
+                        if (fechaPublicacion != null) {
+                            java.time.LocalDate fechaVencimiento = fechaPublicacion.plusDays(30);
+                            
+                            if (fechaActual.isAfter(fechaVencimiento)) {
                             double montoRecaudado = calcularMontoRecaudado(dtPropuesta);
                             double montoNecesario = dtPropuesta.getMontoNecesario();
                             
@@ -300,6 +305,7 @@ public class PrincipalServlet extends HttpServlet {
                             }
 
                             IPC.modificarHistorialYEstadoPropuesta(propuesta);
+                            }
                         }
                     }
                 }
