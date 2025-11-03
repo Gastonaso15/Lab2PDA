@@ -14,13 +14,13 @@
 <body class="bg-light">
 
 <!-- Cabecera -->
-<%-- Lo comento porque hay que adaptar el cabezal comun tambien, sino no queda estetico
+
 <div class="container">
     <jsp:include page="cabezalComun.jsp"/>
 </div>
 
 <!-- Contenido centrado y fluido -->
-<main class="container d-flex align-items-center justify-content-center min-vh-100 py-5">
+<main class="container d-flex justify-content-center py-3 pt-md-5">
     <div class="row justify-content-center w-100">
         <!-- Columna responsiva: ocupa to do móvil y se achica en pantallas grandes -->
         <div class="col-12 col-sm-10 col-md-7 col-lg-5 col-xl-4">
