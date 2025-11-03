@@ -4,12 +4,17 @@
 <html>
 <head>
     <title>Registrar Colaboración a Propuesta</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <jsp:include page="estiloCabezalComun.jsp"/>
 
     <style>
-        body { background-color: #f8f9fa; padding-top: 2rem; padding-bottom: 2rem; }
+        body {
+            background-color: #f8f9fa;
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+        }
     </style>
 </head>
 <body>
@@ -39,7 +44,8 @@
                     <form action="registrarColaboracion" method="post">
                         <input type="hidden" name="accion" value="seleccionar"/>
                         <div class="input-group">
-                            <select id="selectPropuesta" name="titulo" class="form-select" required>
+                            <select id="selectPropuesta" name="titulo" class="form-select" required
+                                    onchange="this.form.submit()"> <%-- CAMBIO: Añadido para auto-submit --%>
                                 <option value="" disabled ${empty propuestaSeleccionada ? 'selected' : ''}>-- Elige una propuesta para ver sus detalles --</option>
                                 <c:forEach var="p" items="${propuestas}">
                                     <option value="${p.titulo}" <c:if test="${not empty propuestaSeleccionada && propuestaSeleccionada.titulo eq p.titulo}">selected</c:if>>
@@ -98,7 +104,7 @@
                                 </select>
                             </div>
 
-                            <div class="d-flex justify-content-end gap-2 mt-4">
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
                                 <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalCancelar">
                                     Cancelar
                                 </button>
