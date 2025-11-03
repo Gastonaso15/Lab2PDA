@@ -210,10 +210,10 @@ public class PrincipalServlet extends HttpServlet {
 
         try {
             if (propuesta.getFechaPublicacion() != null) {
-                LocalDate fechaPublicacion = propuesta.getFechaPublicacion();
-                LocalDate fechaActual = LocalDate.now();
+                java.time.LocalDate fechaPublicacion = WSFechaPropuesta.toJavaLocalDate(propuesta.getFechaPublicacion());
+                java.time.LocalDate fechaActual = java.time.LocalDate.now();
 
-                LocalDate fechaLimite = fechaPublicacion.plusDays(30);
+                java.time.LocalDate fechaLimite = fechaPublicacion.plusDays(30);
                 
                 diasRestantes = ChronoUnit.DAYS.between(fechaActual, fechaLimite);
                 if (diasRestantes < 0) {
@@ -262,7 +262,8 @@ public class PrincipalServlet extends HttpServlet {
                      propuesta.getEstadoActual() == DtEstadoPropuesta.EN_FINANCIACION)) {
 
                     if (propuesta.getFechaPublicacion() != null) {
-                        java.time.LocalDate fechaVencimiento = propuesta.getFechaPublicacion().plusDays(30);
+                        java.time.LocalDate fechaPublicacion = WSFechaPropuesta.toJavaLocalDate(propuesta.getFechaPublicacion());
+                        java.time.LocalDate fechaVencimiento = fechaPublicacion.plusDays(30);
                         
                         if (fechaActual.isAfter(fechaVencimiento)) {
                             double montoRecaudado = calcularMontoRecaudado(dtPropuesta);

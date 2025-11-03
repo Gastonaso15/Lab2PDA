@@ -1,6 +1,7 @@
 package com.culturarteWeb.servlets;
 
 import com.culturarteWeb.util.WSFechaUsuario;
+import com.culturarteWeb.util.WSFechaPropuesta;
 import culturarte.servicios.cliente.propuestas.*;
 import culturarte.servicios.cliente.usuario.DtUsuario;
 import culturarte.servicios.cliente.usuario.IUsuarioControllerWS;
@@ -160,10 +161,10 @@ public class ConsultaPropuestaServlet extends HttpServlet {
             long diasRestantes = 0;
             if (propuestaSeleccionada.getFechaPublicacion() != null) {
 
-                LocalDate fechaPublicacion = propuestaSeleccionada.getFechaPublicacion();
-                LocalDate fechaActual = LocalDate.now();
+                java.time.LocalDate fechaPublicacion = WSFechaPropuesta.toJavaLocalDate(propuestaSeleccionada.getFechaPublicacion());
+                java.time.LocalDate fechaActual = java.time.LocalDate.now();
 
-                LocalDate fechaLimite = fechaPublicacion.plusDays(30);
+                java.time.LocalDate fechaLimite = fechaPublicacion.plusDays(30);
 
                 diasRestantes = ChronoUnit.DAYS.between(fechaActual, fechaLimite);
                 if (diasRestantes < 0) {
@@ -299,7 +300,9 @@ public class ConsultaPropuestaServlet extends HttpServlet {
                     if (p1.getFechaPublicacion() == null && p2.getFechaPublicacion() == null) return 0;
                     if (p1.getFechaPublicacion() == null) return 1;
                     if (p2.getFechaPublicacion() == null) return -1;
-                    return p2.getFechaPublicacion().compareTo(p1.getFechaPublicacion()); // Descendente
+                    java.time.LocalDate fecha1 = WSFechaPropuesta.toJavaLocalDate(p1.getFechaPublicacion());
+                    java.time.LocalDate fecha2 = WSFechaPropuesta.toJavaLocalDate(p2.getFechaPublicacion());
+                    return fecha2.compareTo(fecha1); // Descendente
                 });
                 break;
             case "monto_ascendente":

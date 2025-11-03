@@ -1,5 +1,6 @@
 package com.culturarteWeb.servlets;
 
+import com.culturarteWeb.util.WSFechaPropuesta;
 import culturarte.servicios.cliente.propuestas.DtPropuesta;
 import culturarte.servicios.cliente.propuestas.IPropuestaControllerWS;
 import culturarte.servicios.cliente.propuestas.ListaDTPropuesta;
@@ -70,11 +71,14 @@ public class ExtenderFinanciacionServlet extends HttpServlet {
             if(p.getDTProponente().getNickname().equals(userProponente.getNickname())) {
                 if ((p.getEstadoActual().toString().equals("EN_FINANCIACION")
                         || p.getEstadoActual().toString().equals("PUBLICADA"))) {
-                    boolean activa = p.getFechaPublicacion().atStartOfDay()
-                            .plusMonths(1)
-                            .isAfter(LocalDateTime.now());
-                    if (activa)
-                        propuestasActivas.add(p);
+                    if (p.getFechaPublicacion() != null) {
+                        java.time.LocalDate fechaPublicacion = WSFechaPropuesta.toJavaLocalDate(p.getFechaPublicacion());
+                        boolean activa = fechaPublicacion.atStartOfDay()
+                                .plusMonths(1)
+                                .isAfter(LocalDateTime.now());
+                        if (activa)
+                            propuestasActivas.add(p);
+                    }
                 }
             }
         }
