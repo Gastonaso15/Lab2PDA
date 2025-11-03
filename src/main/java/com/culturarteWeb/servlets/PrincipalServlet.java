@@ -280,7 +280,7 @@ public class PrincipalServlet extends HttpServlet {
                                 DtPropuestaEstado propEstado = new DtPropuestaEstado();
                                 propEstado.setPropuesta(propuesta);
                                 propEstado.setEstado(DtEstadoPropuesta.FINANCIADA);
-                                propEstado.setFechaCambio(WSFechaPropuesta.toWSLocalDate(fechaActual));
+                                propEstado.setFechaCambio(WSFechaPropuesta.toWSLocalDateWS(fechaActual));
 
                                 propuesta.getHistorial().add(propEstado);
 
@@ -295,7 +295,7 @@ public class PrincipalServlet extends HttpServlet {
                                 DtPropuestaEstado propEstado = new DtPropuestaEstado();
                                 propEstado.setPropuesta(propuesta);
                                 propEstado.setEstado(DtEstadoPropuesta.NO_FINANCIADA);
-                                propEstado.setFechaCambio(WSFechaPropuesta.toWSLocalDate(fechaActual));
+                                propEstado.setFechaCambio(WSFechaPropuesta.toWSLocalDateWS(fechaActual));
 
                                 propuesta.getHistorial().add(propEstado);
 

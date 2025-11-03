@@ -125,6 +125,45 @@
                 </executions>
             </plugin>
 
+            <!-- Plugin para eliminar las clases LocalDate y LocalDateTime generadas vacías -->
+            <!-- Se ejecuta DESPUÉS de wsdl2java pero ANTES de add-source -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>remove-empty-date-classes-propuestas</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <echo message="Eliminando clases LocalDate y LocalDateTime generadas vacías (propuestas)..."/>
+                                <delete file="${project.build.directory}/generated-sources/wsimport/culturarte/servicios/cliente/propuestas/LocalDate.java" failonerror="false"/>
+                                <delete file="${project.build.directory}/generated-sources/wsimport/culturarte/servicios/cliente/propuestas/LocalDateTime.java" failonerror="false"/>
+                            </target>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>remove-empty-date-classes-usuario</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <echo message="Eliminando clases LocalDate y LocalDateTime generadas vacías (usuario)..."/>
+                                <delete file="${project.build.directory}/generated-sources/wsimport/culturarte/servicios/cliente/usuario/LocalDate.java" failonerror="false"/>
+                                <delete file="${project.build.directory}/generated-sources/wsimport/culturarte/servicios/cliente/usuario/LocalDateTime.java" failonerror="false"/>
+                                <echo message="Clases vacías eliminadas. Usando clases personalizadas con campos completos."/>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>

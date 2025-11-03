@@ -103,13 +103,25 @@
                                 <p><%= propuesta.getLugar() != null ? propuesta.getLugar() : "No especificado" %></p>
 
                                 <h6>Fecha Prevista</h6>
-                                <p><%= propuesta.getFechaPrevista() != null ?
-                                    propuesta.getFechaPrevista() : "No especificada" %></p>
+                                <p><% 
+                                    if (propuesta.getFechaPrevista() != null) {
+                                        java.time.LocalDate fechaPrevista = WSFechaPropuesta.toJavaLocalDate(propuesta.getFechaPrevista());
+                                        out.print(fechaPrevista != null ? fechaPrevista.toString() : "No especificada");
+                                    } else {
+                                        out.print("No especificada");
+                                    }
+                                %></p>
                             </div>
                             <div class="col-md-6">
                                 <h6>Fecha de Publicación</h6>
-                                <p><%= propuesta.getFechaPublicacion() != null ?
-                                    propuesta.getFechaPublicacion() : "No publicada" %></p>
+                                <p><% 
+                                    if (propuesta.getFechaPublicacion() != null) {
+                                        java.time.LocalDate fechaPublicacion = WSFechaPropuesta.toJavaLocalDate(propuesta.getFechaPublicacion());
+                                        out.print(fechaPublicacion != null ? fechaPublicacion.toString() : "No publicada");
+                                    } else {
+                                        out.print("No publicada");
+                                    }
+                                %></p>
 
                                 <h6>Categoría</h6>
                                 <p><%= propuesta.getCategoria() != null ?

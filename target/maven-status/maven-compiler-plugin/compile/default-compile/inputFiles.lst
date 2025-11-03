@@ -1,65 +1,70 @@
-C:\Users\marti\Documents\Facultad\4to semestre\Programacion de aplicaciones\lab\TAREA 2\src\main\java\com\culturarteWeb\servlets\AltaPerfilServlet.java
-C:\Users\marti\Documents\Facultad\4to semestre\Programacion de aplicaciones\lab\TAREA 2\src\main\java\com\culturarteWeb\servlets\AltaPropuestaServlet.java
-C:\Users\marti\Documents\Facultad\4to semestre\Programacion de aplicaciones\lab\TAREA 2\src\main\java\com\culturarteWeb\servlets\CancelarPropuestaServlet.java
-C:\Users\marti\Documents\Facultad\4to semestre\Programacion de aplicaciones\lab\TAREA 2\src\main\java\com\culturarteWeb\servlets\CierreDeSesionServlet.java
-C:\Users\marti\Documents\Facultad\4to semestre\Programacion de aplicaciones\lab\TAREA 2\src\main\java\com\culturarteWeb\servlets\ComentarioServlet.java
-C:\Users\marti\Documents\Facultad\4to semestre\Programacion de aplicaciones\lab\TAREA 2\src\main\java\com\culturarteWeb\servlets\ConsultaPerfilUsuarioServlet.java
-C:\Users\marti\Documents\Facultad\4to semestre\Programacion de aplicaciones\lab\TAREA 2\src\main\java\com\culturarteWeb\servlets\ConsultaPropuestaPorCategoriaServlet.java
-C:\Users\marti\Documents\Facultad\4to semestre\Programacion de aplicaciones\lab\TAREA 2\src\main\java\com\culturarteWeb\servlets\ConsultaPropuestaServlet.java
-C:\Users\marti\Documents\Facultad\4to semestre\Programacion de aplicaciones\lab\TAREA 2\src\main\java\com\culturarteWeb\servlets\EjecutarPropuestaServlet.java
-C:\Users\marti\Documents\Facultad\4to semestre\Programacion de aplicaciones\lab\TAREA 2\src\main\java\com\culturarteWeb\servlets\ExtenderFinanciacionServlet.java
-C:\Users\marti\Documents\Facultad\4to semestre\Programacion de aplicaciones\lab\TAREA 2\src\main\java\com\culturarteWeb\servlets\InicioDeSesionServlet.java
-C:\Users\marti\Documents\Facultad\4to semestre\Programacion de aplicaciones\lab\TAREA 2\src\main\java\com\culturarteWeb\servlets\ListarPropuestasParaComentarServlet.java
-C:\Users\marti\Documents\Facultad\4to semestre\Programacion de aplicaciones\lab\TAREA 2\src\main\java\com\culturarteWeb\servlets\MarcarPropuestaFavorita.java
-C:\Users\marti\Documents\Facultad\4to semestre\Programacion de aplicaciones\lab\TAREA 2\src\main\java\com\culturarteWeb\servlets\PrincipalServlet.java
-C:\Users\marti\Documents\Facultad\4to semestre\Programacion de aplicaciones\lab\TAREA 2\src\main\java\com\culturarteWeb\servlets\RegistrarColaboracionAPropuestaServlet.java
-C:\Users\marti\Documents\Facultad\4to semestre\Programacion de aplicaciones\lab\TAREA 2\src\main\java\com\culturarteWeb\servlets\SeguimientoDeUsuarioServlet.java
-C:\Users\marti\Documents\Facultad\4to semestre\Programacion de aplicaciones\lab\TAREA 2\src\main\java\com\culturarteWeb\util\AdaptadorLocalDate.java
-C:\Users\marti\Documents\Facultad\4to semestre\Programacion de aplicaciones\lab\TAREA 2\src\main\java\com\culturarteWeb\util\WSFechaPropuesta.java
-C:\Users\marti\Documents\Facultad\4to semestre\Programacion de aplicaciones\lab\TAREA 2\src\main\java\com\culturarteWeb\util\WSFechaUsuario.java
-C:\Users\marti\Documents\Facultad\4to semestre\Programacion de aplicaciones\lab\TAREA 2\target\generated-sources\wsimport\culturarte\servicios\cliente\propuestas\DtCategoria.java
-C:\Users\marti\Documents\Facultad\4to semestre\Programacion de aplicaciones\lab\TAREA 2\target\generated-sources\wsimport\culturarte\servicios\cliente\propuestas\DtColaboracion.java
-C:\Users\marti\Documents\Facultad\4to semestre\Programacion de aplicaciones\lab\TAREA 2\target\generated-sources\wsimport\culturarte\servicios\cliente\propuestas\DtColaborador.java
-C:\Users\marti\Documents\Facultad\4to semestre\Programacion de aplicaciones\lab\TAREA 2\target\generated-sources\wsimport\culturarte\servicios\cliente\propuestas\DtComentario.java
-C:\Users\marti\Documents\Facultad\4to semestre\Programacion de aplicaciones\lab\TAREA 2\target\generated-sources\wsimport\culturarte\servicios\cliente\propuestas\DtEstadoPropuesta.java
-C:\Users\marti\Documents\Facultad\4to semestre\Programacion de aplicaciones\lab\TAREA 2\target\generated-sources\wsimport\culturarte\servicios\cliente\propuestas\DtProponente.java
-C:\Users\marti\Documents\Facultad\4to semestre\Programacion de aplicaciones\lab\TAREA 2\target\generated-sources\wsimport\culturarte\servicios\cliente\propuestas\DtPropuesta.java
-C:\Users\marti\Documents\Facultad\4to semestre\Programacion de aplicaciones\lab\TAREA 2\target\generated-sources\wsimport\culturarte\servicios\cliente\propuestas\DtPropuestaEstado.java
-C:\Users\marti\Documents\Facultad\4to semestre\Programacion de aplicaciones\lab\TAREA 2\target\generated-sources\wsimport\culturarte\servicios\cliente\propuestas\DtSeguimiento.java
-C:\Users\marti\Documents\Facultad\4to semestre\Programacion de aplicaciones\lab\TAREA 2\target\generated-sources\wsimport\culturarte\servicios\cliente\propuestas\DtTipoRetorno.java
-C:\Users\marti\Documents\Facultad\4to semestre\Programacion de aplicaciones\lab\TAREA 2\target\generated-sources\wsimport\culturarte\servicios\cliente\propuestas\DtUsuario.java
-C:\Users\marti\Documents\Facultad\4to semestre\Programacion de aplicaciones\lab\TAREA 2\target\generated-sources\wsimport\culturarte\servicios\cliente\propuestas\Exception.java
-C:\Users\marti\Documents\Facultad\4to semestre\Programacion de aplicaciones\lab\TAREA 2\target\generated-sources\wsimport\culturarte\servicios\cliente\propuestas\Exception_Exception.java
-C:\Users\marti\Documents\Facultad\4to semestre\Programacion de aplicaciones\lab\TAREA 2\target\generated-sources\wsimport\culturarte\servicios\cliente\propuestas\IPropuestaControllerWS.java
-C:\Users\marti\Documents\Facultad\4to semestre\Programacion de aplicaciones\lab\TAREA 2\target\generated-sources\wsimport\culturarte\servicios\cliente\propuestas\IPropuestaControllerWS_PropuestaWSEndpointPort_Client.java
-C:\Users\marti\Documents\Facultad\4to semestre\Programacion de aplicaciones\lab\TAREA 2\target\generated-sources\wsimport\culturarte\servicios\cliente\propuestas\ListaDTCategoria.java
-C:\Users\marti\Documents\Facultad\4to semestre\Programacion de aplicaciones\lab\TAREA 2\target\generated-sources\wsimport\culturarte\servicios\cliente\propuestas\ListaDTColaboracion.java
-C:\Users\marti\Documents\Facultad\4to semestre\Programacion de aplicaciones\lab\TAREA 2\target\generated-sources\wsimport\culturarte\servicios\cliente\propuestas\ListaDTComentario.java
-C:\Users\marti\Documents\Facultad\4to semestre\Programacion de aplicaciones\lab\TAREA 2\target\generated-sources\wsimport\culturarte\servicios\cliente\propuestas\ListaDTPropuesta.java
-C:\Users\marti\Documents\Facultad\4to semestre\Programacion de aplicaciones\lab\TAREA 2\target\generated-sources\wsimport\culturarte\servicios\cliente\propuestas\ListaStrings.java
-C:\Users\marti\Documents\Facultad\4to semestre\Programacion de aplicaciones\lab\TAREA 2\target\generated-sources\wsimport\culturarte\servicios\cliente\propuestas\LocalDate.java
-C:\Users\marti\Documents\Facultad\4to semestre\Programacion de aplicaciones\lab\TAREA 2\target\generated-sources\wsimport\culturarte\servicios\cliente\propuestas\LocalDateTime.java
-C:\Users\marti\Documents\Facultad\4to semestre\Programacion de aplicaciones\lab\TAREA 2\target\generated-sources\wsimport\culturarte\servicios\cliente\propuestas\ObjectFactory.java
-C:\Users\marti\Documents\Facultad\4to semestre\Programacion de aplicaciones\lab\TAREA 2\target\generated-sources\wsimport\culturarte\servicios\cliente\propuestas\package-info.java
-C:\Users\marti\Documents\Facultad\4to semestre\Programacion de aplicaciones\lab\TAREA 2\target\generated-sources\wsimport\culturarte\servicios\cliente\propuestas\PropuestaWSEndpointService.java
-C:\Users\marti\Documents\Facultad\4to semestre\Programacion de aplicaciones\lab\TAREA 2\target\generated-sources\wsimport\culturarte\servicios\cliente\usuario\DtCategoria.java
-C:\Users\marti\Documents\Facultad\4to semestre\Programacion de aplicaciones\lab\TAREA 2\target\generated-sources\wsimport\culturarte\servicios\cliente\usuario\DtColaboracion.java
-C:\Users\marti\Documents\Facultad\4to semestre\Programacion de aplicaciones\lab\TAREA 2\target\generated-sources\wsimport\culturarte\servicios\cliente\usuario\DtColaborador.java
-C:\Users\marti\Documents\Facultad\4to semestre\Programacion de aplicaciones\lab\TAREA 2\target\generated-sources\wsimport\culturarte\servicios\cliente\usuario\DtComentario.java
-C:\Users\marti\Documents\Facultad\4to semestre\Programacion de aplicaciones\lab\TAREA 2\target\generated-sources\wsimport\culturarte\servicios\cliente\usuario\DtEstadoPropuesta.java
-C:\Users\marti\Documents\Facultad\4to semestre\Programacion de aplicaciones\lab\TAREA 2\target\generated-sources\wsimport\culturarte\servicios\cliente\usuario\DtProponente.java
-C:\Users\marti\Documents\Facultad\4to semestre\Programacion de aplicaciones\lab\TAREA 2\target\generated-sources\wsimport\culturarte\servicios\cliente\usuario\DtPropuesta.java
-C:\Users\marti\Documents\Facultad\4to semestre\Programacion de aplicaciones\lab\TAREA 2\target\generated-sources\wsimport\culturarte\servicios\cliente\usuario\DtPropuestaEstado.java
-C:\Users\marti\Documents\Facultad\4to semestre\Programacion de aplicaciones\lab\TAREA 2\target\generated-sources\wsimport\culturarte\servicios\cliente\usuario\DtSeguimiento.java
-C:\Users\marti\Documents\Facultad\4to semestre\Programacion de aplicaciones\lab\TAREA 2\target\generated-sources\wsimport\culturarte\servicios\cliente\usuario\DtTipoRetorno.java
-C:\Users\marti\Documents\Facultad\4to semestre\Programacion de aplicaciones\lab\TAREA 2\target\generated-sources\wsimport\culturarte\servicios\cliente\usuario\DtUsuario.java
-C:\Users\marti\Documents\Facultad\4to semestre\Programacion de aplicaciones\lab\TAREA 2\target\generated-sources\wsimport\culturarte\servicios\cliente\usuario\Exception.java
-C:\Users\marti\Documents\Facultad\4to semestre\Programacion de aplicaciones\lab\TAREA 2\target\generated-sources\wsimport\culturarte\servicios\cliente\usuario\Exception_Exception.java
-C:\Users\marti\Documents\Facultad\4to semestre\Programacion de aplicaciones\lab\TAREA 2\target\generated-sources\wsimport\culturarte\servicios\cliente\usuario\IUsuarioControllerWS.java
-C:\Users\marti\Documents\Facultad\4to semestre\Programacion de aplicaciones\lab\TAREA 2\target\generated-sources\wsimport\culturarte\servicios\cliente\usuario\IUsuarioControllerWS_UsuarioWSEndpointPort_Client.java
-C:\Users\marti\Documents\Facultad\4to semestre\Programacion de aplicaciones\lab\TAREA 2\target\generated-sources\wsimport\culturarte\servicios\cliente\usuario\ListaStrings.java
-C:\Users\marti\Documents\Facultad\4to semestre\Programacion de aplicaciones\lab\TAREA 2\target\generated-sources\wsimport\culturarte\servicios\cliente\usuario\LocalDate.java
-C:\Users\marti\Documents\Facultad\4to semestre\Programacion de aplicaciones\lab\TAREA 2\target\generated-sources\wsimport\culturarte\servicios\cliente\usuario\LocalDateTime.java
-C:\Users\marti\Documents\Facultad\4to semestre\Programacion de aplicaciones\lab\TAREA 2\target\generated-sources\wsimport\culturarte\servicios\cliente\usuario\ObjectFactory.java
-C:\Users\marti\Documents\Facultad\4to semestre\Programacion de aplicaciones\lab\TAREA 2\target\generated-sources\wsimport\culturarte\servicios\cliente\usuario\package-info.java
-C:\Users\marti\Documents\Facultad\4to semestre\Programacion de aplicaciones\lab\TAREA 2\target\generated-sources\wsimport\culturarte\servicios\cliente\usuario\UsuarioWSEndpointService.java
+/home/gaston/IdeaProjects/Lab2PDA/src/main/java/com/culturarteWeb/servlets/CancelarPropuestaServlet.java
+/home/gaston/IdeaProjects/Lab2PDA/src/main/java/com/culturarteWeb/servlets/AltaPropuestaServlet.java
+/home/gaston/IdeaProjects/Lab2PDA/target/generated-sources/wsimport/culturarte/servicios/cliente/propuestas/ListaDTCategoria.java
+/home/gaston/IdeaProjects/Lab2PDA/target/generated-sources/wsimport/culturarte/servicios/cliente/usuario/IUsuarioControllerWS_UsuarioWSEndpointPort_Client.java
+/home/gaston/IdeaProjects/Lab2PDA/target/generated-sources/wsimport/culturarte/servicios/cliente/propuestas/Exception_Exception.java
+/home/gaston/IdeaProjects/Lab2PDA/src/main/java/com/culturarteWeb/servlets/AltaPerfilServlet.java
+/home/gaston/IdeaProjects/Lab2PDA/target/generated-sources/wsimport/culturarte/servicios/cliente/usuario/DtSeguimiento.java
+/home/gaston/IdeaProjects/Lab2PDA/src/main/java/com/culturarteWeb/servlets/ConsultaPerfilUsuarioServlet.java
+/home/gaston/IdeaProjects/Lab2PDA/target/generated-sources/wsimport/culturarte/servicios/cliente/propuestas/ListaDTColaboracion.java
+/home/gaston/IdeaProjects/Lab2PDA/src/main/java/culturarte/servicios/cliente/usuario/LocalDateTime.java
+/home/gaston/IdeaProjects/Lab2PDA/target/generated-sources/wsimport/culturarte/servicios/cliente/propuestas/DtCategoria.java
+/home/gaston/IdeaProjects/Lab2PDA/target/generated-sources/wsimport/culturarte/servicios/cliente/usuario/DtEstadoPropuesta.java
+/home/gaston/IdeaProjects/Lab2PDA/target/generated-sources/wsimport/culturarte/servicios/cliente/usuario/LocalDateTimeWS.java
+/home/gaston/IdeaProjects/Lab2PDA/target/generated-sources/wsimport/culturarte/servicios/cliente/propuestas/DtPropuesta.java
+/home/gaston/IdeaProjects/Lab2PDA/target/generated-sources/wsimport/culturarte/servicios/cliente/propuestas/package-info.java
+/home/gaston/IdeaProjects/Lab2PDA/target/generated-sources/wsimport/culturarte/servicios/cliente/usuario/DtUsuario.java
+/home/gaston/IdeaProjects/Lab2PDA/target/generated-sources/wsimport/culturarte/servicios/cliente/propuestas/ListaDTComentario.java
+/home/gaston/IdeaProjects/Lab2PDA/target/generated-sources/wsimport/culturarte/servicios/cliente/propuestas/DtProponente.java
+/home/gaston/IdeaProjects/Lab2PDA/src/main/java/com/culturarteWeb/util/WSFechaUsuario.java
+/home/gaston/IdeaProjects/Lab2PDA/src/main/java/com/culturarteWeb/servlets/ConsultaPropuestaServlet.java
+/home/gaston/IdeaProjects/Lab2PDA/target/generated-sources/wsimport/culturarte/servicios/cliente/usuario/DtProponente.java
+/home/gaston/IdeaProjects/Lab2PDA/target/generated-sources/wsimport/culturarte/servicios/cliente/usuario/DtCategoria.java
+/home/gaston/IdeaProjects/Lab2PDA/src/main/java/com/culturarteWeb/util/AdaptadorLocalDate.java
+/home/gaston/IdeaProjects/Lab2PDA/target/generated-sources/wsimport/culturarte/servicios/cliente/usuario/DtPropuestaEstado.java
+/home/gaston/IdeaProjects/Lab2PDA/src/main/java/com/culturarteWeb/servlets/EjecutarPropuestaServlet.java
+/home/gaston/IdeaProjects/Lab2PDA/target/generated-sources/wsimport/culturarte/servicios/cliente/propuestas/LocalDateTimeWS.java
+/home/gaston/IdeaProjects/Lab2PDA/src/main/java/com/culturarteWeb/servlets/RegistrarColaboracionAPropuestaServlet.java
+/home/gaston/IdeaProjects/Lab2PDA/target/generated-sources/wsimport/culturarte/servicios/cliente/usuario/DtPropuesta.java
+/home/gaston/IdeaProjects/Lab2PDA/target/generated-sources/wsimport/culturarte/servicios/cliente/propuestas/DtEstadoPropuesta.java
+/home/gaston/IdeaProjects/Lab2PDA/target/generated-sources/wsimport/culturarte/servicios/cliente/propuestas/IPropuestaControllerWS.java
+/home/gaston/IdeaProjects/Lab2PDA/target/generated-sources/wsimport/culturarte/servicios/cliente/propuestas/DtColaborador.java
+/home/gaston/IdeaProjects/Lab2PDA/src/main/java/com/culturarteWeb/servlets/InicioDeSesionServlet.java
+/home/gaston/IdeaProjects/Lab2PDA/target/generated-sources/wsimport/culturarte/servicios/cliente/propuestas/DtTipoRetorno.java
+/home/gaston/IdeaProjects/Lab2PDA/src/main/java/com/culturarteWeb/servlets/SeguimientoDeUsuarioServlet.java
+/home/gaston/IdeaProjects/Lab2PDA/target/generated-sources/wsimport/culturarte/servicios/cliente/propuestas/IPropuestaControllerWS_PropuestaWSEndpointPort_Client.java
+/home/gaston/IdeaProjects/Lab2PDA/target/generated-sources/wsimport/culturarte/servicios/cliente/usuario/UsuarioWSEndpointService.java
+/home/gaston/IdeaProjects/Lab2PDA/target/generated-sources/wsimport/culturarte/servicios/cliente/usuario/Exception_Exception.java
+/home/gaston/IdeaProjects/Lab2PDA/target/generated-sources/wsimport/culturarte/servicios/cliente/usuario/LocalDateWS.java
+/home/gaston/IdeaProjects/Lab2PDA/src/main/java/culturarte/servicios/cliente/propuestas/LocalDate.java
+/home/gaston/IdeaProjects/Lab2PDA/src/main/java/com/culturarteWeb/servlets/MarcarPropuestaFavorita.java
+/home/gaston/IdeaProjects/Lab2PDA/target/generated-sources/wsimport/culturarte/servicios/cliente/usuario/package-info.java
+/home/gaston/IdeaProjects/Lab2PDA/target/generated-sources/wsimport/culturarte/servicios/cliente/propuestas/DtUsuario.java
+/home/gaston/IdeaProjects/Lab2PDA/target/generated-sources/wsimport/culturarte/servicios/cliente/usuario/DtColaborador.java
+/home/gaston/IdeaProjects/Lab2PDA/src/main/java/com/culturarteWeb/servlets/PrincipalServlet.java
+/home/gaston/IdeaProjects/Lab2PDA/target/generated-sources/wsimport/culturarte/servicios/cliente/propuestas/DtComentario.java
+/home/gaston/IdeaProjects/Lab2PDA/target/generated-sources/wsimport/culturarte/servicios/cliente/usuario/ObjectFactory.java
+/home/gaston/IdeaProjects/Lab2PDA/src/main/java/com/culturarteWeb/servlets/ComentarioServlet.java
+/home/gaston/IdeaProjects/Lab2PDA/target/generated-sources/wsimport/culturarte/servicios/cliente/usuario/DtColaboracion.java
+/home/gaston/IdeaProjects/Lab2PDA/target/generated-sources/wsimport/culturarte/servicios/cliente/propuestas/DtColaboracion.java
+/home/gaston/IdeaProjects/Lab2PDA/target/generated-sources/wsimport/culturarte/servicios/cliente/usuario/DtTipoRetorno.java
+/home/gaston/IdeaProjects/Lab2PDA/src/main/java/com/culturarteWeb/servlets/ListarPropuestasParaComentarServlet.java
+/home/gaston/IdeaProjects/Lab2PDA/src/main/java/com/culturarteWeb/servlets/ConsultaPropuestaPorCategoriaServlet.java
+/home/gaston/IdeaProjects/Lab2PDA/target/generated-sources/wsimport/culturarte/servicios/cliente/propuestas/PropuestaWSEndpointService.java
+/home/gaston/IdeaProjects/Lab2PDA/src/main/java/com/culturarteWeb/util/WSFechaPropuesta.java
+/home/gaston/IdeaProjects/Lab2PDA/src/main/java/com/culturarteWeb/servlets/CierreDeSesionServlet.java
+/home/gaston/IdeaProjects/Lab2PDA/src/main/java/com/culturarteWeb/servlets/ExtenderFinanciacionServlet.java
+/home/gaston/IdeaProjects/Lab2PDA/src/main/java/culturarte/servicios/cliente/usuario/LocalDate.java
+/home/gaston/IdeaProjects/Lab2PDA/target/generated-sources/wsimport/culturarte/servicios/cliente/propuestas/DtSeguimiento.java
+/home/gaston/IdeaProjects/Lab2PDA/src/main/java/com/culturarteWeb/util/LocalDateAdaptor.java
+/home/gaston/IdeaProjects/Lab2PDA/target/generated-sources/wsimport/culturarte/servicios/cliente/propuestas/LocalDateWS.java
+/home/gaston/IdeaProjects/Lab2PDA/target/generated-sources/wsimport/culturarte/servicios/cliente/usuario/DtComentario.java
+/home/gaston/IdeaProjects/Lab2PDA/target/generated-sources/wsimport/culturarte/servicios/cliente/usuario/ListaStrings.java
+/home/gaston/IdeaProjects/Lab2PDA/target/generated-sources/wsimport/culturarte/servicios/cliente/propuestas/DtPropuestaEstado.java
+/home/gaston/IdeaProjects/Lab2PDA/target/generated-sources/wsimport/culturarte/servicios/cliente/usuario/IUsuarioControllerWS.java
+/home/gaston/IdeaProjects/Lab2PDA/target/generated-sources/wsimport/culturarte/servicios/cliente/propuestas/ListaDTPropuesta.java
+/home/gaston/IdeaProjects/Lab2PDA/target/generated-sources/wsimport/culturarte/servicios/cliente/propuestas/ListaStrings.java
+/home/gaston/IdeaProjects/Lab2PDA/target/generated-sources/wsimport/culturarte/servicios/cliente/usuario/Exception.java
+/home/gaston/IdeaProjects/Lab2PDA/src/main/java/culturarte/servicios/cliente/propuestas/LocalDateTime.java
+/home/gaston/IdeaProjects/Lab2PDA/target/generated-sources/wsimport/culturarte/servicios/cliente/propuestas/ObjectFactory.java
+/home/gaston/IdeaProjects/Lab2PDA/target/generated-sources/wsimport/culturarte/servicios/cliente/propuestas/Exception.java

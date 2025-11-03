@@ -108,8 +108,14 @@
                                                 
                                                 <div class="mb-3">
                                                     <strong>Fecha publicación:</strong> 
-                                                    <%= propuesta.getFechaPublicacion() != null ? 
-                                                        propuesta.getFechaPublicacion() : "N/A" %>
+                                                    <% 
+                                                        if (propuesta.getFechaPublicacion() != null) {
+                                                            java.time.LocalDate fechaPublicacion = com.culturarteWeb.util.WSFechaPropuesta.toJavaLocalDate(propuesta.getFechaPublicacion());
+                                                            out.print(fechaPublicacion != null ? fechaPublicacion.toString() : "N/A");
+                                                        } else {
+                                                            out.print("N/A");
+                                                        }
+                                                    %>
                                                 </div>
                                                 
                                                 <div class="mt-auto">

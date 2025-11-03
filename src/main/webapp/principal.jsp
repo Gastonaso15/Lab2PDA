@@ -1,4 +1,4 @@
-<%@ page import="java.util.*, culturarte.servicios.cliente.propuestas.DtPropuesta, culturarte.servicios.cliente.propuestas.DtCategoria, culturarte.servicios.cliente.propuestas.DtUsuario" %>
+<%@ page import="java.util.*, culturarte.servicios.cliente.propuestas.DtPropuesta, culturarte.servicios.cliente.propuestas.DtCategoria, culturarte.servicios.cliente.propuestas.DtUsuario, com.culturarteWeb.util.WSFechaPropuesta" %>
 <%--
     Quitamos la importación de 'PropuestaConDatos' para evitar problemas de visibilidad
     si es una clase interna no pública.
@@ -226,7 +226,14 @@
 
                         <div class="datosPropuesta d-flex justify-content-between">
                             <span><%= p.getEstadoActual() %></span>
-                            <span><%= p.getFechaPublicacion() %></span>
+                            <span><% 
+                                if (p.getFechaPublicacion() != null) {
+                                    java.time.LocalDate fechaPublicacion = WSFechaPropuesta.toJavaLocalDate(p.getFechaPublicacion());
+                                    out.print(fechaPublicacion != null ? fechaPublicacion.toString() : "N/A");
+                                } else {
+                                    out.print("N/A");
+                                }
+                            %></span>
                         </div>
 
                         <a href="<%= request.getContextPath() %>/consultaPropuesta?accion=detalle&titulo=<%=

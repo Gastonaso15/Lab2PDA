@@ -134,7 +134,7 @@ public class AltaPerfilServlet extends HttpServlet {
                 usuario.setApellido(apellido);
                 usuario.setPassword(password);
                 usuario.setCorreo(email);
-                usuario.setFechaNacimiento(WSFechaUsuario.toWSLocalDate(fechaNac));
+                usuario.setFechaNacimiento(WSFechaUsuario.toWSLocalDateWS(fechaNac));
                 usuario.setImagen(imagenBase64);
                 ((DtProponente) usuario).setDireccion(direccion);
                 ((DtProponente) usuario).setBio(biografia);
@@ -146,7 +146,7 @@ public class AltaPerfilServlet extends HttpServlet {
                 usuario.setApellido(apellido);
                 usuario.setPassword(password);
                 usuario.setCorreo(email);
-                usuario.setFechaNacimiento(WSFechaUsuario.toWSLocalDate(fechaNac));
+                usuario.setFechaNacimiento(WSFechaUsuario.toWSLocalDateWS(fechaNac));
                 usuario.setImagen(imagenBase64);
             }
 

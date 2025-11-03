@@ -99,7 +99,7 @@ public class EjecutarPropuestaServlet extends HttpServlet {
             DtPropuestaEstado propEstado = new DtPropuestaEstado();
             propEstado.setPropuesta(propuesta);
             propEstado.setEstado(DtEstadoPropuesta.FINANCIADA);
-            propEstado.setFechaCambio(WSFechaPropuesta.toWSLocalDate(java.time.LocalDate.now()));
+            propEstado.setFechaCambio(WSFechaPropuesta.toWSLocalDateWS(java.time.LocalDate.now()));
 
             propuesta.getHistorial().add(propEstado);
 
