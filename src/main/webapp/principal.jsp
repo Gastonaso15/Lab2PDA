@@ -1,134 +1,70 @@
 <%@ page import="java.util.*, culturarte.servicios.cliente.propuestas.DtPropuesta, culturarte.servicios.cliente.propuestas.DtCategoria, culturarte.servicios.cliente.propuestas.DtUsuario" %>
+<%--
+    Quitamos la importación de 'PropuestaConDatos' para evitar problemas de visibilidad
+    si es una clase interna no pública.
+--%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Culturarte</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <jsp:include page="estiloCabezalComun.jsp"/>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Arial', sans-serif;
-        }
 
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <jsp:include page="estiloCabezalComun.jsp"/>
+
+    <style>
+        /* --- Estilos Globales --- */
         body {
             background-color: #f5f5f5;
             color: #333;
+            font-family: 'Arial', sans-serif;
             line-height: 1.6;
         }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
+        /* --- Estilos para las Pestañas de Filtro (Tabs) --- */
+        .nav-link.estado-tab {
+            cursor: pointer;
+            color: #333; /* Color inactivo */
         }
-
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #ddd;
+        .nav-link.estado-tab:hover {
+            color: #000;
         }
-
-        .Botones-Menu-Superior {
-            display: flex;
-            gap: 10px;
-        }
-
-        .Botones-Menu-Superior a {
-            text-decoration: none;
-            color: #333;
+        .nav-link.estado-tab.active {
             font-weight: bold;
-            font-size: 14px;
-        }
-
-        .search-bar-Menu-Superior {
-            margin: 20px 0;
-            display: flex;
-            gap: 10px;
-        }
-
-        .search-bar-Menu-Superior input {
-            flex: 1;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-
-        .search-bar-Menu-Superior button {
-            padding: 10px 20px;
             background-color: #333;
             color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
+            border-color: #333 #333 #f5f5f5;
         }
 
-        .filter-tabs {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-
-        .filter-tabs span {
-            font-weight: bold;
-            cursor: pointer;
-            padding: 8px 16px;
-            border-bottom: 2px solid transparent;
-            border-radius: 4px 4px 0 0;
-            transition: all 0.3s ease;
-        }
-
-        .filter-tabs span:hover {
-            background-color: #f0f0f0;
-            border-bottom: 2px solid #666;
-        }
-
-        .filter-tabs span.active {
-            background-color: #333;
-            color: white;
-            border-bottom: 2px solid #333;
-        }
-
-        .gridPropuesta {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
+        /* --- Estilos de las Tarjetas de Propuesta --- */
         .cartaPropuesta {
-            background-color: white;
+            display: flex;
+            flex-direction: column;
             border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            background-color: white;
             overflow: hidden;
         }
 
         .imagenPropuesta {
             height: 180px;
-            background-color: #e0e0e0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #666;
-            font-size: 14px;
+            width: 100%;
+            object-fit: cover;
         }
 
         .contenidoPropuesta {
-            padding: 15px;
+            padding: 1.25rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
         }
 
         .tituloPropuesta {
             font-weight: bold;
             margin-bottom: 10px;
-            font-size: 16px;
+            font-size: 1.1rem;
         }
 
         .descripcionPropuesta {
@@ -137,40 +73,13 @@
             margin-bottom: 15px;
             height: 60px;
             overflow: hidden;
-        }
-
-        .montoPropuesta {
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 15px;
-        }
-
-        .datosPropuesta {
-            display: flex;
-            justify-content: space-between;
-            font-size: 14px;
-            color: #666;
-            margin-bottom: 15px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
         }
 
         .progreso-financiacion {
             margin-bottom: 15px;
-        }
-
-        .barra-progreso {
-            width: 100%;
-            height: 8px;
-            background-color: #e0e0e0;
-            border-radius: 4px;
-            overflow: hidden;
-            margin-bottom: 5px;
-        }
-
-        .barra-progreso-llena {
-            height: 100%;
-            background: linear-gradient(90deg, #4CAF50, #8BC34A);
-            border-radius: 4px;
-            transition: width 0.3s ease;
         }
 
         .info-progreso {
@@ -178,116 +87,113 @@
             justify-content: space-between;
             font-size: 12px;
             color: #666;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
         }
 
         .estadisticas-propuesta {
-            display: flex;
-            justify-content: space-between;
             font-size: 12px;
             color: #666;
             margin-bottom: 15px;
         }
 
-        .dias-restantes {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .colaboradores-count {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
         .icono {
             font-size: 14px;
+            margin-right: 5px;
         }
 
+        .datosPropuesta {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 15px;
+        }
 
+        .contenidoPropuesta .btn {
+            margin-top: auto;
+        }
+
+        /* --- Estilos de las Categorías --- */
         .categorias {
             background-color: white;
             border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             padding: 20px;
-        }
-
-        .categorias h3 {
-            margin-bottom: 15px;
-            font-size: 18px;
-        }
-
-        .listaCategorias {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 10px;
         }
 
         .itemCategoria {
             display: flex;
             align-items: center;
             gap: 8px;
+            font-size: 14px;
         }
 
-        .itemCategoria input {
-            margin-right: 5px;
-        }
-
-        @media (max-width: 768px) {
-            .gridPropuesta {
-                grid-template-columns: 1fr;
-            }
-
-            .listaCategorias {
-                grid-template-columns: 1fr 1fr;
+        @media (max-width: 576px) {
+            .estadisticas-propuesta {
+                flex-direction: column;
+                gap: 5px;
             }
         }
-
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="container my-4">
+
         <jsp:include page="cabezalComun.jsp"/>
 
         <% String busquedaActual = (String) request.getAttribute("busqueda"); %>
         <% if (busquedaActual != null && !busquedaActual.isEmpty()) { %>
-            <div style="background-color: #e3f2fd; border: 1px solid #2196f3; border-radius: 4px; padding: 15px; margin-bottom: 20px;">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <div>
-                        <strong>🔍 Búsqueda activa:</strong> "<%= busquedaActual %>"
-                        <br>
-                        <small style="color: #666;">
-                            Mostrando <%= ((List<DtPropuesta>) request.getAttribute("propuestas")).size() %> resultado(s)
-                        </small>
-                    </div>
-                    <a href="<%= request.getContextPath() %>/principal" 
-                       style="background-color: #f44336; color: white; padding: 8px 12px; text-decoration: none; border-radius: 4px; font-size: 14px;">
-                        ✕ Limpiar búsqueda
-                    </a>
+            <div class="alert alert-info d-flex flex-column flex-sm-row justify-content-sm-between align-items-sm-center shadow-sm">
+                <div>
+                    <strong>🔍 Búsqueda activa:</strong> "<%= busquedaActual %>"
+                    <br>
+                    <small>
+                        <%-- Usamos el nombre completo de la clase aquí por seguridad --%>
+                        Mostrando <%= ((List<com.culturarteWeb.servlets.PrincipalServlet.PropuestaConDatos>) request.getAttribute("propuestas")).size() %> resultado(s)
+                    </small>
                 </div>
+                <a href="<%= request.getContextPath() %>/principal"
+                   class="btn btn-sm btn-outline-danger mt-2 mt-sm-0">
+                    ✕ Limpiar búsqueda
+                </a>
             </div>
         <% } %>
 
-        <div class="filter-tabs">
-            <span class="estado-tab active" data-estado="todas">Propuestas Creadas</span>
-            <span class="estado-tab" data-estado="en_financiacion">Propuestas en Financiación</span>
-            <span class="estado-tab" data-estado="financiadas">Propuestas Financiadas</span>
-            <span class="estado-tab" data-estado="no_financiadas">Propuestas NO Financiadas</span>
-            <span class="estado-tab" data-estado="canceladas">Propuestas Canceladas</span>
-        </div>
+        <ul class="nav nav-tabs mb-4">
+            <li class="nav-item">
+                <span class="nav-link estado-tab active" data-estado="todas">Propuestas Creadas</span>
+            </li>
+            <li class="nav-item">
+                <span class="nav-link estado-tab" data-estado="en_financiacion">En Financiación</span>
+            </li>
+            <li class="nav-item">
+                <span class="nav-link estado-tab" data-estado="financiadas">Financiadas</span>
+            </li>
+            <li class="nav-item">
+                <span class="nav-link estado-tab" data-estado="no_financiadas">NO Financiadas</span>
+            </li>
+            <li class="nav-item">
+                <span class="nav-link estado-tab" data-estado="canceladas">Canceladas</span>
+            </li>
+        </ul>
 
-        <div class="gridPropuesta">
-        <%List<com.culturarteWeb.servlets.PrincipalServlet.PropuestaConDatos> propuestas = (List<com.culturarteWeb.servlets.PrincipalServlet.PropuestaConDatos>) request.getAttribute("propuestas");
-            if (propuestas != null) {
-                for (com.culturarteWeb.servlets.PrincipalServlet.PropuestaConDatos propuestaConDatos : propuestas) {
-                    DtPropuesta p = propuestaConDatos.getPropuesta();
-                    String imagen = (p.getImagen() != null && !p.getImagen().isEmpty()) ? p.getImagen() : "imagenes/propuestaDefault.png";
-                    double porcentajeProgreso = p.getMontoNecesario() > 0 ? (propuestaConDatos.getMontoRecaudado() / p.getMontoNecesario()) * 100 : 0;
-                    if (porcentajeProgreso > 100) porcentajeProgreso = 100;%>
-            <div class="cartaPropuesta">
-                <div class="imagenPropuesta">
-                    <img src="<%= imagen %>" alt="Imagen de <%= p.getTitulo() %>" style="width:100%; height:180px; object-fit:cover;"></div>
+        <div class="row g-4 mb-4">
+            <%
+                // CORRECCIÓN: Usamos el nombre de clase completo para la lista y el cast.
+                List<com.culturarteWeb.servlets.PrincipalServlet.PropuestaConDatos> propuestas =
+                    (List<com.culturarteWeb.servlets.PrincipalServlet.PropuestaConDatos>) request.getAttribute("propuestas");
+
+                if (propuestas != null && !propuestas.isEmpty()) {
+                    // CORRECCIÓN: Usamos el nombre de clase completo en el bucle 'for'.
+                    for (com.culturarteWeb.servlets.PrincipalServlet.PropuestaConDatos propuestaConDatos : propuestas) {
+                        DtPropuesta p = propuestaConDatos.getPropuesta();
+                        String imagen = (p.getImagen() != null && !p.getImagen().isEmpty()) ? p.getImagen() : "imagenes/propuestaDefault.png";
+                        double porcentajeProgreso = p.getMontoNecesario() > 0 ? (propuestaConDatos.getMontoRecaudado() / p.getMontoNecesario()) * 100 : 0;
+                        if (porcentajeProgreso > 100) porcentajeProgreso = 100;
+
+                        long porcentajeRedondeado = Math.round(porcentajeProgreso);
+            %>
+            <div class="col-12 col-md-6 col-lg-4 d-flex">
+                <div class="cartaPropuesta h-100 shadow-sm w-100">
+                    <img src="<%= imagen %>" class="imagenPropuesta" alt="Imagen de <%= p.getTitulo() %>">
+
                     <div class="contenidoPropuesta">
                         <div class="tituloPropuesta"><%= p.getTitulo() %></div>
                         <div class="descripcionPropuesta"><%= p.getDescripcion() %></div>
@@ -295,14 +201,19 @@
                         <div class="progreso-financiacion">
                             <div class="info-progreso">
                                 <span>$<%= String.format("%.0f", propuestaConDatos.getMontoRecaudado()) %> recaudado</span>
-                                <span>$<%= String.format("%.0f", p.getMontoNecesario()) %> objetivo</span>
+                                <span><%= porcentajeRedondeado %>%</span>
                             </div>
-                            <div class="barra-progreso">
-                                <div class="barra-progreso-llena" style="width: <%= Math.min(100, Math.max(0, porcentajeProgreso)) %>%"></div>
+
+                            <div class="progress" style="height: 8px;">
+                                <div class="progress-bar bg-success" role="progressbar"
+                                     style="width: <%= porcentajeRedondeado %>%;"
+                                     aria-valuenow="<%= porcentajeRedondeado %>"
+                                     aria-valuemin="0" <%-- CORRECCIÓN: Era "E" ahora es "0" --%>
+                                     aria-valuemax="100"></div>
                             </div>
                         </div>
 
-                        <div class="estadisticas-propuesta">
+                        <div class="estadisticas-propuesta d-flex flex-column flex-sm-row justify-content-sm-between">
                             <div class="dias-restantes">
                                 <span class="icono">⏰</span>
                                 <span><%= propuestaConDatos.getDiasRestantes() %> días restantes</span>
@@ -312,27 +223,41 @@
                                 <span><%= propuestaConDatos.getTotalColaboradores() %> colaboradores</span>
                             </div>
                         </div>
-                        
-                        <div class="datosPropuesta">
-                            <div><%= p.getEstadoActual() %></div>
-                            <div><%= p.getFechaPublicacion() %></div>
+
+                        <div class="datosPropuesta d-flex justify-content-between">
+                            <span><%= p.getEstadoActual() %></span>
+                            <span><%= p.getFechaPublicacion() %></span>
                         </div>
-                        <a href="<%= request.getContextPath() %>/consultaPropuesta?accion=detalle&titulo=<%= 
-                            java.net.URLEncoder.encode(p.getTitulo(), "UTF-8") %>" 
+
+                        <a href="<%= request.getContextPath() %>/consultaPropuesta?accion=detalle&titulo=<%=
+                                java.net.URLEncoder.encode(p.getTitulo(), "UTF-8") %>"
                            class="btn btn-primary w-100">
                             Ver Detalles
                         </a>
                     </div>
                 </div>
-            <%}}%>
-        </div>
+            </div>
+            <%
+                    } // Fin del for
+                } else { // Si no hay propuestas
+            %>
+                <div class="col-12">
+                    <div class="alert alert-warning text-center">
+                        No se encontraron propuestas que coincidan con los filtros seleccionados.
+                    </div>
+                </div>
+            <%
+                } // Fin del if (propuestas != null)
+            %>
+        </div> <div class="categorias shadow-sm mb-4">
+            <h3>CATEGORÍAS</h3>
+            <form id="filtroCategorias" method="post" action="consultaPropuestaPorCategoria">
 
-            <div class="categorias">
-                <h3>CATEGORÍAS</h3>
-                <form id="filtroCategorias" method="post" action="consultaPropuestaPorCategoria">
-                   <div class="listaCategorias">
-                        <%List<DtCategoria> categorias = (List<DtCategoria>) request.getAttribute("categorias");
-                       String[] categoriasSeleccionadas = (String[]) request.getAttribute("categoriasSeleccionadas");
+                <div class="row g-3">
+                    <%
+                        List<DtCategoria> categorias = (List<DtCategoria>) request.getAttribute("categorias");
+                        String[] categoriasSeleccionadas = (String[]) request.getAttribute("categoriasSeleccionadas");
+
                         if (categorias != null) {
                             for (DtCategoria categ : categorias) {
                                 boolean estaSeleccionada = false;
@@ -343,25 +268,36 @@
                                             break;
                                         }
                                     }
-                                }%>
-                           <div class="itemCategoria">
-                               <input type="checkbox" id="<%= categ.getNombre() %>" name="categoria" value="<%= categ.getNombre() %>">
-                               <label for="<%= categ.getNombre() %>"><%= categ.getNombre() %></label>
-                           </div>
-                       <%}}%>
-                   </div>
-                   <div style="margin-top: 15px;">
-                       <button type="submit" style="background-color: #333; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer;">
-                           Filtrar por Categorías
-                       </button>
-                       <button type="button" onclick="limpiarFiltros()" style="background-color: #666; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; margin-left: 10px;">
-                           Limpiar Filtros
-                       </button>
-                   </div>
-                </form>
-               </div>
-           </div>
+                                }
+                    %>
+                    <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+                        <div class="form-check itemCategoria">
+                            <input class="form-check-input" type="checkbox"
+                                   id="<%= categ.getNombre() %>"
+                                   name="categoria"
+                                   value="<%= categ.getNombre() %>"
+                                   <%= estaSeleccionada ? "checked" : "" %>>
+                            <label class="form-check-label" for="<%= categ.getNombre() %>">
+                                <%= categ.getNombre() %>
+                            </label>
+                        </div>
+                    </div>
+                    <%
+                            } // Fin del for
+                        } // Fin del if (categorias != null)
+                    %>
+                </div> <div class="mt-4">
+                    <button type="submit" class="btn btn-dark">
+                        Filtrar por Categorías
+                    </button>
+                    <button type="button" onclick="limpiarFiltros()" class="btn btn-outline-secondary ms-2">
+                        Limpiar Filtros
+                    </button>
+                </div>
+            </form>
+        </div>
 
+    </div> <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         document.querySelectorAll('.estado-tab').forEach(tab => {
             tab.addEventListener('click', function() {
@@ -369,15 +305,17 @@
                     t.classList.remove('active');
                 });
                 this.classList.add('active');
+
                 const estado = this.getAttribute('data-estado');
-                const url = new URL(window.location);
+                const url = new URL(window.location.origin + window.location.pathname);
+
                 url.searchParams.set('estado', estado);
 
-                const busquedaActual = '<%= request.getParameter("busqueda") %>';
-                if (busquedaActual && busquedaActual !== 'null') {
+                const busquedaActual = '<%= busquedaActual != null ? busquedaActual : "" %>';
+                if (busquedaActual) {
                     url.searchParams.set('busqueda', busquedaActual);
                 }
-                
+
                 window.location.href = url.toString();
             });
         });
@@ -390,20 +328,19 @@
                     tab.classList.add('active');
                 }
             });
+        } else {
+            const primerTab = document.querySelector('.estado-tab[data-estado="todas"]');
+            if (!document.querySelector('.estado-tab.active') && primerTab) {
+                primerTab.classList.add('active');
+            }
         }
-        
+
         function limpiarFiltros() {
             document.querySelectorAll('input[name="categoria"]').forEach(checkbox => {
                 checkbox.checked = false;
             });
             document.getElementById('filtroCategorias').submit();
         }
-
-        document.querySelectorAll('input[name="categoria"]').forEach(checkbox => {
-            checkbox.addEventListener('change', function() {
-            });
-        });
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
