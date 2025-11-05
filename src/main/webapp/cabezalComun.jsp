@@ -15,7 +15,8 @@
             <a href="ejecutarPropuesta">Ejecutar Propuestas</a> |
             <% } %>
         <a href="consultaPropuesta">Ver Propuestas</a> |
-        <a href="consultaPerfilUsuario">Ver Usuarios</a>
+        <a href="consultaPerfilUsuario">Ver Usuarios</a> |
+        <a href="VerRankingDeUsuarios">Ver Ranking de Usuarios</a>
         <%
             Boolean esColaborador = (Boolean) request.getAttribute("esColaborador");
             if (esColaborador != null && esColaborador) {
@@ -25,12 +26,12 @@
     </div>
     <div class="search-bar-Menu-Superior">
         <form method="get" action="<%= request.getContextPath() %>/principal" style="display: flex; gap: 10px; width: 100%;">
-            <input type="text" name="busqueda" placeholder="Buscar por título, lugar o descripción..." 
+            <input type="text" name="busqueda" placeholder="Buscar por título, lugar o descripción..."
                    value="<%= request.getParameter("busqueda") != null ? request.getParameter("busqueda") : "" %>"
                    style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
             <button type="submit" style="padding: 10px 20px; background-color: #333; color: white; border: none; border-radius: 4px; cursor: pointer;">Buscar</button>
             <% if (request.getParameter("busqueda") != null && !request.getParameter("busqueda").isEmpty()) { %>
-                <a href="<%= request.getContextPath() %>/principal" 
+                <a href="<%= request.getContextPath() %>/principal"
                    style="padding: 10px 15px; background-color: #666; color: white; text-decoration: none; border-radius: 4px; display: flex; align-items: center;">
                     Limpiar
                 </a>
