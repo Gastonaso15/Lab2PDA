@@ -24,6 +24,9 @@ public class AltaPropuestaServlet extends HttpServlet {
     public void init() throws ServletException {
         super.init();
         try {
+            System.setProperty("com.sun.xml.ws.transport.http.client.HttpTransportPipe.dump", "true");
+            System.setProperty("com.sun.xml.internal.ws.transport.http.client.HttpTransportPipe.dump", "true");
+
             PropuestaWSEndpointService servicio = new PropuestaWSEndpointService();
             IPC = servicio.getPropuestaWSEndpointPort();
         } catch (Exception e) {
@@ -66,39 +69,38 @@ public class AltaPropuestaServlet extends HttpServlet {
             return;
         }
 
-        String imagen = null;
-
-        // --- Subida de imagen (opcional para el usuario) ---
+        String imagen = "";
         Part part = null;
         try {
-            part = req.getPart("imagen"); // si no sube nada, getPart existe pero size=0
+            part = req.getPart("imagen");
         } catch (IllegalStateException ise) {
-            part = null; // defensivo si el form no viene multipart
+            part = null; // por si el form no vino multipart (defensivo)
         }
 
         if (part != null && part.getSize() > 0) {
             String type = part.getContentType();
-            if (type == null || !type.startsWith("image/"))
+            if (type == null || !type.startsWith("image/")) {
                 throw new IllegalArgumentException("El archivo no es una imagen válida.");
+            }
 
-            // elegir extensión fiable
             String ext;
-            if (type.contains("png")) ext = ".png";
-            else if (type.contains("gif")) ext = ".gif";
+            if (type.contains("png"))       ext = ".png";
+            else if (type.contains("gif"))  ext = ".gif";
             else if (type.contains("jpeg")) ext = ".jpeg";
-            else ext = ".jpg";
+            else                            ext = ".jpg";
 
             String relDir = "uploads/propuestas";
             String fileName = "ImagenProp" + System.currentTimeMillis() + ext;
 
             File base = new File(getServletContext().getRealPath("/"), relDir);
-            if (!base.exists() && !base.mkdirs())
+            if (!base.exists() && !base.mkdirs()) {
                 throw new IOException("No se pudo crear el directorio de subida.");
+            }
 
             File dest = new File(base, fileName);
             part.write(dest.getAbsolutePath());
 
-            imagen = relDir + "/" + fileName; // guardar RUTA RELATIVA
+            imagen = relDir + "/" + fileName;
         }
 
         String categoria     = req.getParameter("categoria");
@@ -108,7 +110,6 @@ public class AltaPropuestaServlet extends HttpServlet {
         String fechaStr      = req.getParameter("fecha");
         String precioStr     = req.getParameter("precioEntrada");
         String montoStr      = req.getParameter("montoNecesario");
-        //String imagen        = req.getParameter("imagen");
         String[] retornosArr = req.getParameterValues("retornos");
 
         try {
@@ -138,37 +139,29 @@ public class AltaPropuestaServlet extends HttpServlet {
             List<String> retornos = (retornosArr != null) ? Arrays.asList(retornosArr) : new ArrayList<>();
             ListaStrings listaRetornos = new ListaStrings();
             listaRetornos.getItem().addAll(retornos);
-
-
-            /*  Estuve debuggeando y lo dejo por si lo preciso de nuevo
-            System.out.println("Titulo: " + titulo);
-            System.out.println("Descripcion: " + descripcion);
-            System.out.println("Lugar: " + lugar);
-            System.out.println("Fecha string: " + fechaStr); // Debugging line
-            System.out.println("Precio: " + precio);
-            System.out.println("Monto: " + monto);
-            System.out.println("Imagen: " + imagen);
-            System.out.println("Proponente: " + proponente.getNickname());
-            System.out.println("Categoria: " + categoria);
-            System.out.println("Retornos: " + retornos);
-            */
-            //Creo la propuesta
-
-            IPC.crearPropuesta(titulo, descripcion, lugar, WSFechaPropuesta.toWSLocalDate(fecha), precio, monto, imagen,
+            IPC.crearPropuesta(titulo, descripcion, lugar, WSFechaPropuesta.toWSLocalDateWS(fecha), precio, monto, imagen,
                     proponente.getNickname(), categoria, listaRetornos);
 
             resp.sendRedirect(req.getContextPath() + "/");
         } catch (Exception e) {
             e.printStackTrace(); // <-- imprime el error completo en la consola del servidor
-            ListaDTCategoria categoriasWS;
             try {
-                categoriasWS = IPC.devolverTodasLasCategorias();
+                ListaDTCategoria categoriasWS = IPC.devolverTodasLasCategorias();
                 req.setAttribute("categorias", categoriasWS.getCategoria());
-            } catch (Exception ex) {
-
+            } catch (Exception ignore) {
             }
-            req.setAttribute("error", "Error al crear la propuesta: " + e.getMessage());
+
+            req.setAttribute("error", (e.getMessage() != null) ? e.getMessage() : "Ocurrió un error procesando la propuesta");
+            req.setAttribute("categoria", categoria);
+            req.setAttribute("titulo", titulo);
+            req.setAttribute("descripcion", descripcion);
+            req.setAttribute("lugar", lugar);
+            req.setAttribute("fecha", fechaStr);
+            req.setAttribute("precioEntrada", precioStr);
+            req.setAttribute("montoNecesario", montoStr);
+            req.setAttribute("retornos", retornosArr);
             req.getRequestDispatcher("/altaPropuesta.jsp").forward(req, resp);
+            return;
         }
     }
 }

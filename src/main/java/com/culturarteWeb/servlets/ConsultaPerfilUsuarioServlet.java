@@ -2,7 +2,6 @@ package com.culturarteWeb.servlets;
 
 import culturarte.servicios.cliente.propuestas.*;
 import culturarte.servicios.cliente.usuario.DtColaboracion;
-import culturarte.servicios.cliente.propuestas.DtComentario;
 import culturarte.servicios.cliente.usuario.DtEstadoPropuesta;
 import culturarte.servicios.cliente.propuestas.DtPropuesta;
 import culturarte.servicios.cliente.usuario.ListaStrings;
@@ -27,6 +26,14 @@ public class ConsultaPerfilUsuarioServlet extends HttpServlet {
     public void init() throws ServletException {
         super.init();
         try {
+            // habilita dump SOAP en el CLIENTE (tu webapp)
+            System.setProperty("com.sun.xml.ws.transport.http.client.HttpTransportPipe.dump", "true");
+            System.setProperty("com.sun.xml.internal.ws.transport.http.client.HttpTransportPipe.dump", "true");
+
+
+
+
+
             PropuestaWSEndpointService propuestaServicio = new PropuestaWSEndpointService();
             IPC = propuestaServicio.getPropuestaWSEndpointPort();
 
@@ -51,10 +58,12 @@ public class ConsultaPerfilUsuarioServlet extends HttpServlet {
 
                 List<Map<String, Object>> usuariosCombo = new ArrayList<>();
 
+
                 for (String n : nicks) {
                     DtUsuario u = ICU.getDTUsuario(n);
                     if (u == null) continue;
-
+                    Long idPrueba = u.getId();
+                    System.out.println(idPrueba);
                     String tipo;
                     try {
                         ICU.devolverProponentePorNickname(n);
@@ -189,7 +198,10 @@ public class ConsultaPerfilUsuarioServlet extends HttpServlet {
             if (colaborador != null && colaborador.getColaboraciones() != null) {
                 misColaboraciones = colaborador.getColaboraciones();
                 for (DtColaboracion c : misColaboraciones) {
-                    if (c.getPropuesta() != null) colaboradas.add(c.getPropuesta());
+                    if (c.getPropuesta() != null) {
+                        colaboradas.add(c.getPropuesta());
+                        System.out.println("tituo = " + c.getPropuesta().getTitulo());
+                    }
                 }
             }
 

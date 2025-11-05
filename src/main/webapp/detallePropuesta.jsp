@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="culturarte.servicios.cliente.propuestas.DtPropuesta, culturarte.servicios.cliente.propuestas.DtUsuario, culturarte.servicios.cliente.propuestas.DtComentario, java.util.List, java.time.format.DateTimeFormatter, com.culturarteWeb.util.WSFechaPropuesta" %>
+<%@ page import="culturarte.servicios.cliente.propuestas.DtPropuesta, culturarte.servicios.cliente.usuario.DtUsuario, culturarte.servicios.cliente.propuestas.DtComentario, java.util.List, java.time.format.DateTimeFormatter, com.culturarteWeb.util.WSFechaPropuesta" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -106,9 +106,9 @@
                                 <p><% 
                                     if (propuesta.getFechaPrevista() != null) {
                                         java.time.LocalDate fechaPrevista = WSFechaPropuesta.toJavaLocalDate(propuesta.getFechaPrevista());
-                                        out.print(fechaPrevista != null ? fechaPrevista.toString() : "No especificada");
+                                        System.out.print(fechaPrevista != null ? fechaPrevista.toString() : "No especificada");
                                     } else {
-                                        out.print("No especificada");
+                                        System.out.print("No especificada");
                                     }
                                 %></p>
                             </div>
@@ -117,9 +117,9 @@
                                 <p><% 
                                     if (propuesta.getFechaPublicacion() != null) {
                                         java.time.LocalDate fechaPublicacion = WSFechaPropuesta.toJavaLocalDate(propuesta.getFechaPublicacion());
-                                        out.print(fechaPublicacion != null ? fechaPublicacion.toString() : "No publicada");
+                                        System.out.print(fechaPublicacion != null ? fechaPublicacion.toString() : "No publicada");
                                     } else {
-                                        out.print("No publicada");
+                                        System.out.print("No publicada");
                                     }
                                 %></p>
 
@@ -165,7 +165,7 @@
                                                                     if (comentario.getUsuario() != null && comentario.getUsuario().getNickname() != null) {
                                                                         nickname = comentario.getUsuario().getNickname();
                                                                     }
-                                                                    out.print(nickname);
+                                                                    System.out.print(nickname);
                                                                 %>
                                                             </h6>
                                                             <% if (comentario.getUsuario() != null && comentario.getUsuario().getNombre() != null) { %>
@@ -180,12 +180,12 @@
                                                                 if (comentario.getFechaHora() != null) {
                                                                     java.time.LocalDateTime fechaHora = WSFechaPropuesta.toJavaLocalDateTime(comentario.getFechaHora());
                                                                     if (fechaHora != null) {
-                                                                        out.print(fechaHora.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
+                                                                        System.out.print(fechaHora.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
                                                                     } else {
-                                                                        out.print("Fecha no disponible");
+                                                                        System.out.print("Fecha no disponible");
                                                                     }
                                                                 } else {
-                                                                    out.print("Fecha no disponible");
+                                                                    System.out.print("Fecha no disponible");
                                                                 }
                                                             %>
                                                         </small>

@@ -1,12 +1,7 @@
-<%@ page import="java.time.format.DateTimeFormatter" %>
-<%@ page import="java.text.NumberFormat" %>
-<%@ page import="java.util.Locale" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.util.*" %>
 <%@ page import="culturarte.servicios.cliente.usuario.*" %>
 <%@ page import="culturarte.servicios.cliente.propuestas.DtPropuesta" %>
-<%@ page import="culturarte.servicios.cliente.propuestas.DtColaboracion" %>
-<%@ page import="com.culturarteWeb.util.WSFechaPropuesta" %>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -201,10 +196,12 @@
                         </thead>
                         <tbody>
                         <% if (favoritas != null && !favoritas.isEmpty()) {
-                            for (DtPropuesta p : favoritas) { %>
+                            for (culturarte.servicios.cliente.propuestas.DtPropuesta p : favoritas) { %>
                         <tr>
-                            <td><%=p.getTitulo()%></td>
-                            <td class="text-center"><a class="btn btn-link btn-sm" href="<%=ctx%>/consultaPropuesta?accion=detalle&titulo=<%=p.getTitulo()%>">Ver detalle</a></td>
+                            <td><%= p.getTitulo() %></td>
+                            <td class="text-center">
+                                <a class="btn btn-link btn-sm" href="<%=ctx%>/consultaPropuesta?accion=detalle&titulo=<%= p.getTitulo() %>">Ver detalle</a>
+                            </td>
                         </tr>
                         <% } } else { %>
                         <tr><td colspan="2" class="text-center text-muted">(sin favoritas)</td></tr>
@@ -258,23 +255,14 @@
                         <%--Muestro Propuestas con las que colaboró--%>
                         <tbody>
                         <% if (colaboradas != null && !colaboradas.isEmpty()) {
-                            //Fomateo la fecha y hora para que tenga una apariencia más linda a la vista
-                            DateTimeFormatter fmtUY = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm", new Locale("es","UY"));
-                            for (DtColaboracion m : misColaboraciones){
-                                DtPropuesta prop = m.getPropuesta();
+                            for (DtColaboracion m : misColaboraciones) {
+                                culturarte.servicios.cliente.usuario.DtPropuesta prop = m.getPropuesta();
                         %>
                         <tr>
                         <td><%=prop.getTitulo()%></td>
                             <%--si esta en su propio perfil es la unica manera de que vea el monto y fecha--%>
                             <% if (esPropio != null && esPropio ){%>
-                        <td><% 
-                                if (m.getFechaHora() != null) {
-                                    java.time.LocalDateTime fechaHora = WSFechaPropuesta.toJavaLocalDateTime(m.getFechaHora());
-                                    out.print(fechaHora != null ? fechaHora.format(fmtUY) : "-");
-                                } else {
-                                    out.print("-");
-                                }
-                            %></td>
+                        <td><%m.getFechaHora();%></td>
                         <td><%=m.getMonto()%></td>
                             <%}else{%>
                             <td>- </td>
