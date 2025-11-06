@@ -62,8 +62,6 @@ public class ConsultaPerfilUsuarioServlet extends HttpServlet {
                 for (String n : nicks) {
                     DtUsuario u = ICU.getDTUsuario(n);
                     if (u == null) continue;
-                    Long idPrueba = u.getId();
-                    System.out.println(idPrueba);
                     String tipo;
                     try {
                         ICU.devolverProponentePorNickname(n);
@@ -225,7 +223,6 @@ public class ConsultaPerfilUsuarioServlet extends HttpServlet {
                 for (DtColaboracion c : misColaboraciones) {
                     if (c.getPropuesta() != null) {
                         colaboradas.add(c.getPropuesta());
-                        System.out.println("tituo = " + c.getPropuesta().getTitulo());
                     }
                 }
             }
@@ -254,8 +251,8 @@ public class ConsultaPerfilUsuarioServlet extends HttpServlet {
             req.setAttribute("misColaboraciones", misColaboraciones);
             
             // Atributos del usuario CONSULTADO (para mostrar información del perfil)
-            req.setAttribute("esProponenteConsultado", proponente != null);
-            req.setAttribute("esColaboradorConsultado", colaborador != null);
+            req.setAttribute("esProponente", proponente != null);
+            req.setAttribute("esColaborador", colaborador != null);
             
             // Atributos del usuario ACTUAL logueado (para el menú lateral)
             boolean esProponenteActual = false;
@@ -275,8 +272,8 @@ public class ConsultaPerfilUsuarioServlet extends HttpServlet {
                     esColaboradorActual = false;
                 }
             }
-            req.setAttribute("esProponente", esProponenteActual);
-            req.setAttribute("esColaborador", esColaboradorActual);
+            req.setAttribute("esProponenteActual", esProponenteActual);
+            req.setAttribute("esColaboradorActual", esColaboradorActual);
 
 
             req.getRequestDispatcher("/consultaPerfilUsuario.jsp").forward(req, resp);

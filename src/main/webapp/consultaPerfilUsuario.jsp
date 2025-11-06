@@ -334,6 +334,12 @@
             </button>
         </form>
         <% } %>
+        <% if (esPropio != null && esPropio && esProponente) { %>
+            <a href="<%= request.getContextPath() %>/bajaProponente"
+               class="btn btn-danger">
+                <i class="bi bi-trash"></i> Dar de Baja Mi Cuenta
+            </a>
+        <% } %>
     </div>
 
     <% } // fin if usuariosCombo %>
