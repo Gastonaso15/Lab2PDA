@@ -1,6 +1,5 @@
 package com.culturarteWeb.servlets;
 
-import com.culturarteWeb.util.WSFechaUsuario;
 import com.culturarteWeb.util.WSFechaPropuesta;
 import culturarte.servicios.cliente.propuestas.*;
 import culturarte.servicios.cliente.usuario.DtUsuario;
@@ -11,12 +10,9 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.lang.Exception;
-import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.LinkedHashMap;
 
 @WebServlet("/consultaPropuesta")
 public class ConsultaPropuestaServlet extends HttpServlet {
@@ -89,7 +85,8 @@ public class ConsultaPropuestaServlet extends HttpServlet {
             if (ordenarPor != null && !ordenarPor.isEmpty()) {
                 propuestasVisibles = ordenarPropuestas(propuestasVisibles, ordenarPor);
             }
-            List<DtCategoria> categorias = extraerCategoriasReales(propuestasVisibles);
+
+            List<DtCategoria> categorias = extraerCategoriasDePropuestas(propuestasVisibles);
             boolean esProponente = false;
             boolean esColaborador = false;
             HttpSession session = request.getSession(false);
@@ -328,16 +325,16 @@ public class ConsultaPropuestaServlet extends HttpServlet {
         return propuestasOrdenadas;
     }
     
-    private List<DtCategoria> extraerCategoriasReales(List<DtPropuesta> propuestas) {
+    private List<DtCategoria> extraerCategoriasDePropuestas(List<DtPropuesta> propuestas) {
         List<DtCategoria> categorias = new ArrayList<>();
-        Map<String, DtCategoria> categoriasMap = new LinkedHashMap<>();
+        java.util.Map<String, DtCategoria> categoriasMap = new java.util.LinkedHashMap<>();
 
-        for(DtPropuesta propuesta : propuestas){
-            try{
-                if(propuesta.getCategoria() != null){
+        for (DtPropuesta propuesta : propuestas) {
+            try {
+                if (propuesta.getCategoria() != null) {
                     DtCategoria categoria = propuesta.getCategoria();
                     String nombreCategoria = categoria.getNombre();
-                    if(!categoriasMap.containsKey(nombreCategoria)){
+                    if (nombreCategoria != null && !nombreCategoria.isEmpty() && !categoriasMap.containsKey(nombreCategoria)) {
                         categoriasMap.put(nombreCategoria, categoria);
                     }
                 }
@@ -348,17 +345,15 @@ public class ConsultaPropuestaServlet extends HttpServlet {
 
         categorias.addAll(categoriasMap.values());
 
-        if(categorias.isEmpty()){
-            String[] categoriasDefault = {"Música", "Teatro", "Danza", "Artes Visuales", "Literatura", "Cine"};
-            for(String categoriaDefault : categoriasDefault){
-                try{
-                    DtCategoria categoria = DtCategoria.class.getDeclaredConstructor(String.class).newInstance(categoriaDefault);
-                    categorias.add(categoria);
-                } catch (Exception e) {
-                    System.out.println("No se pudo crear categoría por defecto: "+ categoriaDefault);
-                }
-            }
+        if (categorias != null && !categorias.isEmpty()) {
+            categorias.sort((c1, c2) -> {
+                String nombre1 = c1.getNombre() != null ? c1.getNombre() : "";
+                String nombre2 = c2.getNombre() != null ? c2.getNombre() : "";
+                return nombre1.compareToIgnoreCase(nombre2);
+            });
         }
+
         return categorias;
     }
+    
 }

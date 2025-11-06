@@ -1,10 +1,12 @@
 package com.culturarteWeb.servlets;
+import com.culturarteWeb.util.WSFechaPropuesta;
 import culturarte.servicios.cliente.propuestas.*;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.lang.Exception;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,9 +38,17 @@ public class ConsultaPropuestaPorCategoriaServlet extends HttpServlet {
                     propuestasVisibles.add(propuesta);
                 }
             }
-            List<DtCategoria> categorias = extraerCategoriasReales(propuestasVisibles);
+
+            List<DtCategoria> categorias = extraerCategoriasDePropuestas(propuestasVisibles);
+            
+            List<PrincipalServlet.PropuestaConDatos> propuestasConDatos = new ArrayList<>();
+            for (DtPropuesta propuesta : propuestasVisibles) {
+                PrincipalServlet.PropuestaConDatos propuestaConDatos = calcularDatosPropuesta(propuesta);
+                propuestasConDatos.add(propuestaConDatos);
+            }
+            
             request.setAttribute("categorias", categorias);
-            request.setAttribute("propuestas", propuestasVisibles);
+            request.setAttribute("propuestas", propuestasConDatos);
 
             request.getRequestDispatcher("/principal.jsp").forward(request, response);
         } catch (Exception e) {
@@ -62,8 +72,7 @@ public class ConsultaPropuestaPorCategoriaServlet extends HttpServlet {
                 propuestasVisibles.add(propuesta);
             }
         }
-        List<DtCategoria> todasLasCategorias = extraerCategoriasReales(propuestasVisibles);
-        request.setAttribute("categorias", todasLasCategorias);
+        
         List<DtPropuesta> propuestasFiltradas = new ArrayList<>();
 
         if(categoriasSeleccionadas != null && categoriasSeleccionadas.length > 0){
@@ -90,7 +99,17 @@ public class ConsultaPropuestaPorCategoriaServlet extends HttpServlet {
         }else {
             propuestasFiltradas = propuestasVisibles;
         }
-        request.setAttribute("propuestas", propuestasFiltradas);
+        
+       List<DtCategoria> todasLasCategorias = extraerCategoriasDePropuestas(propuestasVisibles);
+        
+       List<PrincipalServlet.PropuestaConDatos> propuestasConDatos = new ArrayList<>();
+        for (DtPropuesta propuesta : propuestasFiltradas) {
+            PrincipalServlet.PropuestaConDatos propuestaConDatos = calcularDatosPropuesta(propuesta);
+            propuestasConDatos.add(propuestaConDatos);
+        }
+        
+        request.setAttribute("categorias", todasLasCategorias);
+        request.setAttribute("propuestas", propuestasConDatos);
         request.setAttribute("categoriasSeleccionadas", categoriasSeleccionadas);
         request.getRequestDispatcher("/principal.jsp").forward(request, response);
         }catch (Exception e) {
@@ -99,16 +118,16 @@ public class ConsultaPropuestaPorCategoriaServlet extends HttpServlet {
         }
     }
 
-    private List<DtCategoria> extraerCategoriasReales(List<DtPropuesta> propuestas) {
+    private List<DtCategoria> extraerCategoriasDePropuestas(List<DtPropuesta> propuestas) {
         List<DtCategoria> categorias = new ArrayList<>();
         java.util.Map<String, DtCategoria> categoriasMap = new java.util.LinkedHashMap<>();
 
-        for(DtPropuesta propuesta : propuestas){
-            try{
-                if(propuesta.getCategoria() != null){
+        for (DtPropuesta propuesta : propuestas) {
+            try {
+                if (propuesta.getCategoria() != null) {
                     DtCategoria categoria = propuesta.getCategoria();
                     String nombreCategoria = categoria.getNombre();
-                    if(!categoriasMap.containsKey(nombreCategoria)){
+                    if (nombreCategoria != null && !nombreCategoria.isEmpty() && !categoriasMap.containsKey(nombreCategoria)) {
                         categoriasMap.put(nombreCategoria, categoria);
                     }
                 }
@@ -119,17 +138,49 @@ public class ConsultaPropuestaPorCategoriaServlet extends HttpServlet {
 
         categorias.addAll(categoriasMap.values());
 
-        if(categorias.isEmpty()){
-            String[] categoriasDefault = {"Música", "Teatro", "Danza", "Artes Visuales", "Literatura", "Cine"};
-            for(String categoriaDefault : categoriasDefault){
-                try{
-                    DtCategoria categoria = DtCategoria.class.getDeclaredConstructor(String.class).newInstance(categoriaDefault);
-                    categorias.add(categoria);
-                } catch (Exception e) {
-                    System.out.println("No se pudo crear categoría por defecto: "+ categoriaDefault);
+       if (categorias != null && !categorias.isEmpty()) {
+            categorias.sort((c1, c2) -> {
+                String nombre1 = c1.getNombre() != null ? c1.getNombre() : "";
+                String nombre2 = c2.getNombre() != null ? c2.getNombre() : "";
+                return nombre1.compareToIgnoreCase(nombre2);
+            });
+        }
+
+        return categorias;
+    }
+    
+    private PrincipalServlet.PropuestaConDatos calcularDatosPropuesta(DtPropuesta propuesta) {
+        double montoRecaudado = 0.0;
+        int totalColaboradores = 0;
+        long diasRestantes = 0;
+
+        if (propuesta.getColaboraciones() != null) {
+            for (DtColaboracion colaboracion : propuesta.getColaboraciones()) {
+                montoRecaudado += colaboracion.getMonto();
+            }
+            totalColaboradores = propuesta.getColaboraciones().size();
+        }
+
+        try {
+            if (propuesta.getFechaPublicacion() != null) {
+                java.time.LocalDate fechaPublicacion = WSFechaPropuesta.toJavaLocalDate(propuesta.getFechaPublicacion());
+                
+                if (fechaPublicacion != null) {
+                    java.time.LocalDate fechaActual = java.time.LocalDate.now();
+
+                    java.time.LocalDate fechaLimite = fechaPublicacion.plusDays(30);
+                    
+                    diasRestantes = ChronoUnit.DAYS.between(fechaActual, fechaLimite);
+                    if (diasRestantes < 0) {
+                        diasRestantes = 0;
+                    }
                 }
             }
+        } catch (Exception e) {
+            System.out.println("Error al calcular días restantes: " + e.getMessage());
+            diasRestantes = 0;
         }
-        return categorias;
+        
+        return new PrincipalServlet.PropuestaConDatos(propuesta, montoRecaudado, totalColaboradores, diasRestantes);
     }
 }

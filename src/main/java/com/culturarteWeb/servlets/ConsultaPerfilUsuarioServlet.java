@@ -95,6 +95,31 @@ public class ConsultaPerfilUsuarioServlet extends HttpServlet {
             } catch (Exception e) {
                 req.setAttribute("error", "No se pudo listar usuarios: " + e.getMessage());
             }
+            
+            // Establecer atributos del usuario actual para el menú lateral
+            HttpSession ses = req.getSession(false);
+            DtUsuario actual = (ses != null) ? (DtUsuario) ses.getAttribute("usuarioLogueado") : null;
+            
+            boolean esProponenteActual = false;
+            boolean esColaboradorActual = false;
+            if (actual != null) {
+                try {
+                    ICU.devolverProponentePorNickname(actual.getNickname());
+                    esProponenteActual = true;
+                } catch (Exception e) {
+                    esProponenteActual = false;
+                }
+                
+                try {
+                    ICU.devolverColaboradorPorNickname(actual.getNickname());
+                    esColaboradorActual = true;
+                } catch (Exception e) {
+                    esColaboradorActual = false;
+                }
+            }
+            req.setAttribute("esProponente", esProponenteActual);
+            req.setAttribute("esColaborador", esColaboradorActual);
+            
             //envio los datos ya cargados al jsp con el Dispatcher (si hasta parece despachador en español ahora que veo)
             req.getRequestDispatcher("/consultaPerfilUsuario.jsp").forward(req, resp);
             return;
@@ -227,8 +252,31 @@ public class ConsultaPerfilUsuarioServlet extends HttpServlet {
             req.setAttribute("colaboradas", colaboradas);
             req.setAttribute("creadasIngresadas", creadasIngresadas);
             req.setAttribute("misColaboraciones", misColaboraciones);
-            req.setAttribute("esProponente", proponente != null);
-            req.setAttribute("esColaborador", colaborador != null);
+            
+            // Atributos del usuario CONSULTADO (para mostrar información del perfil)
+            req.setAttribute("esProponenteConsultado", proponente != null);
+            req.setAttribute("esColaboradorConsultado", colaborador != null);
+            
+            // Atributos del usuario ACTUAL logueado (para el menú lateral)
+            boolean esProponenteActual = false;
+            boolean esColaboradorActual = false;
+            if (actual != null) {
+                try {
+                    ICU.devolverProponentePorNickname(actual.getNickname());
+                    esProponenteActual = true;
+                } catch (Exception e) {
+                    esProponenteActual = false;
+                }
+                
+                try {
+                    ICU.devolverColaboradorPorNickname(actual.getNickname());
+                    esColaboradorActual = true;
+                } catch (Exception e) {
+                    esColaboradorActual = false;
+                }
+            }
+            req.setAttribute("esProponente", esProponenteActual);
+            req.setAttribute("esColaborador", esColaboradorActual);
 
 
             req.getRequestDispatcher("/consultaPerfilUsuario.jsp").forward(req, resp);

@@ -1,37 +1,69 @@
 <%@ page import="culturarte.servicios.cliente.usuario.DtUsuario" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <header>
+    <div class="menu-hamburguesa">
+        <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </div>
+    
     <div class="logo">
         <a href="<%= request.getContextPath() %>/principal" style="text-decoration: none;">
             <img src="imagenes/culturarte.png" alt="Logo Culturarte" style="width:150px; height:auto;">
         </a>
     </div>
+    
+    <div class="sidebar-menu" id="sidebarMenu">
+        <div class="sidebar-header">
+            <h3>Menú</h3>
+            <button class="sidebar-close" id="sidebarClose" aria-label="Cerrar menú">&times;</button>
+        </div>
+        <nav class="sidebar-nav">
+            <%
+                Boolean esProponente = (Boolean) request.getAttribute("esProponente");
+                Boolean esColaborador = (Boolean) request.getAttribute("esColaborador");
+                
+                if (esProponente != null && esProponente) {
+            %>
+                <a href="<%= request.getContextPath() %>/altaPropuesta" class="sidebar-item">
+                    <span>📝</span> Nueva Propuesta
+                </a>
+                <a href="<%= request.getContextPath() %>/ejecutarPropuesta" class="sidebar-item">
+                    <span>▶️</span> Ejecutar Propuestas
+                </a>
+            <%
+                }
+                
+                if (esColaborador != null && esColaborador) {
+            %>
+                <a href="<%= request.getContextPath() %>/listarPropuestasParaComentar" class="sidebar-item">
+                    <span>💬</span> Comentar Propuestas
+                </a>
+            <%
+                }
+            %>
+            <a href="<%= request.getContextPath() %>/VerRankingDeUsuarios" class="sidebar-item">
+                <span>🏆</span> Ver Ranking de Usuarios
+            </a>
+        </nav>
+    </div>
+    
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    
     <div class="Botones-Menu-Superior">
-        <%
-            Boolean esProponente = (Boolean) request.getAttribute("esProponente");
-            if (esProponente != null && esProponente) {
-        %>
-            <a href="altaPropuesta">Nueva Propuesta</a> |
-            <a href="ejecutarPropuesta">Ejecutar Propuestas</a> |
-            <% } %>
         <a href="consultaPropuesta">Ver Propuestas</a> |
-        <a href="consultaPerfilUsuario">Ver Usuarios</a> |
-        <a href="VerRankingDeUsuarios">Ver Ranking de Usuarios</a>
-        <%
-            Boolean esColaborador = (Boolean) request.getAttribute("esColaborador");
-            if (esColaborador != null && esColaborador) {
-        %>
-          | <a href="listarPropuestasParaComentar">Comentar Propuestas</a>
-        <% } %>
+        <a href="consultaPerfilUsuario">Ver Usuarios</a>
     </div>
     <div class="search-bar-Menu-Superior">
-        <form method="get" action="<%= request.getContextPath() %>/principal" style="display: flex; gap: 10px; width: 100%;">
+        <form method="get" action="<%= request.getContextPath() %>/consultaPropuesta" style="display: flex; gap: 10px; width: 100%;">
             <input type="text" name="busqueda" placeholder="Buscar por título, lugar o descripción..."
                    value="<%= request.getParameter("busqueda") != null ? request.getParameter("busqueda") : "" %>"
                    style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
             <button type="submit" style="padding: 10px 20px; background-color: #333; color: white; border: none; border-radius: 4px; cursor: pointer;">Buscar</button>
             <% if (request.getParameter("busqueda") != null && !request.getParameter("busqueda").isEmpty()) { %>
-                <a href="<%= request.getContextPath() %>/principal"
+                <a href="<%= request.getContextPath() %>/consultaPropuesta"
                    style="padding: 10px 15px; background-color: #666; color: white; text-decoration: none; border-radius: 4px; display: flex; align-items: center;">
                     Limpiar
                 </a>
@@ -67,3 +99,43 @@
             <%}%>
         </div>
 </header>
+<script>
+    // Control del menú desplegable
+    document.addEventListener('DOMContentLoaded', function() {
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebarMenu = document.getElementById('sidebarMenu');
+        const sidebarClose = document.getElementById('sidebarClose');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+        function openMenu() {
+            sidebarMenu.classList.add('active');
+            sidebarOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMenu() {
+            sidebarMenu.classList.remove('active');
+            sidebarOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        if (menuToggle) {
+            menuToggle.addEventListener('click', openMenu);
+        }
+
+        if (sidebarClose) {
+            sidebarClose.addEventListener('click', closeMenu);
+        }
+
+        if (sidebarOverlay) {
+            sidebarOverlay.addEventListener('click', closeMenu);
+        }
+
+        // Cerrar con tecla ESC
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && sidebarMenu.classList.contains('active')) {
+                closeMenu();
+            }
+        });
+    });
+</script>
