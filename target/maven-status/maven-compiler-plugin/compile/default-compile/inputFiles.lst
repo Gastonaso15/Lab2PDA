@@ -9,13 +9,17 @@ C:\Users\agusm\IdeaProjects\Lab2PDA\src\main\java\com\culturarteWeb\servlets\Con
 C:\Users\agusm\IdeaProjects\Lab2PDA\src\main\java\com\culturarteWeb\servlets\ConsultaPropuestaPorCategoriaServlet.java
 C:\Users\agusm\IdeaProjects\Lab2PDA\src\main\java\com\culturarteWeb\servlets\ConsultaPropuestaServlet.java
 C:\Users\agusm\IdeaProjects\Lab2PDA\src\main\java\com\culturarteWeb\servlets\EjecutarPropuestaServlet.java
+C:\Users\agusm\IdeaProjects\Lab2PDA\src\main\java\com\culturarteWeb\servlets\EmitirConstanciaPagoServlet.java
 C:\Users\agusm\IdeaProjects\Lab2PDA\src\main\java\com\culturarteWeb\servlets\ExtenderFinanciacionServlet.java
+C:\Users\agusm\IdeaProjects\Lab2PDA\src\main\java\com\culturarteWeb\servlets\GenerarPDFConstanciaServlet.java
 C:\Users\agusm\IdeaProjects\Lab2PDA\src\main\java\com\culturarteWeb\servlets\InicioDeSesionServlet.java
+C:\Users\agusm\IdeaProjects\Lab2PDA\src\main\java\com\culturarteWeb\servlets\ListarColaboracionesConstanciaServlet.java
 C:\Users\agusm\IdeaProjects\Lab2PDA\src\main\java\com\culturarteWeb\servlets\ListarPropuestasParaComentarServlet.java
 C:\Users\agusm\IdeaProjects\Lab2PDA\src\main\java\com\culturarteWeb\servlets\MarcarPropuestaFavorita.java
 C:\Users\agusm\IdeaProjects\Lab2PDA\src\main\java\com\culturarteWeb\servlets\PrincipalServlet.java
 C:\Users\agusm\IdeaProjects\Lab2PDA\src\main\java\com\culturarteWeb\servlets\RegistrarColaboracionAPropuestaServlet.java
 C:\Users\agusm\IdeaProjects\Lab2PDA\src\main\java\com\culturarteWeb\servlets\SeguimientoDeUsuarioServlet.java
+C:\Users\agusm\IdeaProjects\Lab2PDA\src\main\java\com\culturarteWeb\servlets\VerificarDisponibilidadServlet.java
 C:\Users\agusm\IdeaProjects\Lab2PDA\src\main\java\com\culturarteWeb\servlets\VerRankingDeUsuariosServlet.java
 C:\Users\agusm\IdeaProjects\Lab2PDA\src\main\java\com\culturarteWeb\util\AdaptadorLocalDate.java
 C:\Users\agusm\IdeaProjects\Lab2PDA\src\main\java\com\culturarteWeb\util\LocalDateAdaptor.java
