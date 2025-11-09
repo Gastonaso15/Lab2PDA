@@ -49,7 +49,7 @@
                                 <option value="" disabled ${empty propuestaSeleccionada ? 'selected' : ''}>-- Elige una propuesta para ver sus detalles --</option>
                                 <c:forEach var="p" items="${propuestas}">
                                     <option value="${p.titulo}" <c:if test="${not empty propuestaSeleccionada && propuestaSeleccionada.titulo eq p.titulo}">selected</c:if>>
-                                        ${p.titulo} (por ${p.proponente})
+                                        ${p.titulo} (por ${p.DTProponente.nickname})
                                     </option>
                                 </c:forEach>
                             </select>

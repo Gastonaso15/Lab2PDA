@@ -4,8 +4,6 @@
 <head>
     <meta charset="utf-8">
     <title>Iniciar Sesión - Culturarte</title>
-
-    <!--para móvil -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -13,16 +11,13 @@
 </head>
 <body class="bg-light">
 
-<!-- Cabecera -->
 
 <div class="container">
     <jsp:include page="cabezalComun.jsp"/>
 </div>
 
-<!-- Contenido centrado y fluido -->
 <main class="container d-flex justify-content-center py-3 pt-md-5">
     <div class="row justify-content-center w-100">
-        <!-- Columna responsiva: ocupa to do móvil y se achica en pantallas grandes -->
         <div class="col-12 col-sm-10 col-md-7 col-lg-5 col-xl-4">
             <div class="card shadow-sm p-4 p-md-5">
                 <h3 class="text-center mb-4">Iniciar sesión</h3>

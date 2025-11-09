@@ -36,7 +36,9 @@
     </style>
 </head>
 <body>
-    <jsp:include page="cabezalComun.jsp"/>
+    <div class="container">
+            <jsp:include page="cabezalComun.jsp"/>
+        </div>
 
     <div class="container mt-4">
         <h1 class="mb-4">Constancias de Pago de Colaboración</h1>

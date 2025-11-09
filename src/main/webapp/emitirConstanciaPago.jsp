@@ -78,7 +78,10 @@
     </style>
 </head>
 <body>
-    <jsp:include page="cabezalComun.jsp"/>
+
+    <div class="container">
+        <jsp:include page="cabezalComun.jsp"/>
+    </div>
 
     <div class="container mt-4">
         <% String error = (String) request.getAttribute("error"); %>

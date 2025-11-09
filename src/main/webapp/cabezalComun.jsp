@@ -59,6 +59,7 @@
         <a href="consultaPropuesta">Ver Propuestas</a> |
         <a href="consultaPerfilUsuario">Ver Usuarios</a>
     </div>
+
     <div class="search-bar-Menu-Superior">
         <form method="get" action="<%= request.getContextPath() %>/consultaPropuesta" style="display: flex; gap: 10px; width: 100%;">
             <input type="text" name="busqueda" placeholder="Buscar por título, lugar o descripción..."
@@ -73,35 +74,38 @@
             <% } %>
         </form>
     </div>
-     <div class="Botones-Menu-Superior">
-            <%Object usuarioObj = session.getAttribute("usuarioLogueado");
-            if(usuarioObj != null) {
-                DtUsuario usuario = (DtUsuario) usuarioObj;%>
-                <div style="display:flex; align-items:center; gap:10px;">
-                   <%
-                       String rutaImagen = usuario.getImagen();
-                       if (rutaImagen == null || rutaImagen.isEmpty()) {
-                           rutaImagen = request.getContextPath() + "/imagenes/usuarioDefault.png";
-                       } else {
-                           rutaImagen = request.getContextPath() + "/" + rutaImagen;
-                       }
-                   %>
-                   <img src="<%= rutaImagen %>" alt="Imagen de Usuario" style="width:40px; height:40px; border-radius:50%;">
-                   <div style="display:flex; flex-direction:column;">
-                        <span><%= usuario.getNombre() %> <%= usuario.getApellido() %></span>
-                        <span style="font-size:13px;">
-                            <a href="<%= request.getContextPath() %>/consultaPerfilUsuario?nick=<%= usuario.getNickname() %>" style="text-decoration:none; color:#333;">Perfil</a> |
-                            <a href="${pageContext.request.contextPath}/cierreSesion" style="text-decoration:none; color:#333;">Cerrar Sesión </a>
 
-                        </span>
-                    </div>
+    <div class="Botones-Menu-Superior">
+        <%
+            Object usuarioObj = session.getAttribute("usuarioLogueado");
+            if(usuarioObj != null) {
+                DtUsuario usuario = (DtUsuario) usuarioObj;
+        %>
+            <div style="display:flex; align-items:center; gap:10px;">
+               <%
+                   String rutaImagen = usuario.getImagen();
+                   if (rutaImagen == null || rutaImagen.isEmpty()) {
+                       rutaImagen = request.getContextPath() + "/imagenes/usuarioDefault.png";
+                   } else {
+                       rutaImagen = request.getContextPath() + "/" + rutaImagen;
+                   }
+               %>
+               <img src="<%= rutaImagen %>" alt="Imagen de Usuario" style="width:40px; height:40px; border-radius:50%;">
+               <div style="display:flex; flex-direction:column;">
+                    <span><%= usuario.getNombre() %> <%= usuario.getApellido() %></span>
+                    <span style="font-size:13px;">
+                        <a href="<%= request.getContextPath() %>/consultaPerfilUsuario?nick=<%= usuario.getNickname() %>" style="text-decoration:none; color:#333;">Perfil</a> |
+                        <a href="${pageContext.request.contextPath}/cierreSesion" style="text-decoration:none; color:#333;">Cerrar Sesión </a>
+                    </span>
                 </div>
-            <%}else{%>
-                <a href="altaPerfil">REGISTRARSE</a> |
-                <a href="inicioDeSesion">ENTRAR</a>
-            <%}%>
-        </div>
+            </div>
+        <% } else { %>
+            <a href="altaPerfil">REGISTRARSE</a> |
+            <a href="inicioDeSesion">ENTRAR</a>
+        <% } %>
+    </div>
 </header>
+
 <script>
     // Control del menú desplegable
     document.addEventListener('DOMContentLoaded', function() {
@@ -113,26 +117,20 @@
         function openMenu() {
             sidebarMenu.classList.add('active');
             sidebarOverlay.classList.add('active');
+            menuToggle.style.display = 'none'; // 🔹 Ocultar el botón de menú
             document.body.style.overflow = 'hidden';
         }
 
         function closeMenu() {
             sidebarMenu.classList.remove('active');
             sidebarOverlay.classList.remove('active');
+            menuToggle.style.display = ''; // 🔹 Mostrarlo de nuevo
             document.body.style.overflow = '';
         }
 
-        if (menuToggle) {
-            menuToggle.addEventListener('click', openMenu);
-        }
-
-        if (sidebarClose) {
-            sidebarClose.addEventListener('click', closeMenu);
-        }
-
-        if (sidebarOverlay) {
-            sidebarOverlay.addEventListener('click', closeMenu);
-        }
+        if (menuToggle) menuToggle.addEventListener('click', openMenu);
+        if (sidebarClose) sidebarClose.addEventListener('click', closeMenu);
+        if (sidebarOverlay) sidebarOverlay.addEventListener('click', closeMenu);
 
         // Cerrar con tecla ESC
         document.addEventListener('keydown', function(e) {
