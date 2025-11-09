@@ -16,7 +16,6 @@
     <jsp:include page="estiloCabezalComun.jsp"/>
 
     <style>
-        /* --- Estilos Globales --- */
         body {
             background-color: #f5f5f5;
             color: #333;
@@ -24,7 +23,6 @@
             line-height: 1.6;
         }
 
-        /* --- Estilos para las Pestañas de Filtro (Tabs) --- */
         .nav-link.estado-tab {
             cursor: pointer;
             color: #333; /* Color inactivo */
@@ -38,16 +36,18 @@
             color: white;
             border-color: #333 #333 #f5f5f5;
         }
-
-        /* --- Estilos de las Tarjetas de Propuesta --- */
         .cartaPropuesta {
             display: flex;
             flex-direction: column;
             border-radius: 8px;
             background-color: white;
             overflow: hidden;
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
         }
-
+        .cartaPropuesta:hover {
+                    transform: translateY(-5px);
+                    box-shadow: 0 1rem 3rem rgba(0, 0, 0, .175) !important;
+                }
         .imagenPropuesta {
             height: 180px;
             width: 100%;
@@ -111,7 +111,6 @@
             margin-top: auto;
         }
 
-        /* --- Estilos de las Categorías --- */
         .categorias {
             background-color: white;
             border-radius: 8px;
@@ -176,12 +175,10 @@
 
         <div class="row g-4 mb-4">
             <%
-                // CORRECCIÓN: Usamos el nombre de clase completo para la lista y el cast.
                 List<com.culturarteWeb.servlets.PrincipalServlet.PropuestaConDatos> propuestas =
                     (List<com.culturarteWeb.servlets.PrincipalServlet.PropuestaConDatos>) request.getAttribute("propuestas");
 
                 if (propuestas != null && !propuestas.isEmpty()) {
-                    // CORRECCIÓN: Usamos el nombre de clase completo en el bucle 'for'.
                     for (com.culturarteWeb.servlets.PrincipalServlet.PropuestaConDatos propuestaConDatos : propuestas) {
                         DtPropuesta p = propuestaConDatos.getPropuesta();
                         String imagen = (p.getImagen() != null && !p.getImagen().isEmpty()) ? p.getImagen() : "imagenes/propuestaDefault.png";
@@ -245,8 +242,8 @@
                 </div>
             </div>
             <%
-                    } // Fin del for
-                } else { // Si no hay propuestas
+                    }
+                } else {
             %>
                 <div class="col-12">
                     <div class="alert alert-warning text-center">
@@ -254,7 +251,7 @@
                     </div>
                 </div>
             <%
-                } // Fin del if (propuestas != null)
+                }
             %>
         </div> <div class="categorias shadow-sm mb-4">
             <h3>CATEGORÍAS</h3>
@@ -290,8 +287,8 @@
                         </div>
                     </div>
                     <%
-                            } // Fin del for
-                        } // Fin del if (categorias != null)
+                            }
+                        }
                     %>
                 </div> <div class="mt-4">
                     <button type="submit" class="btn btn-dark">
