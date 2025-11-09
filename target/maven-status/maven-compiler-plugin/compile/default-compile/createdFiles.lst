@@ -74,3 +74,4 @@ culturarte\servicios\cliente\usuario\LocalDateTime.class
 culturarte\servicios\cliente\propuestas\DtCategoria.class
 culturarte\servicios\cliente\propuestas\DtTipoRetorno.class
 culturarte\servicios\cliente\propuestas\package-info.class
+com\culturarteWeb\RegistroAccesoFilter.class
