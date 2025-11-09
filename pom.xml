@@ -67,6 +67,18 @@
             <scope>runtime</scope>
         </dependency>
 
+        <!-- iText 7 para generar PDFs -->
+        <dependency>
+            <groupId>com.itextpdf</groupId>
+            <artifactId>kernel</artifactId>
+            <version>7.2.5</version>
+        </dependency>
+        <dependency>
+            <groupId>com.itextpdf</groupId>
+            <artifactId>layout</artifactId>
+            <version>7.2.5</version>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -143,6 +155,7 @@
                                 <echo message="Eliminando clases LocalDate y LocalDateTime generadas vacías (propuestas)..."/>
                                 <delete file="${project.build.directory}/generated-sources/wsimport/culturarte/servicios/cliente/propuestas/LocalDate.java" failonerror="false"/>
                                 <delete file="${project.build.directory}/generated-sources/wsimport/culturarte/servicios/cliente/propuestas/LocalDateTime.java" failonerror="false"/>
+                                <echo message="Clases vacías eliminadas. Usando clases personalizadas con campos completos."/>
                             </target>
                         </configuration>
                     </execution>

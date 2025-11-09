@@ -9,7 +9,6 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.lang.Exception;
-import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +39,8 @@ public class PrincipalServlet extends HttpServlet {
             
             String estadoFiltro = request.getParameter("estado");
             String busqueda = request.getParameter("busqueda");
+            String categoriaFiltro = request.getParameter("categoria");
+            String ordenarPor = request.getParameter("ordenarPor");
 
             ListaDTPropuesta propuestasWS = IPC.devolverTodasLasPropuestas();
             List<DtPropuesta> todasLasPropuestas = propuestasWS.getPropuesta();
@@ -49,6 +50,8 @@ public class PrincipalServlet extends HttpServlet {
             for (DtPropuesta propuesta : todasLasPropuestas) {
                 if (propuesta.getEstadoActual() != DtEstadoPropuesta.INGRESADA) {
                     boolean cumpleEstado = false;
+                    boolean cumpleBusqueda = true;
+                    boolean cumpleCategoria = true;
                     
                     if (estadoFiltro == null || estadoFiltro.isEmpty() || "todas".equals(estadoFiltro)) {
                         cumpleEstado = true;
@@ -56,16 +59,25 @@ public class PrincipalServlet extends HttpServlet {
                         cumpleEstado = coincideConEstadoFiltro(propuesta.getEstadoActual().toString(), estadoFiltro);
                     }
 
-                    boolean cumpleBusqueda = true;
                     if (busqueda != null && !busqueda.trim().isEmpty()) {
                         cumpleBusqueda = coincideConBusqueda(propuesta, busqueda.trim());
                     }
 
-                    if (cumpleEstado && cumpleBusqueda) {
+                    if (categoriaFiltro != null && !categoriaFiltro.isEmpty() && !"todas".equals(categoriaFiltro)) {
+                        cumpleCategoria = coincideConCategoriaFiltro(propuesta, categoriaFiltro);
+                    }
+
+                    if (cumpleEstado && cumpleBusqueda && cumpleCategoria) {
                         propuestasVisibles.add(propuesta);
                     }
                 }
             }
+
+            if (ordenarPor != null && !ordenarPor.isEmpty()) {
+                propuestasVisibles = ordenarPropuestas(propuestasVisibles, ordenarPor);
+            }
+            
+            List<DtCategoria> categorias = extraerCategoriasDePropuestas(propuestasVisibles);
 
             boolean esProponente = false;
             HttpSession session = request.getSession(false);
@@ -96,11 +108,12 @@ public class PrincipalServlet extends HttpServlet {
                 propuestasConDatos.add(propuestaConDatos);
             }
             
-            List<DtCategoria> categorias = extraerCategoriasReales(propuestasVisibles);
             request.setAttribute("categorias", categorias);
             request.setAttribute("propuestas", propuestasConDatos);
             request.setAttribute("estadoFiltro", estadoFiltro);
             request.setAttribute("busqueda", busqueda);
+            request.setAttribute("categoriaFiltro", categoriaFiltro);
+            request.setAttribute("ordenarPor", ordenarPor);
             request.setAttribute("esProponente", esProponente);
             request.setAttribute("esColaborador", esColaborador);
             request.getRequestDispatcher("/principal.jsp").forward(request, response);
@@ -110,16 +123,23 @@ public class PrincipalServlet extends HttpServlet {
         }
     }
 
-    private List<DtCategoria> extraerCategoriasReales(List<DtPropuesta> propuestas) {
+    private boolean coincideConCategoriaFiltro(DtPropuesta propuesta, String filtro) {
+        if (filtro == null || propuesta.getCategoria() == null) {
+            return false;
+        }
+        return filtro.equals(propuesta.getCategoria().getNombre());
+    }
+    
+    private List<DtCategoria> extraerCategoriasDePropuestas(List<DtPropuesta> propuestas) {
         List<DtCategoria> categorias = new ArrayList<>();
         java.util.Map<String, DtCategoria> categoriasMap = new java.util.LinkedHashMap<>();
 
-        for(DtPropuesta propuesta : propuestas){
-            try{
-                if(propuesta.getCategoria() != null){
+        for (DtPropuesta propuesta : propuestas) {
+            try {
+                if (propuesta.getCategoria() != null) {
                     DtCategoria categoria = propuesta.getCategoria();
                     String nombreCategoria = categoria.getNombre();
-                    if(!categoriasMap.containsKey(nombreCategoria)){
+                    if (nombreCategoria != null && !nombreCategoria.isEmpty() && !categoriasMap.containsKey(nombreCategoria)) {
                         categoriasMap.put(nombreCategoria, categoria);
                     }
                 }
@@ -130,18 +150,59 @@ public class PrincipalServlet extends HttpServlet {
 
         categorias.addAll(categoriasMap.values());
 
-        if(categorias.isEmpty()){
-            String[] categoriasDefault = {"Música", "Teatro", "Danza", "Artes Visuales", "Literatura", "Cine"};
-            for(String categoriaDefault : categoriasDefault){
-                try{
-                    DtCategoria categoria = DtCategoria.class.getDeclaredConstructor(String.class).newInstance(categoriaDefault);
-                    categorias.add(categoria);
-                } catch (Exception e) {
-                    System.out.println("No se pudo crear categoría por defecto: "+ categoriaDefault);
-                }
-            }
+        if (categorias != null && !categorias.isEmpty()) {
+            categorias.sort((c1, c2) -> {
+                String nombre1 = c1.getNombre() != null ? c1.getNombre() : "";
+                String nombre2 = c2.getNombre() != null ? c2.getNombre() : "";
+                return nombre1.compareToIgnoreCase(nombre2);
+            });
         }
+
         return categorias;
+    }
+    
+    private List<DtPropuesta> ordenarPropuestas(List<DtPropuesta> propuestas, String criterioOrdenamiento) {
+        List<DtPropuesta> propuestasOrdenadas = new ArrayList<>(propuestas);
+
+        switch (criterioOrdenamiento.toLowerCase()) {
+            case "alfabetico":
+            case "alfabeticamente":
+                propuestasOrdenadas.sort((p1, p2) -> {
+                    String titulo1 = p1.getTitulo() != null ? p1.getTitulo() : "";
+                    String titulo2 = p2.getTitulo() != null ? p2.getTitulo() : "";
+                    return titulo1.compareToIgnoreCase(titulo2);
+                });
+                break;
+            case "fecha_creacion":
+            case "fecha_creacion_descendente":
+                propuestasOrdenadas.sort((p1, p2) -> {
+                    if (p1.getFechaPublicacion() == null && p2.getFechaPublicacion() == null) return 0;
+                    if (p1.getFechaPublicacion() == null) return 1;
+                    if (p2.getFechaPublicacion() == null) return -1;
+                    java.time.LocalDate fecha1 = WSFechaPropuesta.toJavaLocalDate(p1.getFechaPublicacion());
+                    java.time.LocalDate fecha2 = WSFechaPropuesta.toJavaLocalDate(p2.getFechaPublicacion());
+                    return fecha2.compareTo(fecha1); // Descendente
+                });
+                break;
+            case "monto_ascendente":
+                propuestasOrdenadas.sort((p1, p2) -> {
+                    double monto1 = p1.getMontoNecesario() != null ? p1.getMontoNecesario() : 0.0;
+                    double monto2 = p2.getMontoNecesario() != null ? p2.getMontoNecesario() : 0.0;
+                    return Double.compare(monto1, monto2);
+                });
+                break;
+            case "monto_descendente":
+                propuestasOrdenadas.sort((p1, p2) -> {
+                    double monto1 = p1.getMontoNecesario() != null ? p1.getMontoNecesario() : 0.0;
+                    double monto2 = p2.getMontoNecesario() != null ? p2.getMontoNecesario() : 0.0;
+                    return Double.compare(monto2, monto1);
+                });
+                break;
+            default:
+                break;
+        }
+
+        return propuestasOrdenadas;
     }
 
     private boolean coincideConBusqueda(DtPropuesta propuesta, String busqueda) {

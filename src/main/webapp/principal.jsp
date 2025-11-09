@@ -156,20 +156,26 @@
         <% } %>
 
         <ul class="nav nav-tabs mb-4">
+            <%
+                String estadoFiltro = (String) request.getAttribute("estadoFiltro");
+                if (estadoFiltro == null || estadoFiltro.isEmpty()) {
+                    estadoFiltro = "todas";
+                }
+            %>
             <li class="nav-item">
-                <span class="nav-link estado-tab active" data-estado="todas">Propuestas Creadas</span>
+                <span class="nav-link estado-tab <%= "todas".equals(estadoFiltro) ? "active" : "" %>" data-estado="todas">Propuestas Creadas</span>
             </li>
             <li class="nav-item">
-                <span class="nav-link estado-tab" data-estado="en_financiacion">En Financiación</span>
+                <span class="nav-link estado-tab <%= "en_financiacion".equals(estadoFiltro) ? "active" : "" %>" data-estado="en_financiacion">En Financiación</span>
             </li>
             <li class="nav-item">
-                <span class="nav-link estado-tab" data-estado="financiadas">Financiadas</span>
+                <span class="nav-link estado-tab <%= "financiadas".equals(estadoFiltro) ? "active" : "" %>" data-estado="financiadas">Financiadas</span>
             </li>
             <li class="nav-item">
-                <span class="nav-link estado-tab" data-estado="no_financiadas">NO Financiadas</span>
+                <span class="nav-link estado-tab <%= "no_financiadas".equals(estadoFiltro) ? "active" : "" %>" data-estado="no_financiadas">NO Financiadas</span>
             </li>
             <li class="nav-item">
-                <span class="nav-link estado-tab" data-estado="canceladas">Canceladas</span>
+                <span class="nav-link estado-tab <%= "canceladas".equals(estadoFiltro) ? "active" : "" %>" data-estado="canceladas">Canceladas</span>
             </li>
         </ul>
 
@@ -305,11 +311,6 @@
     <script>
         document.querySelectorAll('.estado-tab').forEach(tab => {
             tab.addEventListener('click', function() {
-                document.querySelectorAll('.estado-tab').forEach(t => {
-                    t.classList.remove('active');
-                });
-                this.classList.add('active');
-
                 const estado = this.getAttribute('data-estado');
                 const url = new URL(window.location.origin + window.location.pathname);
 
@@ -323,21 +324,6 @@
                 window.location.href = url.toString();
             });
         });
-
-        const estadoFiltro = '<%= request.getAttribute("estadoFiltro") %>';
-        if (estadoFiltro && estadoFiltro !== 'null') {
-            document.querySelectorAll('.estado-tab').forEach(tab => {
-                tab.classList.remove('active');
-                if (tab.getAttribute('data-estado') === estadoFiltro) {
-                    tab.classList.add('active');
-                }
-            });
-        } else {
-            const primerTab = document.querySelector('.estado-tab[data-estado="todas"]');
-            if (!document.querySelector('.estado-tab.active') && primerTab) {
-                primerTab.classList.add('active');
-            }
-        }
 
         function limpiarFiltros() {
             document.querySelectorAll('input[name="categoria"]').forEach(checkbox => {

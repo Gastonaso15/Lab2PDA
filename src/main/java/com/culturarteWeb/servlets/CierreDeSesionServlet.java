@@ -14,7 +14,7 @@ public class CierreDeSesionServlet extends HttpServlet {
         HttpSession session = request.getSession(false);
 
         if (session != null) {
-            System.out.println(">> Cerrando sesión del usuario: " + session.getAttribute("usuario"));
+            System.out.println(">> Cerrando sesión del usuario: " + session.getAttribute("usuarioLogueado"));
             session.invalidate();
         } else {
             System.out.println(">> No había sesión activa al intentar cerrar sesión.");
