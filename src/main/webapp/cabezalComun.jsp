@@ -41,6 +41,9 @@
                 <a href="<%= request.getContextPath() %>/listarPropuestasParaComentar" class="sidebar-item">
                     <span>💬</span> Comentar Propuestas
                 </a>
+                <a href="<%= request.getContextPath() %>/listarColaboracionesConstancia" class="sidebar-item">
+                    <span>📄</span> Constancias de Pago
+                </a>
             <%
                 }
             %>
