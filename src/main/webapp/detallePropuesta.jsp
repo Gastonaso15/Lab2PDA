@@ -92,46 +92,44 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="mb-4">
+                            <dl class="row">
+                                <dt class="col-sm-3"><i class="bi bi-person-fill text-muted"></i> Proponente</dt>
+                                <dd class="col-sm-9"><%= propuesta.getDTProponente() != null ?
+                                    propuesta.getDTProponente().getNickname() : "N/A" %></dd>
 
-                        <div class="row mb-4">
-                            <div class="col-md-6">
-                                <h6>Proponente</h6>
-                                <p><%= propuesta.getDTProponente() != null ?
-                                    propuesta.getDTProponente().getNickname() : "N/A" %></p>
+                                <dt class="col-sm-3"><i class="bi bi-bookmark-fill text-muted"></i> Categoría</dt>
+                                <dd class="col-sm-9"><%= propuesta.getCategoria() != null ?
+                                    propuesta.getCategoria().getNombre() : "Sin categoría" %></dd>
 
-                                <h6>Lugar</h6>
-                                <p><%= propuesta.getLugar() != null ? propuesta.getLugar() : "No especificado" %></p>
+                                <dt class="col-sm-3"><i class="bi bi-geo-alt-fill text-muted"></i> Lugar</dt>
+                                <dd class="col-sm-9"><%= propuesta.getLugar() != null ? propuesta.getLugar() : "No especificado" %></dd>
 
-                                <h6>Fecha Prevista</h6>
-                                <p><% 
+                                <dt class="col-sm-3"><i class="bi bi-calendar-event text-muted"></i> Fecha Prevista</dt>
+                                <dd class="col-sm-9"><%
                                     if (propuesta.getFechaPrevista() != null) {
                                         java.time.LocalDate fechaPrevista = WSFechaPropuesta.toJavaLocalDate(propuesta.getFechaPrevista());
-                                        System.out.print(fechaPrevista != null ? fechaPrevista.toString() : "No especificada");
+                                        out.print(fechaPrevista != null ? fechaPrevista.toString() : "No especificada");
                                     } else {
-                                        System.out.print("No especificada");
+                                        out.print("No especificada");
                                     }
-                                %></p>
-                            </div>
-                            <div class="col-md-6">
-                                <h6>Fecha de Publicación</h6>
-                                <p><% 
+                                %></dd>
+
+                                <dt class="col-sm-3"><i class="bi bi-calendar-check text-muted"></i> Publicación</dt>
+                                <dd class="col-sm-9"><%
                                     if (propuesta.getFechaPublicacion() != null) {
                                         java.time.LocalDate fechaPublicacion = WSFechaPropuesta.toJavaLocalDate(propuesta.getFechaPublicacion());
-                                        System.out.print(fechaPublicacion != null ? fechaPublicacion.toString() : "No publicada");
+                                        out.print(fechaPublicacion != null ? fechaPublicacion.toString() : "No publicada");
                                     } else {
-                                        System.out.print("No publicada");
+                                        out.print("No publicada");
                                     }
-                                %></p>
-
-                                <h6>Categoría</h6>
-                                <p><%= propuesta.getCategoria() != null ?
-                                    propuesta.getCategoria().getNombre() : "Sin categoría" %></p>
+                                %></dd>
 
                                 <% if (propuesta.getPrecioEntrada() != null && propuesta.getPrecioEntrada() > 0) { %>
-                                    <h6>Precio de Entrada</h6>
-                                    <p>$<%= String.format("%.2f", propuesta.getPrecioEntrada()) %></p>
+                                    <dt class="col-sm-3"><i class="bi bi-ticket-fill text-muted"></i> Precio Entrada</dt>
+                                    <dd class="col-sm-9">$<%= String.format("%.2f", propuesta.getPrecioEntrada()) %></dd>
                                 <% } %>
-                            </div>
+                            </dl>
                         </div>
 
                         <div class="mb-4">
