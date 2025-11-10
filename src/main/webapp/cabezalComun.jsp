@@ -38,6 +38,9 @@
                 
                 if (esColaborador != null && esColaborador) {
             %>
+                <a href="<%= request.getContextPath() %>/recomendacionPropuestas" class="sidebar-item">
+                    <span>⭐</span> Recomendaciones de Propuestas
+                </a>
                 <a href="<%= request.getContextPath() %>/listarPropuestasParaComentar" class="sidebar-item">
                     <span>💬</span> Comentar Propuestas
                 </a>
@@ -117,14 +120,14 @@
         function openMenu() {
             sidebarMenu.classList.add('active');
             sidebarOverlay.classList.add('active');
-            menuToggle.style.display = 'none'; // 🔹 Ocultar el botón de menú
+            menuToggle.style.display = 'none';
             document.body.style.overflow = 'hidden';
         }
 
         function closeMenu() {
             sidebarMenu.classList.remove('active');
             sidebarOverlay.classList.remove('active');
-            menuToggle.style.display = ''; // 🔹 Mostrarlo de nuevo
+            menuToggle.style.display = '';
             document.body.style.overflow = '';
         }
 
