@@ -34,7 +34,6 @@
             font-weight: bold;
             background-color: #333;
             color: white;
-            border-color: #333 #333 #f5f5f5;
         }
         .cartaPropuesta {
             display: flex;
@@ -43,15 +42,26 @@
             background-color: white;
             overflow: hidden;
             transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            animation: fadeInDesdeAbajo 0.6s ease-out forwards;
         }
+        .cartaPropuesta .btn {
+                    transition: transform 0.15s ease-in-out;
+                }
+        .cartaPropuesta .btn:hover {
+                    transform: scale(1.03);
+                }
         .cartaPropuesta:hover {
                     transform: translateY(-5px);
                     box-shadow: 0 1rem 3rem rgba(0, 0, 0, .175) !important;
+        }
+        .cartaPropuesta:hover .imagenPropuesta {
+            transform: scale(1.05);
         }
         .imagenPropuesta {
             height: 180px;
             width: 100%;
             object-fit: cover;
+            transition: transform 0.2s ease-in-out;
         }
 
         .contenidoPropuesta {
@@ -130,6 +140,39 @@
                 gap: 5px;
             }
         }
+        @keyframes fadeInDesdeAbajo {
+                    from {
+                        opacity: 0;
+                        transform: translateY(20px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+        .itemCategoria .form-check-input {
+            display: none;
+        }
+
+        .itemCategoria .form-check-label {
+            display: inline-block;
+            padding: 8px 16px;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .itemCategoria .form-check-label:hover {
+            background-color: #f5f5f5;
+            border-color: #aaa;
+        }
+
+        .itemCategoria .form-check-input:checked + .form-check-label {
+            background-color: #333;
+            color: white;
+            border-color: #333;
+        }
     </style>
 </head>
 <body>
@@ -155,7 +198,7 @@
             </div>
         <% } %>
 
-        <ul class="nav nav-tabs mb-4">
+        <ul class="nav nav-pills nav-fill mb-4">
             <%
                 String estadoFiltro = (String) request.getAttribute("estadoFiltro");
                 if (estadoFiltro == null || estadoFiltro.isEmpty()) {
