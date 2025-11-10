@@ -74,6 +74,7 @@ public class ConsultaPerfilUsuarioServlet extends HttpServlet {
                     Long id = u.getId();
                     row.put("id", id != null ? id : 0L);
                     row.put("nick", u.getNickname());
+                    row.put("imagen", u.getImagen());
                     row.put("nombre", u.getNombre());
                     row.put("apellido", u.getApellido());
                     row.put("tipo", tipo);

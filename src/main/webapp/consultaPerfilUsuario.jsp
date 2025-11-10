@@ -19,7 +19,7 @@
     <jsp:include page="cabezalComun.jsp"/>
     <h1 class="h3 mb-4">Consulta de Perfil de Usuario</h1>
 
-    <%-- Mensaje de error si llegó algo desde el servlet --%>
+    <%-- Mensaje de error si llegó alguno desde el servlet --%>
     <%
         Object err = request.getAttribute("error");
         if (err != null) {
@@ -39,27 +39,88 @@
 
         if (usuariosCombo != null) {
     %>
-    <!-- PANTALLA 1: selector de usuario -->
-    <form method="get" action="<%=ctx%>/consultaPerfilUsuario" class="row g-2 align-items-end">
-        <div class="col-12 col-md-6">
-            <label class="form-label">Elegí un usuario</label>
-            <select name="nick" class="form-select">
-                <% for (Map<String, Object> u : usuariosCombo) {
-                    String nickOpt = (String) u.get("nick");
-                    String nombreOpt = (String) u.get("nombre");
-                    String apellidoOpt = (String) u.get("apellido");
-                    String tipoOpt = (String) u.get("tipo");
-                    Long   idOpt   = (Long)   u.get("id"); %>
-                <option value="<%= nickOpt %>">
-                    <%= nickOpt %> — <%= nombreOpt %> <%= apellidoOpt %> — <%= tipoOpt %> (#<%= idOpt %>)
-                </option>
+    <!-- PANTALLA 1: buscador + grilla -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                <h2 class="h5 mb-0">Elegí un usuario</h2>
+
+                <!-- buscador -->
+                <div class="input-group" style="max-width: 420px;">
+        <span class="input-group-text">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+               class="bi bi-search" viewBox="0 0 16 16">
+            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85zm-5.242.656a5 5 0 1 1 0-10 5 5 0 0 1 0 10z"/>
+          </svg>
+        </span>
+                    <input id="filtroUsuarios" type="text" class="form-control"
+                           placeholder="Buscar por nick, nombre o apellido...">
+                </div>
+            </div>
+
+            <!-- grilla de tarjetas  -->
+            <div class="row g-3" id="gridUsuarios">
+                <%
+                    for (Map<String, Object> u : usuariosCombo) {
+                        String nickOpt     = String.valueOf(u.get("nick"));
+                        String nombreOpt   = String.valueOf(u.getOrDefault("nombre",""));
+                        String apellidoOpt = String.valueOf(u.getOrDefault("apellido",""));
+                        String tipoOpt     = String.valueOf(u.getOrDefault("tipo","Usuario"));
+                        String img         = (String) u.get("imagen");
+                        String rutaImagen  = (img == null || img.isBlank()) ? (ctx + "/imagenes/usuarioDefault.png") : (ctx + "/" + img);
+
+                        String badgeClass = "text-bg-secondary";
+                        if ("Proponente".equalsIgnoreCase(tipoOpt))  badgeClass = "text-bg-primary";
+                        else if ("Colaborador".equalsIgnoreCase(tipoOpt)) badgeClass = "text-bg-success";
+                %>
+                <div class="col-12 col-sm-6 col-lg-4 col-xl-3 user-card"
+                     data-nick="<%= nickOpt.toLowerCase() %>"
+                     data-nombre="<%= nombreOpt.toLowerCase() %>"
+                     data-apellido="<%= apellidoOpt.toLowerCase() %>">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body d-flex gap-3">
+                            <img src="<%= rutaImagen %>" alt="avatar" class="rounded-circle border"
+                                 style="width:64px;height:64px;object-fit:cover">
+                            <div class="flex-grow-1">
+                                <div class="d-flex align-items-center gap-2 mb-1">
+                                    <span class="badge <%= badgeClass %>"><%= tipoOpt %></span>
+                                </div>
+                                <div class="fw-semibold"><%= nickOpt %></div>
+                                <div class="text-muted small"><%= nombreOpt %> <%= apellidoOpt %></div>
+                                <div class="mt-2">
+                                    <a class="btn btn-sm btn-primary"
+                                       href="<%= ctx %>/consultaPerfilUsuario?nick=<%= nickOpt %>">
+                                        Ver perfil
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <% } %>
-            </select>
+            </div>
         </div>
-        <div class="col-12 col-md-auto">
-            <button type="submit" class="btn btn-primary">Ver perfil</button>
-        </div>
-    </form>
+    </div>
+
+    <!-- filtro en vivo (client-side) -->
+    <script>
+        (function() {
+            const input = document.getElementById('filtroUsuarios');
+            const cards = document.querySelectorAll('#gridUsuarios .user-card');
+            if (!input) return;
+
+            input.addEventListener('input', function () {
+                const q = this.value.trim().toLowerCase();
+                cards.forEach(card => {
+                    const nick = card.dataset.nick || "";
+                    const nombre = card.dataset.nombre || "";
+                    const apellido = card.dataset.apellido || "";
+                    const match = !q || nick.includes(q) || nombre.includes(q) || apellido.includes(q);
+                    card.classList.toggle('d-none', !match);
+                });
+            });
+        })();
+    </script>
 
     <%
     } else {
