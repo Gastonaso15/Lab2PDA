@@ -8,7 +8,6 @@
     <title>Ranking de Usuarios</title>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- Bootstrap 5 (CDN) -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <jsp:include page="estiloCabezalComun.jsp"/>
 </head>
@@ -19,7 +18,6 @@
     <jsp:include page="cabezalComun.jsp"/>
     <h1 class="h3 mb-4">Ranking de Usuarios</h1>
 
-    <%-- Mensaje de error si pasó algo desde el servlet --%>
         <%
         Object err = request.getAttribute("error");
         if (err != null) {
@@ -32,9 +30,7 @@
                 (List<Map<String, Object>>) request.getAttribute("usuariosCombo");
 
     %>
-    <!-- Ranking de usuarios -->
-        <!-- Ranking de usuarios (grilla) -->
-        <div class="row g-3"><%  // <-- ESTA ES LA GRILLA
+        <div class="row g-3"><%
             for (Map<String, Object> u : usuariosCombo) {
                 String nickOpt    = String.valueOf(u.get("nick"));
                 String nombreOpt  = String.valueOf(u.getOrDefault("nombre",""));
@@ -44,7 +40,6 @@
                 long   idOpt      = ((Number)u.getOrDefault("id",0)).longValue();
                 int    rankOpt    = ((Number)u.getOrDefault("rank",0)).intValue();
 
-                // imagen ya viene del servlet; fallback por si viniera vacía
                 String rutaImagen = (String) u.get("imagen");
                 if (rutaImagen == null || rutaImagen.isBlank()) {
                     rutaImagen = ctx + "/imagenes/usuarioDefault.png";
@@ -56,7 +51,6 @@
                 if ("Proponente".equalsIgnoreCase(tipoOpt)) badgeClass = "text-bg-primary";
                 else if ("Colaborador".equalsIgnoreCase(tipoOpt)) badgeClass = "text-bg-success";
         %>
-            <!-- TARJETA INDIVIDUAL -->
             <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
                 <div class="card shadow-sm h-100 position-relative">
                     <!-- N° de ranking arriba a la izquierda -->

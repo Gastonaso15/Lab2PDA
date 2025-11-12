@@ -47,6 +47,9 @@
                 <a href="<%= request.getContextPath() %>/listarColaboracionesConstancia" class="sidebar-item">
                     <span>📄</span> Constancias de Pago
                 </a>
+                <a href="<%= request.getContextPath() %>/listarColaboracionesParaPagar" class="sidebar-item">
+                    <span>💳</span> Pagar Colaboración
+                </a>
             <%
                 }
             %>
@@ -110,7 +113,6 @@
 </header>
 
 <script>
-    // Control del menú desplegable
     document.addEventListener('DOMContentLoaded', function() {
         const menuToggle = document.getElementById('menuToggle');
         const sidebarMenu = document.getElementById('sidebarMenu');
@@ -135,7 +137,6 @@
         if (sidebarClose) sidebarClose.addEventListener('click', closeMenu);
         if (sidebarOverlay) sidebarOverlay.addEventListener('click', closeMenu);
 
-        // Cerrar con tecla ESC
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape' && sidebarMenu.classList.contains('active')) {
                 closeMenu();

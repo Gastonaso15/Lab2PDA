@@ -29,7 +29,6 @@
         position: relative;
     }
 
-    /* Estilos del menú hamburguesa */
     .menu-hamburguesa {
         display: flex;
         align-items: center;
@@ -58,7 +57,6 @@
         background-color: #000;
     }
 
-    /* Sidebar */
     .sidebar-menu {
         position: fixed;
         top: 0;
@@ -135,7 +133,6 @@
         font-size: 20px;
     }
 
-    /* Overlay */
     .sidebar-overlay {
         position: fixed;
         top: 0;

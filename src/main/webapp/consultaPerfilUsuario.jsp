@@ -8,7 +8,6 @@
     <title>Perfil de Usuario</title>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- Bootstrap 5 (CDN) -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <jsp:include page="estiloCabezalComun.jsp"/>
 </head>
@@ -19,7 +18,6 @@
     <jsp:include page="cabezalComun.jsp"/>
     <h1 class="h3 mb-4">Consulta de Perfil de Usuario</h1>
 
-    <%-- Mensaje de error si llegó alguno desde el servlet --%>
     <%
         Object err = request.getAttribute("error");
         if (err != null) {
@@ -28,7 +26,6 @@
     <% } %>
 
     <%
-        // Si existe usuariosCombo -> pantalla de selección; si no, mostramos el perfil
         List<Map<String, Object>> usuariosCombo =
                 (List<Map<String, Object>>) request.getAttribute("usuariosCombo");
 
@@ -39,13 +36,11 @@
 
         if (usuariosCombo != null) {
     %>
-    <!-- PANTALLA 1: buscador + grilla -->
     <div class="card shadow-sm mb-4">
         <div class="card-body">
             <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
                 <h2 class="h5 mb-0">Elegí un usuario</h2>
 
-                <!-- buscador -->
                 <div class="input-group" style="max-width: 420px;">
         <span class="input-group-text">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
@@ -58,7 +53,6 @@
                 </div>
             </div>
 
-            <!-- grilla de tarjetas  -->
             <div class="row g-3" id="gridUsuarios">
                 <%
                     for (Map<String, Object> u : usuariosCombo) {
@@ -102,7 +96,6 @@
         </div>
     </div>
 
-    <!-- filtro en vivo (client-side) -->
     <script>
         (function() {
             const input = document.getElementById('filtroUsuarios');
@@ -124,7 +117,6 @@
 
     <%
     } else {
-        // PANTALLA 2: vista de perfil
         usuario = (DtUsuario) request.getAttribute("usuarioConsultado");
         esPropio = (Boolean) request.getAttribute("esPropio");
         esProponente = request.getAttribute("esProponente") != null && (Boolean) request.getAttribute("esProponente");
@@ -142,7 +134,6 @@
         List<DtColaboracion> misColaboraciones = (List<DtColaboracion>) request.getAttribute("misColaboraciones");
     %>
 
-    <!-- Cabecera de perfil -->
     <div class="card shadow-sm mb-4">
         <div class="card-body">
             <h2 class="h4 mb-3">Perfil de <%= (usuario != null ? usuario.getNickname() : request.getParameter("nick")) %></h2>
@@ -210,7 +201,6 @@
             </div>
         </div>
 
-        <!-- Siguiendo -->
         <div class="col-12 col-lg-6">
             <div class="card shadow-sm h-100">
                 <div class="card-body">
@@ -246,7 +236,6 @@
             </div>
         </div>
 
-        <!-- Favoritas -->
         <div class="col-12">
             <div class="card shadow-sm">
                 <div class="card-body">
@@ -274,7 +263,6 @@
         </div>
 
         <% if (esProponente) { %>
-        <!-- Publicadas (no INGRESADA) -->
         <div class="col-12">
             <div class="card shadow-sm">
                 <div class="card-body">
@@ -313,7 +301,6 @@
                             <th>Título</th><th>Fecha y Hora</th><th>Monto</th><th>Acciones</th>
                         </thead>
 
-                        <%--Muestro Propuestas con las que colaboró--%>
                         <tbody>
                         <% if (colaboradas != null && !colaboradas.isEmpty()) {
                             for (DtColaboracion m : misColaboraciones) {
@@ -342,7 +329,6 @@
         <% } %>
 
         <% if (esPropio != null && esPropio && esProponente) { %>
-        <!-- (Propio) Mis INGRESADAS -->
         <div class="col-12">
             <div class="card shadow-sm">
                 <div class="card-body">
@@ -368,9 +354,8 @@
             </div>
         </div>
         <% } %>
-    </div> <!-- row -->
+    </div>
 
-    <!-- Acciones inferiores -->
     <div class="d-flex gap-2 mt-4">
         <button type="button" class="btn btn-outline-secondary"
                 onclick="location.href='${pageContext.request.contextPath}/principal'">Volver al inicio
@@ -404,6 +389,6 @@
     </div>
 
     <% } // fin if usuariosCombo %>
-</div> <!-- container -->
+</div>
 </body>
 </html>

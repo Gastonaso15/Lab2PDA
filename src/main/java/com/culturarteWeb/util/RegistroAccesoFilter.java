@@ -1,4 +1,4 @@
-package com.culturarteWeb;
+package com.culturarteWeb.util;
 
 import culturarte.servicios.cliente.usuario.IUsuarioControllerWS;
 import culturarte.servicios.cliente.usuario.UsuarioWSEndpointService;

@@ -61,14 +61,9 @@ public class ListarColaboracionesConstanciaServlet extends HttpServlet {
                 todasLasColaboraciones = colaborador.getColaboraciones();
             }
 
-            // Filtrar colaboraciones: solo las que tienen pago asociado (monto > 0)
-            // y no tienen constancia emitida (simulado con una estructura simple)
             List<DtColaboracion> colaboracionesConPago = new ArrayList<>();
             for (DtColaboracion colab : todasLasColaboraciones) {
-                // Asumimos que todas las colaboraciones con monto > 0 tienen pago asociado
                 if (colab.getMonto() != null && colab.getMonto() > 0) {
-                    // TODO: Verificar si ya se emitió constancia (requiere persistencia)
-                    // Por ahora, todas las que tienen pago pueden generar constancia
                     colaboracionesConPago.add(colab);
                 }
             }

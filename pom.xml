@@ -67,7 +67,6 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- iText 7 para generar PDFs -->
         <dependency>
             <groupId>com.itextpdf</groupId>
             <artifactId>kernel</artifactId>
@@ -77,6 +76,12 @@
             <groupId>com.itextpdf</groupId>
             <artifactId>layout</artifactId>
             <version>7.2.5</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.sun.mail</groupId>
+            <artifactId>jakarta.mail</artifactId>
+            <version>2.0.1</version>
         </dependency>
 
     </dependencies>
@@ -137,8 +142,6 @@
                 </executions>
             </plugin>
 
-            <!-- Plugin para eliminar las clases LocalDate y LocalDateTime generadas vacías -->
-            <!-- Se ejecuta DESPUÉS de wsdl2java pero ANTES de add-source -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>

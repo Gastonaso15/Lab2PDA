@@ -15,7 +15,7 @@ import java.util.*;
 
 @WebServlet("/altaPropuesta")
 
-@MultipartConfig // necesario para req.getPart(...)
+@MultipartConfig
 public class AltaPropuestaServlet extends HttpServlet {
 
     private IPropuestaControllerWS IPC;
@@ -35,7 +35,6 @@ public class AltaPropuestaServlet extends HttpServlet {
     }
 
     @Override
-    //pido los datos a altaPropuesta.jsp con el doGet
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
