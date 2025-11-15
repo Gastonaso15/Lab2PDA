@@ -66,6 +66,18 @@ public class ListarColaboracionesParaPagarServlet extends HttpServlet {
             ListaDTColaboracion listaColaboracionesWS = IPC.devolverColaboracionesSinPago(usuarioActual.getNickname());
             List<DtColaboracion> colaboraciones = listaColaboracionesWS.getColaboracion();
 
+            // Establecer atributos para el menú lateral
+            boolean esColaboradorActual = true;
+            boolean esProponenteActual = false;
+            try {
+                ICU.devolverProponentePorNickname(usuarioActual.getNickname());
+                esProponenteActual = true;
+            } catch (Exception e) {
+                esProponenteActual = false;
+            }
+            request.setAttribute("esProponente", esProponenteActual);
+            request.setAttribute("esColaborador", esColaboradorActual);
+
             request.setAttribute("colaboraciones", colaboraciones);
             request.getRequestDispatcher("/listarColaboracionesParaPagar.jsp").forward(request, response);
 

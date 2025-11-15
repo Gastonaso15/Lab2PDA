@@ -176,14 +176,18 @@
                                                         <small class="text-muted">
                                                             <% 
                                                                 if (comentario.getFechaHora() != null) {
-                                                                    java.time.LocalDateTime fechaHora = WSFechaPropuesta.toJavaLocalDateTime(comentario.getFechaHora());
-                                                                    if (fechaHora != null) {
-                                                                        System.out.print(fechaHora.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
-                                                                    } else {
-                                                                        System.out.print("Fecha no disponible");
+                                                                    try {
+                                                                        java.time.LocalDateTime fechaHora = WSFechaPropuesta.toJavaLocalDateTime(comentario.getFechaHora());
+                                                                        if (fechaHora != null) {
+                                                                            out.print(fechaHora.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
+                                                                        } else {
+                                                                            out.print("Fecha no disponible");
+                                                                        }
+                                                                    } catch (Exception e) {
+                                                                        out.print("Fecha no disponible");
                                                                     }
                                                                 } else {
-                                                                    System.out.print("Fecha no disponible");
+                                                                    out.print("Fecha no disponible");
                                                                 }
                                                             %>
                                                         </small>
