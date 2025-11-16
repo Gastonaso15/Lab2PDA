@@ -37,7 +37,7 @@
                 String apellidoOpt= String.valueOf(u.getOrDefault("apellido",""));
                 String tipoOpt    = String.valueOf(u.getOrDefault("tipo","Usuario"));
                 int    segOpt     = ((Number)u.getOrDefault("cantFollowers",0)).intValue();
-                long   idOpt      = ((Number)u.getOrDefault("id",0)).longValue();
+                long   idOpt      = (u.get("id") instanceof Number) ? ((Number)u.get("id")).longValue(): 0L;
                 int    rankOpt    = ((Number)u.getOrDefault("rank",0)).intValue();
 
                 String rutaImagen = (String) u.get("imagen");

@@ -271,7 +271,22 @@
                         </div>
 
                         <div class="datosPropuesta d-flex justify-content-between">
-                            <span><%= p.getEstadoActual() %></span>
+                            <%
+                            String estado = p.getEstadoActual().toString();
+                            String estadoFormateado;
+
+                             switch (estado) {
+                                case "INGRESADA": estadoFormateado = "Ingresada"; break;
+                                case "PUBLICADA": estadoFormateado = "Publicada"; break;
+                                case "EN_FINANCIACION": estadoFormateado = "En Financiación"; break;
+                                case "FINANCIADA": estadoFormateado = "Financiada"; break;
+                                case "NO_FINANCIADA": estadoFormateado = "No Financiada"; break;
+                                case "CANCELADA": estadoFormateado = "Cancelada"; break;
+                                default: estadoFormateado = estado;
+                            }
+                            %>
+
+                            <span><%= estadoFormateado %></span>
                             <span><% 
                                 if (p.getFechaPublicacion() != null) {
                                     java.time.LocalDate fechaPublicacion = WSFechaPropuesta.toJavaLocalDate(p.getFechaPublicacion());

@@ -68,7 +68,22 @@
                                 <div class="card bg-light">
                                     <div class="card-body">
                                         <h6 class="card-title">Estado</h6>
-                                        <span class="badge bg-primary fs-6"><%= propuesta.getEstadoActual() %></span>
+                                        <%
+                                        String estado = propuesta.getEstadoActual().toString();
+                                        String estadoFormateado;
+
+                                        switch (estado) {
+                                            case "INGRESADA": estadoFormateado = "Ingresada"; break;
+                                            case "PUBLICADA": estadoFormateado = "Publicada"; break;
+                                            case "EN_FINANCIACION": estadoFormateado = "En Financiación"; break;
+                                            case "FINANCIADA": estadoFormateado = "Financiada"; break;
+                                            case "NO_FINANCIADA": estadoFormateado = "No Financiada"; break;
+                                            case "CANCELADA": estadoFormateado = "Cancelada"; break;
+                                            default: estadoFormateado = estado;
+                                        }
+                                        %>
+
+                                        <span class="badge bg-primary fs-6"><%= estadoFormateado %></span>
 
                                         <h6 class="card-title mt-3">Monto Necesario</h6>
                                         <p class="mb-0">$<%= String.format("%.2f", propuesta.getMontoNecesario()) %></p>
