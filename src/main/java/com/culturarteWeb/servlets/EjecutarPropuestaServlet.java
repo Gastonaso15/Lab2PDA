@@ -113,7 +113,6 @@ public class EjecutarPropuestaServlet extends HttpServlet {
                 && propuesta.getEstadoActual() == DtEstadoPropuesta.FINANCIADA) {
 
             DtPropuestaEstado propEstado = new DtPropuestaEstado();
-            propEstado.setPropuesta(propuesta);
             propEstado.setEstado(DtEstadoPropuesta.FINANCIADA);
             propEstado.setFechaCambio(WSFechaPropuesta.toWSLocalDateWS(java.time.LocalDate.now()));
 

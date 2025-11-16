@@ -119,7 +119,6 @@ public class RegistrarColaboracionAPropuestaServlet extends HttpServlet {
                     propuesta.setEstadoActual(DtEstadoPropuesta.EN_FINANCIACION);
 
                     DtPropuestaEstado propEstado = new DtPropuestaEstado();
-                    propEstado.setPropuesta(propuesta);
                     propEstado.setEstado(DtEstadoPropuesta.EN_FINANCIACION);
                     propEstado.setFechaCambio(WSFechaPropuesta.toWSLocalDateWS(java.time.LocalDate.now()));
 

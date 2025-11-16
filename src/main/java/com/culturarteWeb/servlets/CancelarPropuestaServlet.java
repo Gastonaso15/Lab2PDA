@@ -105,7 +105,6 @@ public class CancelarPropuestaServlet extends HttpServlet {
             propuesta.setEstadoActual(DtEstadoPropuesta.CANCELADA);
 
             DtPropuestaEstado propEstado = new DtPropuestaEstado();
-            propEstado.setPropuesta(propuesta);
             propEstado.setEstado(DtEstadoPropuesta.CANCELADA);
             propEstado.setFechaCambio(WSFechaPropuesta.toWSLocalDateWS(java.time.LocalDate.now()));
 
