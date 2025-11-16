@@ -68,11 +68,17 @@
             color: #666;
         }
         @media print {
-            .no-print {
-                display: none;
+            body * {
+                visibility: hidden !important;
+            }
+            .constancia-container, .constancia-container * {
+                visibility: visible !important;
             }
             .constancia-container {
-                box-shadow: none;
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
             }
         }
     </style>
