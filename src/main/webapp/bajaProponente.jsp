@@ -3,6 +3,8 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Baja de Proponente - Culturarte</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <jsp:include page="estiloCabezalComun.jsp"/>
@@ -26,7 +28,7 @@
 
         <div class="py-5">
             <div class="row justify-content-center">
-                <div class="col-md-8">
+                <div class="col-md-8 col-12">
                     <div class="card shadow-sm">
                         <div class="card-header bg-danger text-white">
                             <h3 class="text-center mb-0">
@@ -67,7 +69,7 @@
                                            required>
                                 </div>
 
-                                <div class="d-flex gap-3 justify-content-center">
+                                <div class="d-flex gap-3 justify-content-center flex-wrap">
                                     <a href="<%= request.getContextPath() %>/principal"
                                        class="btn btn-secondary btn-lg">
                                         <i class="bi bi-arrow-left"></i> Cancelar
