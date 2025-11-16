@@ -237,6 +237,15 @@ public class ConsultaPerfilUsuarioServlet extends HttpServlet {
             }
             req.setAttribute("loSigo", loSigo);
 
+            String bio = null;
+            String sitioWeb = null;
+            if (proponente != null) {
+                bio = proponente.getBio();
+                sitioWeb = proponente.getSitioWeb();
+            }
+            req.setAttribute("bio", bio);
+            req.setAttribute("sitioWeb", sitioWeb);
+
 
             // Seteo los atributos que mando al jsp
             req.setAttribute("esPropio", esPropio);

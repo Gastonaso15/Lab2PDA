@@ -138,6 +138,9 @@
         List<culturarte.servicios.cliente.usuario.DtPropuesta> colaboradas = (List<culturarte.servicios.cliente.usuario.DtPropuesta>) request.getAttribute("colaboradas");
         List<culturarte.servicios.cliente.usuario.DtPropuesta> creadasIngresadas = (List<culturarte.servicios.cliente.usuario.DtPropuesta>) request.getAttribute("creadasIngresadas");
         List<DtColaboracion> misColaboraciones = (List<DtColaboracion>) request.getAttribute("misColaboraciones");
+
+        String bio = (String) request.getAttribute("bio");
+        String sitioWeb = (String) request.getAttribute("sitioWeb");
     %>
 
     <div class="card shadow-sm mb-4">
@@ -165,6 +168,24 @@
                     <div><b>Nombre:</b> <%=usuario.getNombre()%> <%=usuario.getApellido()%></div>
                     <div><b>Correo:</b> <%=usuario.getCorreo()%></div>
                     <% } %>
+
+                    <%
+                       if (esProponenteC) {
+
+                           if (bio != null && !bio.isBlank()) { %>
+                               <div><b>Biografía:</b> <%=bio%></div>
+                           <% }
+
+                           if (sitioWeb != null && !sitioWeb.isBlank()) {
+                               String sitioWebURL = sitioWeb;
+                               if (!sitioWebURL.toLowerCase().startsWith("http")) {
+                                   sitioWebURL = "http://" + sitioWebURL;
+                               }
+                           %>
+                               <div><b>Sitio Web:</b> <a href="<%=sitioWebURL%>" target="_blank"><%=sitioWeb%></a></div>
+                           <% }
+                       }
+                    %>
                 </div>
             </div>
         </div>
