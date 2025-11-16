@@ -2,6 +2,8 @@ package com.culturarteWeb.servlets;
 
 import culturarte.servicios.cliente.propuestas.*;
 import culturarte.servicios.cliente.usuario.DtUsuario;
+import culturarte.servicios.cliente.usuario.IUsuarioControllerWS;
+import culturarte.servicios.cliente.usuario.UsuarioWSEndpointService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
@@ -12,6 +14,7 @@ import java.util.List;
 @WebServlet("/comentario")
 public class ComentarioServlet extends HttpServlet {
     private IPropuestaControllerWS IPC;
+    private IUsuarioControllerWS ICU;
 
     @Override
     public void init() throws ServletException {
@@ -20,6 +23,8 @@ public class ComentarioServlet extends HttpServlet {
             PropuestaWSEndpointService propuestaServicio = new PropuestaWSEndpointService();
             IPC = propuestaServicio.getPropuestaWSEndpointPort();
 
+            UsuarioWSEndpointService usuarioServicio = new UsuarioWSEndpointService();
+            ICU = usuarioServicio.getUsuarioWSEndpointPort();
         } catch (Exception e) {
             throw new ServletException("Error al inicializar Web Services", e);
         }
@@ -82,7 +87,18 @@ public class ComentarioServlet extends HttpServlet {
                 request.getRequestDispatcher("/formularioComentario.jsp").forward(request, response);
                 return;
             }
-            
+
+            boolean esColaboradorActual = true;
+            boolean esProponenteActual = false;
+            try {
+                ICU.devolverProponentePorNickname(usuario.getNickname());
+                esProponenteActual = true;
+            } catch (Exception e) {
+                esProponenteActual = false;
+            }
+            request.setAttribute("esProponente", esProponenteActual);
+            request.setAttribute("esColaborador", esColaboradorActual);
+
             request.setAttribute("propuesta", propuesta);
             request.setAttribute("usuario", usuario);
             request.getRequestDispatcher("/formularioComentario.jsp").forward(request, response);
@@ -179,6 +195,17 @@ public class ComentarioServlet extends HttpServlet {
             request.setAttribute("mensajeExito", 
                 "¡Comentario agregado exitosamente! Tu comentario ha sido registrado para la propuesta '" + 
                 propuesta.getTitulo() + "'.");
+
+            boolean esColaboradorActual = true;
+            boolean esProponenteActual = false;
+            try {
+                ICU.devolverProponentePorNickname(usuario.getNickname());
+                esProponenteActual = true;
+            } catch (Exception e) {
+                esProponenteActual = false;
+            }
+            request.setAttribute("esProponente", esProponenteActual);
+            request.setAttribute("esColaborador", esColaboradorActual);
             
             request.getRequestDispatcher("/exitoComentario.jsp").forward(request, response);
             

@@ -252,8 +252,8 @@ public class ConsultaPerfilUsuarioServlet extends HttpServlet {
             req.setAttribute("misColaboraciones", misColaboraciones);
             
             // Atributos del usuario CONSULTADO (para mostrar información del perfil)
-            req.setAttribute("esProponente", proponente != null);
-            req.setAttribute("esColaborador", colaborador != null);
+            req.setAttribute("esProponenteC", proponente != null);
+            req.setAttribute("esColaboradorC", colaborador != null);
             
             // Atributos del usuario ACTUAL logueado (para el menú lateral)
             boolean esProponenteActual = false;
@@ -273,8 +273,8 @@ public class ConsultaPerfilUsuarioServlet extends HttpServlet {
                     esColaboradorActual = false;
                 }
             }
-            req.setAttribute("esProponenteActual", esProponenteActual);
-            req.setAttribute("esColaboradorActual", esColaboradorActual);
+            req.setAttribute("esProponente", esProponenteActual);
+            req.setAttribute("esColaborador", esColaboradorActual);
 
 
             req.getRequestDispatcher("/consultaPerfilUsuario.jsp").forward(req, resp);

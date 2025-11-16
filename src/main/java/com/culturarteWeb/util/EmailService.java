@@ -41,7 +41,7 @@ public class EmailService {
     public void enviarNotificacionPagoColaborador(String emailDestinatario, String nombreColaborador, DtColaboracion
             colaboracion, DtPago pago, String baseUrl) throws MessagingException {
 
-        java.time.LocalDateTime fechaPago = WSFechaPropuesta.toJavaLocalDateTime(pago.getFechaPago());
+        LocalDateTime fechaPago = WSFechaPropuesta.toJavaLocalDateTime(pago.getFechaPago());
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
         String fechaPagoStr = fechaPago.format(formatter);
 

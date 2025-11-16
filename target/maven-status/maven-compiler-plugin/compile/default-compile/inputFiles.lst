@@ -1,4 +1,3 @@
-C:\Users\agusm\IdeaProjects\Lab2PDA\src\main\java\com\culturarteWeb\RegistroAccesoFilter.java
 C:\Users\agusm\IdeaProjects\Lab2PDA\src\main\java\com\culturarteWeb\servlets\AltaPerfilServlet.java
 C:\Users\agusm\IdeaProjects\Lab2PDA\src\main\java\com\culturarteWeb\servlets\AltaPropuestaServlet.java
 C:\Users\agusm\IdeaProjects\Lab2PDA\src\main\java\com\culturarteWeb\servlets\BajaProponenteServlet.java
@@ -27,6 +26,7 @@ C:\Users\agusm\IdeaProjects\Lab2PDA\src\main\java\com\culturarteWeb\servlets\Ver
 C:\Users\agusm\IdeaProjects\Lab2PDA\src\main\java\com\culturarteWeb\util\AdaptadorLocalDate.java
 C:\Users\agusm\IdeaProjects\Lab2PDA\src\main\java\com\culturarteWeb\util\EmailService.java
 C:\Users\agusm\IdeaProjects\Lab2PDA\src\main\java\com\culturarteWeb\util\LocalDateAdaptor.java
+C:\Users\agusm\IdeaProjects\Lab2PDA\src\main\java\com\culturarteWeb\util\RegistroAccesoFilter.java
 C:\Users\agusm\IdeaProjects\Lab2PDA\src\main\java\com\culturarteWeb\util\WSFechaPropuesta.java
 C:\Users\agusm\IdeaProjects\Lab2PDA\src\main\java\com\culturarteWeb\util\WSFechaUsuario.java
 C:\Users\agusm\IdeaProjects\Lab2PDA\src\main\java\culturarte\servicios\cliente\propuestas\LocalDate.java
@@ -76,6 +76,7 @@ C:\Users\agusm\IdeaProjects\Lab2PDA\target\generated-sources\wsimport\culturarte
 C:\Users\agusm\IdeaProjects\Lab2PDA\target\generated-sources\wsimport\culturarte\servicios\cliente\usuario\Exception_Exception.java
 C:\Users\agusm\IdeaProjects\Lab2PDA\target\generated-sources\wsimport\culturarte\servicios\cliente\usuario\IUsuarioControllerWS.java
 C:\Users\agusm\IdeaProjects\Lab2PDA\target\generated-sources\wsimport\culturarte\servicios\cliente\usuario\IUsuarioControllerWS_UsuarioWSEndpointPort_Client.java
+C:\Users\agusm\IdeaProjects\Lab2PDA\target\generated-sources\wsimport\culturarte\servicios\cliente\usuario\ListaDTColaboracion.java
 C:\Users\agusm\IdeaProjects\Lab2PDA\target\generated-sources\wsimport\culturarte\servicios\cliente\usuario\ListaDTProponente.java
 C:\Users\agusm\IdeaProjects\Lab2PDA\target\generated-sources\wsimport\culturarte\servicios\cliente\usuario\ListaStrings.java
 C:\Users\agusm\IdeaProjects\Lab2PDA\target\generated-sources\wsimport\culturarte\servicios\cliente\usuario\LocalDateTimeWS.java

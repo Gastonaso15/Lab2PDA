@@ -33,7 +33,7 @@ public class PagarColaboracionServlet extends HttpServlet {
 
             UsuarioWSEndpointService usuarioServicio = new UsuarioWSEndpointService();
             ICU = usuarioServicio.getUsuarioWSEndpointPort();
-        } catch (java.lang.Exception e) {
+        } catch (Exception e) {
             throw new ServletException("Error al inicializar Web Services", e);
         }
     }
@@ -79,6 +79,17 @@ public class PagarColaboracionServlet extends HttpServlet {
                 request.getRequestDispatcher("/listarColaboracionesParaPagar").forward(request, response);
                 return;
             }
+
+            boolean esColaboradorActual = true;
+            boolean esProponenteActual = false;
+            try {
+                ICU.devolverProponentePorNickname(usuarioActual.getNickname());
+                esProponenteActual = true;
+            } catch (Exception e) {
+                esProponenteActual = false;
+            }
+            request.setAttribute("esProponente", esProponenteActual);
+            request.setAttribute("esColaborador", esColaboradorActual);
 
             request.setAttribute("colaboracion", colaboracionSeleccionada);
             request.getRequestDispatcher("/pagarColaboracion.jsp").forward(request, response);

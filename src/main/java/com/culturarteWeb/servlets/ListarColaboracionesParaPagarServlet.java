@@ -30,7 +30,7 @@ public class ListarColaboracionesParaPagarServlet extends HttpServlet {
 
             UsuarioWSEndpointService usuarioServicio = new UsuarioWSEndpointService();
             ICU = usuarioServicio.getUsuarioWSEndpointPort();
-        } catch (java.lang.Exception e) {
+        } catch (Exception e) {
             throw new ServletException("Error al inicializar Web Services", e);
         }
     }
@@ -66,7 +66,6 @@ public class ListarColaboracionesParaPagarServlet extends HttpServlet {
             ListaDTColaboracion listaColaboracionesWS = IPC.devolverColaboracionesSinPago(usuarioActual.getNickname());
             List<DtColaboracion> colaboraciones = listaColaboracionesWS.getColaboracion();
 
-            // Establecer atributos para el menú lateral
             boolean esColaboradorActual = true;
             boolean esProponenteActual = false;
             try {

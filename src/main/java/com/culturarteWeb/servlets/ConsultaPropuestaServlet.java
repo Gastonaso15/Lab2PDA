@@ -184,6 +184,7 @@ public class ConsultaPropuestaServlet extends HttpServlet {
             HttpSession sesion = request.getSession(false);
             DtUsuario usuarioActual = null;
             boolean esProponente = false;
+            boolean esColaborador = false;
             boolean esProponenteDeEstaPropuesta = false;
             boolean haColaborado = false;
             boolean esFavorita = false;
@@ -201,6 +202,13 @@ public class ConsultaPropuestaServlet extends HttpServlet {
                 } catch (Exception e) {
                     esProponente = false;
                 }
+
+                try {
+                    ICU.devolverColaboradorPorNickname(usuarioActual.getNickname());
+                    esColaborador = true;
+                } catch (Exception e) {
+                    esColaborador = false;
+                }
                 
                 if (nicknamesColaboradores.contains(usuarioActual.getNickname())) {
                     haColaborado = true;
@@ -217,6 +225,7 @@ public class ConsultaPropuestaServlet extends HttpServlet {
             request.setAttribute("montoRecaudado", montoRecaudado);
             request.setAttribute("nicknamesColaboradores", nicknamesColaboradores);
             request.setAttribute("esProponente", esProponente);
+            request.setAttribute("esColaborador", esColaborador);
             request.setAttribute("esProponenteDeEstaPropuesta", esProponenteDeEstaPropuesta);
             request.setAttribute("haColaborado", haColaborado);
             request.setAttribute("usuarioActual", usuarioActual);

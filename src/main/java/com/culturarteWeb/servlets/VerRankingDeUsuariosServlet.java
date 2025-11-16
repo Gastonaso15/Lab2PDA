@@ -12,6 +12,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.util.*;
@@ -99,14 +100,31 @@ public class VerRankingDeUsuariosServlet extends HttpServlet {
             } catch (Exception e) {
                 req.setAttribute("error", "No se pudo listar usuarios: " + e.getMessage());
             }
+
+            boolean esProponente = false;
+            boolean esColaborador = false;
+            HttpSession session = req.getSession(false);
+            if (session != null && session.getAttribute("usuarioLogueado") != null) {
+                DtUsuario usuarioLogueado = (DtUsuario) session.getAttribute("usuarioLogueado");
+
+                try {
+                    ICU.devolverProponentePorNickname(usuarioLogueado.getNickname());
+                    esProponente = true;
+                } catch (Exception e) {
+                    esProponente = false;
+                }
+                try {
+                    ICU.devolverColaboradorPorNickname(usuarioLogueado.getNickname());
+                    esColaborador = true;
+                } catch (Exception e) {
+                    esColaborador = false;
+                }
+            }
+            req.setAttribute("esProponente", esProponente);
+            req.setAttribute("esColaborador", esColaborador);
+
             //envio los datos ya cargados al jsp con el Dispatcher
             req.getRequestDispatcher("/verRankingDeUsuarios.jsp").forward(req, resp);
         }
-
-
-
-
-
-
     }
 }

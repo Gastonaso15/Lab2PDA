@@ -30,8 +30,11 @@
                 (List<Map<String, Object>>) request.getAttribute("usuariosCombo");
 
         DtUsuario usuario = null;
-        boolean esProponente = false;
+        boolean esProponenteC = false;
         Boolean esPropio = null;
+        boolean esColaboradorC = false;
+
+        boolean esProponente = false;
         boolean esColaborador = false;
 
         if (usuariosCombo != null) {
@@ -119,6 +122,9 @@
     } else {
         usuario = (DtUsuario) request.getAttribute("usuarioConsultado");
         esPropio = (Boolean) request.getAttribute("esPropio");
+        esProponenteC = request.getAttribute("esProponenteC") != null && (Boolean) request.getAttribute("esProponenteC");
+        esColaboradorC = request.getAttribute("esColaboradorC") != null && (Boolean) request.getAttribute("esColaboradorC");
+
         esProponente = request.getAttribute("esProponente") != null && (Boolean) request.getAttribute("esProponente");
         esColaborador = request.getAttribute("esColaborador") != null && (Boolean) request.getAttribute("esColaborador");
 
@@ -148,8 +154,8 @@
                <img alt="avatar" src="<%= rutaImagen %>" class="rounded-circle border" style="width:96px;height:96px;object-fit:cover">
                 <div>
                     <div class="mb-1">
-                        <span class="badge <%= esProponente ? "text-bg-primary" : (esColaborador ? "text-bg-success" : "text-bg-secondary") %>">
-                            <%= esProponente ? "Proponente" : (esColaborador ? "Colaborador" : "Usuario") %>
+                        <span class="badge <%= esProponenteC ? "text-bg-primary" : (esColaboradorC ? "text-bg-success" : "text-bg-secondary") %>">
+                            <%= esProponenteC ? "Proponente" : (esColaboradorC ? "Colaborador" : "Usuario") %>
                         </span>
                         <% if (esPropio != null && esPropio) { %>
                         <span class="ms-2 text-muted small">Estás viendo tu propio perfil</span>
@@ -262,7 +268,7 @@
             </div>
         </div>
 
-        <% if (esProponente) { %>
+        <% if (esProponenteC) { %>
         <div class="col-12">
             <div class="card shadow-sm">
                 <div class="card-body">
@@ -289,7 +295,7 @@
         </div>
         <% } %>
 
-        <% if (esColaborador) { %>
+        <% if (esColaboradorC) { %>
         <!-- Colaboradas -->
         <div class="col-12">
             <div class="card shadow-sm">
@@ -328,7 +334,7 @@
         </div>
         <% } %>
 
-        <% if (esPropio != null && esPropio && esProponente) { %>
+        <% if (esPropio != null && esPropio && esProponenteC) { %>
         <div class="col-12">
             <div class="card shadow-sm">
                 <div class="card-body">
@@ -380,7 +386,7 @@
             </button>
         </form>
         <% } %>
-        <% if (esPropio != null && esPropio && esProponente) { %>
+        <% if (esPropio != null && esPropio && esProponenteC) { %>
             <a href="<%= request.getContextPath() %>/bajaProponente"
                class="btn btn-danger">
                 <i class="bi bi-trash"></i> Dar de Baja Mi Cuenta

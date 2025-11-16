@@ -6,6 +6,8 @@ import culturarte.servicios.cliente.propuestas.ListaDTCategoria;
 import culturarte.servicios.cliente.propuestas.ListaStrings;
 import culturarte.servicios.cliente.propuestas.PropuestaWSEndpointService;
 import culturarte.servicios.cliente.usuario.DtUsuario;
+import culturarte.servicios.cliente.usuario.IUsuarioControllerWS;
+import culturarte.servicios.cliente.usuario.UsuarioWSEndpointService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
@@ -19,6 +21,7 @@ import java.util.*;
 public class AltaPropuestaServlet extends HttpServlet {
 
     private IPropuestaControllerWS IPC;
+    private IUsuarioControllerWS ICU;
 
     @Override
     public void init() throws ServletException {
@@ -29,6 +32,9 @@ public class AltaPropuestaServlet extends HttpServlet {
 
             PropuestaWSEndpointService servicio = new PropuestaWSEndpointService();
             IPC = servicio.getPropuestaWSEndpointPort();
+
+            UsuarioWSEndpointService usuarioServicio = new UsuarioWSEndpointService();
+            ICU = usuarioServicio.getUsuarioWSEndpointPort();
         } catch (Exception e) {
             throw new ServletException("Error al inicializar Web Services", e);
         }
@@ -51,6 +57,17 @@ public class AltaPropuestaServlet extends HttpServlet {
         } catch (Exception e) {
             throw new ServletException("No se pudieron obtener las categorías", e);
         }
+
+        boolean esColaboradorActual = false;
+        boolean esProponenteActual = true;
+        try {
+            ICU.devolverColaboradorPorNickname(u.getNickname());
+            esColaboradorActual = true;
+        } catch (Exception e) {
+            esColaboradorActual = false;
+        }
+        req.setAttribute("esProponente", esProponenteActual);
+        req.setAttribute("esColaborador", esColaboradorActual);
 
         req.getRequestDispatcher("/altaPropuesta.jsp").forward(req, resp);
     }
