@@ -208,7 +208,7 @@
                                                                         } else {
                                                                             out.print("Fecha no disponible");
                                                                         }
-                                                                    } catch (Exception e) {
+                                                                    } catch (java.lang.Exception e) {
                                                                         out.print("Fecha no disponible");
                                                                     }
                                                                 } else {
@@ -309,7 +309,6 @@
 
 
 
-                                        </button>
                                                 <% if (propuesta.getEstadoActual() != null && "FINANCIADA".equalsIgnoreCase(propuesta.getEstadoActual().name())) { %>
                                                     <form method="post" action="<%= request.getContextPath() %>/cancelarPropuesta" class="d-inline">
                                                         <input type="hidden" name="titulo" value="<%= propuesta.getTitulo() %>"/>
@@ -330,9 +329,6 @@
                                                 <em>Nota 1: Solo puedes extender la financiación si la propuesta está en estado "Publicada" o "En Financiación".<br>
                                                 Nota 2: Solo puedes cancelar propuestas que se encuentren en estado "Financiada".</em>
                                             </p>
-
-                                        <% } else if (haColaborado) { %>
-                                    </div>
 
                                 <% } else if (haColaborado) { %>
                                     <div class="d-flex flex-column flex-sm-row gap-2 mb-3">

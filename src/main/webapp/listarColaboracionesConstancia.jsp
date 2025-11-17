@@ -91,7 +91,7 @@
                                     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
                                     fechaHoraStr = fechaHora.format(formatter);
                                 }
-                            } catch (Exception e) {
+                            } catch (java.lang.Exception e) {
                                 fechaHoraStr = "Fecha no disponible";
                             }
                         }

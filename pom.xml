@@ -180,7 +180,7 @@
                 <executions>
                     <execution>
                         <id>remove-empty-date-classes-propuestas</id>
-                        <phase>generate-sources</phase>
+                        <phase>process-sources</phase>
                         <goals>
                             <goal>run</goal>
                         </goals>
@@ -195,7 +195,7 @@
                     </execution>
                     <execution>
                         <id>remove-empty-date-classes-usuario</id>
-                        <phase>generate-sources</phase>
+                        <phase>process-sources</phase>
                         <goals>
                             <goal>run</goal>
                         </goals>

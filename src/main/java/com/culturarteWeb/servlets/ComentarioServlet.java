@@ -8,7 +8,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import java.io.IOException;
-import java.lang.Exception;
 import java.util.List;
 
 @WebServlet("/comentario")
@@ -25,7 +24,7 @@ public class ComentarioServlet extends HttpServlet {
 
             UsuarioWSEndpointService usuarioServicio = new UsuarioWSEndpointService();
             ICU = usuarioServicio.getUsuarioWSEndpointPort();
-        } catch (Exception e) {
+        } catch (java.lang.Exception e) {
             throw new ServletException("Error al inicializar Web Services", e);
         }
     }
@@ -93,7 +92,7 @@ public class ComentarioServlet extends HttpServlet {
             try {
                 ICU.devolverProponentePorNickname(usuario.getNickname());
                 esProponenteActual = true;
-            } catch (Exception e) {
+            } catch (java.lang.Exception e) {
                 esProponenteActual = false;
             }
             request.setAttribute("esProponente", esProponenteActual);
@@ -103,7 +102,7 @@ public class ComentarioServlet extends HttpServlet {
             request.setAttribute("usuario", usuario);
             request.getRequestDispatcher("/formularioComentario.jsp").forward(request, response);
             
-        } catch (Exception e) {
+        } catch (java.lang.Exception e) {
             request.setAttribute("error", "Error al cargar el formulario: " + e.getMessage());
             request.getRequestDispatcher("/formularioComentario.jsp").forward(request, response);
         }
@@ -201,7 +200,7 @@ public class ComentarioServlet extends HttpServlet {
             try {
                 ICU.devolverProponentePorNickname(usuario.getNickname());
                 esProponenteActual = true;
-            } catch (Exception e) {
+            } catch (java.lang.Exception e) {
                 esProponenteActual = false;
             }
             request.setAttribute("esProponente", esProponenteActual);
@@ -209,7 +208,7 @@ public class ComentarioServlet extends HttpServlet {
             
             request.getRequestDispatcher("/exitoComentario.jsp").forward(request, response);
             
-        } catch (Exception e) {
+        } catch (java.lang.Exception e) {
             request.setAttribute("error", "Error al agregar el comentario: " + e.getMessage());
             request.getRequestDispatcher("/formularioComentario.jsp").forward(request, response);
         }
@@ -255,7 +254,7 @@ public class ComentarioServlet extends HttpServlet {
             
             return new ValidationResult(true, null, propuesta);
             
-        } catch (Exception e) {
+        } catch (java.lang.Exception e) {
             return new ValidationResult(false, "Error al validar propuesta: " + e.getMessage(), null);
         }
     }

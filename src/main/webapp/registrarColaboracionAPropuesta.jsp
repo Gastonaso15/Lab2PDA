@@ -1,5 +1,4 @@
-<%@ page import="culturarte.servicios.cliente.propuestas.DtTipoRetorno" %>
-<%@ page import="java.util.List" %>
+<%@ page import="culturarte.servicios.cliente.propuestas.DtTipoRetorno, culturarte.servicios.cliente.propuestas.DtPropuesta, java.util.List" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
@@ -97,10 +96,17 @@
                                 <input type="number" name="monto" id="monto" class="form-control" min="1" required/>
                             </div>
 <%
-    List<DtTipoRetorno> listaTipoRet = propuesta.getTiposRetorno();
-    String tipoRetornoString = "";
-    for (DtTipoRetorno i :listaTipoRet){
-        tipoRetornoString = tipoRetornoString + i.value();
+    DtPropuesta propuestaSeleccionada = (DtPropuesta) request.getAttribute("propuestaSeleccionada");
+    if (propuestaSeleccionada != null) {
+        List<DtTipoRetorno> listaTipoRet = propuestaSeleccionada.getTiposRetorno();
+        String tipoRetornoString = "";
+        if (listaTipoRet != null) {
+            for (DtTipoRetorno i : listaTipoRet){
+                if (i != null) {
+                    tipoRetornoString = tipoRetornoString + i.value();
+                }
+            }
+        }
     }
 %>
                             <div class="mb-3">

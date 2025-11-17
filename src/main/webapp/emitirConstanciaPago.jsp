@@ -145,7 +145,7 @@
                         <div class="constancia-value"><%= fechaNac.format(dateFormatter) %></div>
                     </div>
                     <%      }
-                        } catch (Exception e) { }
+                        } catch (java.lang.Exception e) { }
                     } %>
                 </div>
 
