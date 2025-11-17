@@ -1,4 +1,4 @@
-<%@ page import="java.util.*, culturarte.servicios.cliente.propuestas.DtPropuesta, culturarte.servicios.cliente.propuestas.DtCategoria, culturarte.servicios.cliente.propuestas.DtUsuario, com.culturarteWeb.util.WSFechaPropuesta" %>
+<%@ page import="java.util.*, culturarte.servicios.cliente.propuestas.DtPropuesta, culturarte.servicios.cliente.propuestas.DtCategoria, culturarte.servicios.cliente.propuestas.DtUsuario, com.culturarteWeb.util.WSFechaPropuesta, culturarte.servicios.cliente.imagenes.*" %>
 <%--
     Quitamos la importación de 'PropuestaConDatos' para evitar problemas de visibilidad
     si es una clase interna no pública.
@@ -230,7 +230,15 @@
                 if (propuestas != null && !propuestas.isEmpty()) {
                     for (com.culturarteWeb.servlets.PrincipalServlet.PropuestaConDatos propuestaConDatos : propuestas) {
                         DtPropuesta p = propuestaConDatos.getPropuesta();
-                        String imagen = (p.getImagen() != null && !p.getImagen().isEmpty()) ? p.getImagen() : "imagenes/propuestaDefault.png";
+                        String imagen;
+                        if (p.getImagen() != null && !p.getImagen().isEmpty()) {
+                            // Llamar al Web Service SOAP para obtener la imagen en Base64
+                            ImagenWSEndpointService imagenServicio = new ImagenWSEndpointService();
+                            IImagenControllerWS imagenWS = imagenServicio.getImagenWSEndpointPort();
+                            imagen = imagenWS.obtenerImagenBase64(p.getImagen());
+                        } else {
+                            imagen = request.getContextPath() + "/imagenes/propuestaDefault.png";
+                        }
                         double porcentajeProgreso = p.getMontoNecesario() > 0 ? (propuestaConDatos.getMontoRecaudado() / p.getMontoNecesario()) * 100 : 0;
                         if (porcentajeProgreso > 100) porcentajeProgreso = 100;
 

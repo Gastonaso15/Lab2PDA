@@ -105,18 +105,31 @@ public class AltaPropuestaServlet extends HttpServlet {
             else if (type.contains("jpeg")) ext = ".jpeg";
             else                            ext = ".jpg";
 
-            String relDir = "uploads/propuestas";
             String fileName = "ImagenProp" + System.currentTimeMillis() + ext;
 
-            File base = new File(getServletContext().getRealPath("/"), relDir);
-            if (!base.exists() && !base.mkdirs()) {
-                throw new IOException("No se pudo crear el directorio de subida.");
+            // Leer los bytes de la imagen
+            byte[] imagenBytes;
+            try (InputStream is = part.getInputStream();
+                 ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+                byte[] buffer = new byte[8192];
+                int bytesRead;
+                while ((bytesRead = is.read(buffer)) != -1) {
+                    baos.write(buffer, 0, bytesRead);
+                }
+                imagenBytes = baos.toByteArray();
             }
-
-            File dest = new File(base, fileName);
-            part.write(dest.getAbsolutePath());
-
-            imagen = relDir + "/" + fileName;
+            
+            // Subir la imagen al servidor central usando el Web Service
+            try {
+                culturarte.servicios.cliente.imagenes.ImagenWSEndpointService imagenServicio = 
+                    new culturarte.servicios.cliente.imagenes.ImagenWSEndpointService();
+                culturarte.servicios.cliente.imagenes.IImagenControllerWS imagenWS = 
+                    imagenServicio.getImagenWSEndpointPort();
+                
+                imagen = imagenWS.subirImagen(imagenBytes, fileName, "propuesta");
+            } catch (Exception e) {
+                throw new IOException("Error al subir la imagen al servidor central: " + e.getMessage(), e);
+            }
         }
 
         String categoria     = req.getParameter("categoria");

@@ -2,6 +2,7 @@
 <%@ page import="java.util.List" %>
 <%@ page import="culturarte.servicios.cliente.propuestas.DtPropuesta" %>
 <%@ page import="culturarte.servicios.cliente.usuario.DtUsuario" %>
+<%@ page import="culturarte.servicios.cliente.imagenes.*" %>
 <%@ page import="com.culturarteWeb.util.WSFechaPropuesta" %>
 
 <!DOCTYPE html>
@@ -98,7 +99,13 @@
                                         </div>
 
                                         <% if (propuesta.getImagen() != null && !propuesta.getImagen().isEmpty()) { %>
-                                            <img src="<%= request.getContextPath() %>/<%= propuesta.getImagen() %>" 
+                                            <%
+                                            // Llamar al Web Service SOAP para obtener la imagen en Base64
+                                            ImagenWSEndpointService imagenServicio = new ImagenWSEndpointService();
+                                            IImagenControllerWS imagenWS = imagenServicio.getImagenWSEndpointPort();
+                                            String imagenDataUri = imagenWS.obtenerImagenBase64(propuesta.getImagen());
+                                            %>
+                                            <img src="<%= imagenDataUri %>" 
                                                  class="img-fluid rounded mb-3" 
                                                  style="max-height: 150px; width: 100%; object-fit: cover;"
                                                  alt="Imagen de <%= propuesta.getTitulo() %>">

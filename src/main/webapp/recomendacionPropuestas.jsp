@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="java.util.List, java.util.Map, culturarte.servicios.cliente.propuestas.DtPropuesta" %>
+<%@ page import="java.util.List, java.util.Map, culturarte.servicios.cliente.propuestas.DtPropuesta, culturarte.servicios.cliente.imagenes.*" %>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -148,9 +148,15 @@
                                                 Double montoRecaudado = (Double) detalles.get("montoRecaudado");
                                                 Double porcentajeFinanciacion = (Double) detalles.get("porcentajeFinanciacion");
 
-                                                String imagen = (p.getImagen() != null && !p.getImagen().isEmpty())
-                                                    ? p.getImagen()
-                                                    : "imagenes/propuestaDefault.png";
+                                                String imagen;
+                                                if (p.getImagen() != null && !p.getImagen().isEmpty()) {
+                                                    // Llamar al Web Service SOAP para obtener la imagen en Base64
+                                                    ImagenWSEndpointService imagenServicio = new ImagenWSEndpointService();
+                                                    IImagenControllerWS imagenWS = imagenServicio.getImagenWSEndpointPort();
+                                                    imagen = imagenWS.obtenerImagenBase64(p.getImagen());
+                                                } else {
+                                                    imagen = request.getContextPath() + "/imagenes/propuestaDefault.png";
+                                                }
 
                                                 double porcentajeProgreso = porcentajeFinanciacion != null ? porcentajeFinanciacion : 0.0;
                                                 if (porcentajeProgreso > 100) porcentajeProgreso = 100;

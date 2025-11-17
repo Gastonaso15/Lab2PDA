@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="culturarte.servicios.cliente.propuestas.DtPropuesta, culturarte.servicios.cliente.usuario.DtUsuario, culturarte.servicios.cliente.propuestas.DtComentario, java.util.List, java.time.format.DateTimeFormatter, com.culturarteWeb.util.WSFechaPropuesta" %>
+<%@ page import="culturarte.servicios.cliente.propuestas.DtPropuesta, culturarte.servicios.cliente.usuario.DtUsuario, culturarte.servicios.cliente.propuestas.DtComentario, java.util.List, java.time.format.DateTimeFormatter, com.culturarteWeb.util.WSFechaPropuesta, culturarte.servicios.cliente.imagenes.*" %>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -45,8 +45,14 @@
                         %>
 
                         <% if (tieneImagen) { %>
+                            <%
+                            // Llamar al Web Service SOAP para obtener la imagen en Base64
+                            ImagenWSEndpointService imagenServicio = new ImagenWSEndpointService();
+                            IImagenControllerWS imagenWS = imagenServicio.getImagenWSEndpointPort();
+                            String imagenDataUri = imagenWS.obtenerImagenBase64(imagenPropuesta);
+                            %>
                             <div class="text-center mb-4">
-                                <img src="<%= request.getContextPath() %>/<%= imagenPropuesta %>"
+                                <img src="<%= imagenDataUri %>"
                                      class="img-fluid rounded" style="max-height: 300px; width: 100%; object-fit: cover;"
                                      alt="Imagen de <%= propuesta.getTitulo() %>"
                                      onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">

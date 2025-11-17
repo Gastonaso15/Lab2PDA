@@ -60,21 +60,40 @@ public class ConsultaPerfilUsuarioServlet extends HttpServlet {
 
 
                 for (String n : nicks) {
-                    DtUsuario u = ICU.getDTUsuario(n);
-                    if (u == null) continue;
+                    DtUsuario u = null;
                     String tipo;
+                    String imagen = null;
+
+                    // Intentar obtener como proponente primero
                     try {
-                        ICU.devolverProponentePorNickname(n);
+                        DtProponente prop = ICU.devolverProponentePorNickname(n);
                         tipo = "Proponente";
+                        u = prop;
+                        imagen = prop.getImagen(); // Obtener imagen del proponente
                     } catch (Exception ex) {
-                        tipo = "Colaborador";
+                        // No es proponente, intentar como colaborador
+                        try {
+                            DtColaborador colab = ICU.devolverColaboradorPorNickname(n);
+                            tipo = "Colaborador";
+                            u = colab;
+                            imagen = colab.getImagen(); // Obtener imagen del colaborador
+                        } catch (Exception ex2) {
+                            // Si no es ni proponente ni colaborador, usar getDTUsuario como fallback
+                            u = ICU.getDTUsuario(n);
+                            tipo = "Usuario";
+                            if (u != null) {
+                                imagen = u.getImagen();
+                            }
+                        }
                     }
+
+                    if (u == null) continue;
 
                     Map<String, Object> row = new HashMap<>();
                     Long id = u.getId();
                     row.put("id", id != null ? id : 0L);
                     row.put("nick", u.getNickname());
-                    row.put("imagen", u.getImagen());
+                    row.put("imagen", imagen); // Usar la imagen obtenida específicamente
                     row.put("nombre", u.getNombre());
                     row.put("apellido", u.getApellido());
                     row.put("tipo", tipo);
@@ -94,11 +113,11 @@ public class ConsultaPerfilUsuarioServlet extends HttpServlet {
             } catch (Exception e) {
                 req.setAttribute("error", "No se pudo listar usuarios: " + e.getMessage());
             }
-            
+
             // Establecer atributos del usuario actual para el menú lateral
             HttpSession ses = req.getSession(false);
             DtUsuario actual = (ses != null) ? (DtUsuario) ses.getAttribute("usuarioLogueado") : null;
-            
+
             boolean esProponenteActual = false;
             boolean esColaboradorActual = false;
             if (actual != null) {
@@ -108,7 +127,7 @@ public class ConsultaPerfilUsuarioServlet extends HttpServlet {
                 } catch (Exception e) {
                     esProponenteActual = false;
                 }
-                
+
                 try {
                     ICU.devolverColaboradorPorNickname(actual.getNickname());
                     esColaboradorActual = true;
@@ -118,7 +137,7 @@ public class ConsultaPerfilUsuarioServlet extends HttpServlet {
             }
             req.setAttribute("esProponente", esProponenteActual);
             req.setAttribute("esColaborador", esColaboradorActual);
-            
+
             //envio los datos ya cargados al jsp con el Dispatcher (si hasta parece despachador en español ahora que veo)
             req.getRequestDispatcher("/consultaPerfilUsuario.jsp").forward(req, resp);
             return;
@@ -259,11 +278,11 @@ public class ConsultaPerfilUsuarioServlet extends HttpServlet {
             req.setAttribute("colaboradas", colaboradas);
             req.setAttribute("creadasIngresadas", creadasIngresadas);
             req.setAttribute("misColaboraciones", misColaboraciones);
-            
+
             // Atributos del usuario CONSULTADO (para mostrar información del perfil)
             req.setAttribute("esProponenteC", proponente != null);
             req.setAttribute("esColaboradorC", colaborador != null);
-            
+
             // Atributos del usuario ACTUAL logueado (para el menú lateral)
             boolean esProponenteActual = false;
             boolean esColaboradorActual = false;
@@ -274,7 +293,7 @@ public class ConsultaPerfilUsuarioServlet extends HttpServlet {
                 } catch (Exception e) {
                     esProponenteActual = false;
                 }
-                
+
                 try {
                     ICU.devolverColaboradorPorNickname(actual.getNickname());
                     esColaboradorActual = true;
@@ -289,7 +308,7 @@ public class ConsultaPerfilUsuarioServlet extends HttpServlet {
             req.getRequestDispatcher("/consultaPerfilUsuario.jsp").forward(req, resp);
 
         } catch (Exception e) {
-        e.printStackTrace();
+            e.printStackTrace();
             req.setAttribute("error", "Error al consultar perfil: " + e.getMessage());
             req.getRequestDispatcher("/consultaPerfilUsuario.jsp").forward(req, resp);
         }

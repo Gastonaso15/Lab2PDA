@@ -1,4 +1,4 @@
-<%@ page import="java.util.*, culturarte.servicios.cliente.propuestas.DtColaboracion, com.culturarteWeb.util.WSFechaPropuesta, java.time.format.DateTimeFormatter" %>
+<%@ page import="java.util.*, culturarte.servicios.cliente.propuestas.DtColaboracion, com.culturarteWeb.util.WSFechaPropuesta, java.time.format.DateTimeFormatter, culturarte.servicios.cliente.imagenes.*" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
 <html lang="es">
@@ -73,9 +73,15 @@
                     
                     <% for (DtColaboracion colab : colaboraciones) { 
                         String tituloPropuesta = colab.getPropuesta() != null ? colab.getPropuesta().getTitulo() : "Sin título";
-                        String imagenPropuesta = colab.getPropuesta() != null && colab.getPropuesta().getImagen() != null && !colab.getPropuesta().getImagen().isEmpty() 
-                            ? request.getContextPath() + "/" + colab.getPropuesta().getImagen() 
-                            : request.getContextPath() + "/imagenes/propuestaDefault.png";
+                        String imagenPropuesta;
+                        if (colab.getPropuesta() != null && colab.getPropuesta().getImagen() != null && !colab.getPropuesta().getImagen().isEmpty()) {
+                            // Llamar al Web Service SOAP para obtener la imagen en Base64
+                            ImagenWSEndpointService imagenServicio = new ImagenWSEndpointService();
+                            IImagenControllerWS imagenWS = imagenServicio.getImagenWSEndpointPort();
+                            imagenPropuesta = imagenWS.obtenerImagenBase64(colab.getPropuesta().getImagen());
+                        } else {
+                            imagenPropuesta = request.getContextPath() + "/imagenes/propuestaDefault.png";
+                        }
                         Double monto = colab.getMonto() != null ? colab.getMonto() : 0.0;
                         String fechaHoraStr = "No disponible";
                         

@@ -95,6 +95,17 @@
             </plugin>
 
             <plugin>
+                <groupId>org.apache.tomcat.maven</groupId>
+                <artifactId>tomcat7-maven-plugin</artifactId>
+                <version>2.2</version>
+                <configuration>
+                    <port>8080</port>
+                    <path>/LabPDAWeb</path>
+                    <uriEncoding>UTF-8</uriEncoding>
+                </configuration>
+            </plugin>
+
+            <plugin>
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-codegen-plugin</artifactId>
                 <version>3.5.5</version>
@@ -133,6 +144,26 @@
                                     <extraargs>
                                         <extraarg>-p</extraarg>
                                         <extraarg>culturarte.servicios.cliente.propuestas</extraarg>
+                                        <extraarg>-client</extraarg>
+                                    </extraargs>
+                                </wsdlOption>
+                            </wsdlOptions>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>wsimport-imagenes</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>wsdl2java</goal>
+                        </goals>
+                        <configuration>
+                            <sourceRoot>${project.build.directory}/generated-sources/wsimport</sourceRoot>
+                            <wsdlOptions>
+                                <wsdlOption>
+                                    <wsdl>http://localhost:9128/culturarteWS/imagenes?wsdl</wsdl>
+                                    <extraargs>
+                                        <extraarg>-p</extraarg>
+                                        <extraarg>culturarte.servicios.cliente.imagenes</extraarg>
                                         <extraarg>-client</extraarg>
                                     </extraargs>
                                 </wsdlOption>

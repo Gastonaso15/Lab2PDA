@@ -2,6 +2,7 @@
 <%@ page import="java.util.*" %>
 <%@ page import="culturarte.servicios.cliente.usuario.*" %>
 <%@ page import="culturarte.servicios.cliente.propuestas.DtPropuesta" %>
+<%@ page import="culturarte.servicios.cliente.imagenes.*" %>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -64,7 +65,25 @@
                         String apellidoOpt = String.valueOf(u.getOrDefault("apellido",""));
                         String tipoOpt     = String.valueOf(u.getOrDefault("tipo","Usuario"));
                         String img         = (String) u.get("imagen");
-                        String rutaImagen  = (img == null || img.isBlank()) ? (ctx + "/imagenes/usuarioDefault.png") : (ctx + "/" + img);
+                        String rutaImagen;
+                        if (img == null || img.isBlank()) {
+                            rutaImagen = ctx + "/imagenes/usuarioDefault.png";
+                        } else {
+                            // Llamar al Web Service SOAP para obtener la imagen en Base64
+                            // Crear el servicio para cada usuario (igual que en el perfil individual)
+                            try {
+                                ImagenWSEndpointService imagenServicio = new ImagenWSEndpointService();
+                                IImagenControllerWS imagenWS = imagenServicio.getImagenWSEndpointPort();
+                                rutaImagen = imagenWS.obtenerImagenBase64(img);
+                                // Verificar que se obtuvo una respuesta válida (debe empezar con "data:image")
+                                if (rutaImagen == null || rutaImagen.trim().isEmpty() || !rutaImagen.startsWith("data:image")) {
+                                    rutaImagen = ctx + "/imagenes/usuarioDefault.png";
+                                }
+                            } catch (java.lang.Exception e) {
+                                // Si falla, usar imagen por defecto
+                                rutaImagen = ctx + "/imagenes/usuarioDefault.png";
+                            }
+                        }
 
                         String badgeClass = "text-bg-secondary";
                         if ("Proponente".equalsIgnoreCase(tipoOpt))  badgeClass = "text-bg-primary";
@@ -77,7 +96,8 @@
                     <div class="card h-100 shadow-sm">
                         <div class="card-body d-flex gap-3">
                             <img src="<%= rutaImagen %>" alt="avatar" class="rounded-circle border"
-                                 style="width:64px;height:64px;object-fit:cover">
+                                 style="width:64px;height:64px;object-fit:cover"
+                                 onerror="this.src='<%= ctx %>/imagenes/usuarioDefault.png'">
                             <div class="flex-grow-1">
                                 <div class="d-flex align-items-center gap-2 mb-1">
                                     <span class="badge <%= badgeClass %>"><%= tipoOpt %></span>
@@ -148,13 +168,25 @@
             <h2 class="h4 mb-3">Perfil de <%= (usuario != null ? usuario.getNickname() : request.getParameter("nick")) %></h2>
             <div class="d-flex gap-3 align-items-start">
 
-               <%String rutaImagen = (usuario != null) ? usuario.getImagen() : null;
-                   if (rutaImagen == null || rutaImagen.isBlank()) {
-                       rutaImagen = ctx + "/imagenes/usuarioDefault.png";
-                   } else {
-                       rutaImagen = ctx + "/" + rutaImagen;
-                   }%>
-               <img alt="avatar" src="<%= rutaImagen %>" class="rounded-circle border" style="width:96px;height:96px;object-fit:cover">
+                <%String rutaImagen = (usuario != null) ? usuario.getImagen() : null;
+                    if (rutaImagen == null || rutaImagen.isBlank()) {
+                        rutaImagen = ctx + "/imagenes/usuarioDefault.png";
+                    } else {
+                        // Llamar al Web Service SOAP para obtener la imagen en Base64
+                        try {
+                            ImagenWSEndpointService imagenServicio = new ImagenWSEndpointService();
+                            IImagenControllerWS imagenWS = imagenServicio.getImagenWSEndpointPort();
+                            rutaImagen = imagenWS.obtenerImagenBase64(rutaImagen);
+                            // Verificar que se obtuvo una respuesta válida
+                            if (rutaImagen == null || rutaImagen.trim().isEmpty() || !rutaImagen.startsWith("data:image")) {
+                                rutaImagen = ctx + "/imagenes/usuarioDefault.png";
+                            }
+                        } catch (java.lang.Exception e) {
+                            // Si falla, usar imagen por defecto
+                            rutaImagen = ctx + "/imagenes/usuarioDefault.png";
+                        }
+                    }%>
+                <img alt="avatar" src="<%= rutaImagen %>" class="rounded-circle border" style="width:96px;height:96px;object-fit:cover">
                 <div>
                     <div class="mb-1">
                         <span class="badge <%= esProponenteC ? "text-bg-primary" : (esColaboradorC ? "text-bg-success" : "text-bg-secondary") %>">
@@ -170,21 +202,21 @@
                     <% } %>
 
                     <%
-                       if (esProponenteC) {
+                        if (esProponenteC) {
 
-                           if (bio != null && !bio.isBlank()) { %>
-                               <div><b>Biografía:</b> <%=bio%></div>
-                           <% }
+                            if (bio != null && !bio.isBlank()) { %>
+                    <div><b>Biografía:</b> <%=bio%></div>
+                    <% }
 
-                           if (sitioWeb != null && !sitioWeb.isBlank()) {
-                               String sitioWebURL = sitioWeb;
-                               if (!sitioWebURL.toLowerCase().startsWith("http")) {
-                                   sitioWebURL = "http://" + sitioWebURL;
-                               }
-                           %>
-                               <div><b>Sitio Web:</b> <a href="<%=sitioWebURL%>" target="_blank"><%=sitioWeb%></a></div>
-                           <% }
-                       }
+                        if (sitioWeb != null && !sitioWeb.isBlank()) {
+                            String sitioWebURL = sitioWeb;
+                            if (!sitioWebURL.toLowerCase().startsWith("http")) {
+                                sitioWebURL = "http://" + sitioWebURL;
+                            }
+                    %>
+                    <div><b>Sitio Web:</b> <a href="<%=sitioWebURL%>" target="_blank"><%=sitioWeb%></a></div>
+                    <% }
+                    }
                     %>
                 </div>
             </div>
@@ -334,17 +366,17 @@
                                 culturarte.servicios.cliente.usuario.DtPropuesta prop = m.getPropuesta();
                         %>
                         <tr>
-                        <td><%=prop.getTitulo()%></td>
+                            <td><%=prop.getTitulo()%></td>
                             <%--si esta en su propio perfil es la unica manera de que vea el monto y fecha--%>
                             <% if (esPropio != null && esPropio ){%>
-                        <td><%m.getFechaHora();%></td>
-                        <td><%=m.getMonto()%></td>
+                            <td><%m.getFechaHora();%></td>
+                            <td><%=m.getMonto()%></td>
                             <%}else{%>
                             <td>- </td>
                             <td>-</td>
                             <%}%>
-                        <td class="text-center"><a class="btn btn-link btn-sm" href="<%=ctx%>/consultaPropuesta?accion=detalle&titulo=<%=prop.getTitulo()%>">Ver detalle</a></td>
-                    </tr>
+                            <td class="text-center"><a class="btn btn-link btn-sm" href="<%=ctx%>/consultaPropuesta?accion=detalle&titulo=<%=prop.getTitulo()%>">Ver detalle</a></td>
+                        </tr>
                         <% }}  else { %>
                         <tr><td colspan="2" class="text-center text-muted">(sin colaboraciones)</td></tr>
                         <% } %>
@@ -408,10 +440,10 @@
         </form>
         <% } %>
         <% if (esPropio != null && esPropio && esProponenteC) { %>
-            <a href="<%= request.getContextPath() %>/bajaProponente"
-               class="btn btn-danger">
-                <i class="bi bi-trash"></i> Dar de Baja Mi Cuenta
-            </a>
+        <a href="<%= request.getContextPath() %>/bajaProponente"
+           class="btn btn-danger">
+            <i class="bi bi-trash"></i> Dar de Baja Mi Cuenta
+        </a>
         <% } %>
     </div>
 

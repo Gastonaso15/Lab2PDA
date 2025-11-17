@@ -4,6 +4,8 @@ package com.culturarteWeb.servlets;
 import culturarte.servicios.cliente.propuestas.IPropuestaControllerWS;
 import culturarte.servicios.cliente.propuestas.PropuestaWSEndpointService;
 import culturarte.servicios.cliente.usuario.DtUsuario;
+import culturarte.servicios.cliente.usuario.DtProponente;
+import culturarte.servicios.cliente.usuario.DtColaborador;
 import culturarte.servicios.cliente.usuario.IUsuarioControllerWS;
 import culturarte.servicios.cliente.usuario.ListaStrings;
 import culturarte.servicios.cliente.usuario.UsuarioWSEndpointService;
@@ -51,29 +53,46 @@ public class VerRankingDeUsuariosServlet extends HttpServlet {
                 List<Map<String, Object>> usuariosCombo = new ArrayList<>();
 
                 for (String n : nicks) {
-                    DtUsuario u = ICU.getDTUsuario(n);
+                    DtUsuario u = null;
+                    String tipo;
+                    String imagen = null;
+
+                    // Intentar obtener como proponente primero
+                    try {
+                        DtProponente prop = ICU.devolverProponentePorNickname(n);
+                        tipo = "Proponente";
+                        u = prop;
+                        imagen = prop.getImagen(); // Obtener imagen del proponente
+                    } catch (Exception ex) {
+                        // No es proponente, intentar como colaborador
+                        try {
+                            DtColaborador colab = ICU.devolverColaboradorPorNickname(n);
+                            tipo = "Colaborador";
+                            u = colab;
+                            imagen = colab.getImagen(); // Obtener imagen del colaborador
+                        } catch (Exception ex2) {
+                            // Si no es ni proponente ni colaborador, usar getDTUsuario como fallback
+                            u = ICU.getDTUsuario(n);
+                            tipo = "Usuario";
+                            if (u != null) {
+                                imagen = u.getImagen();
+                            }
+                        }
+                    }
+
                     if (u == null) continue;
 
-                    String tipo;
-                    try {
-                        ICU.devolverProponentePorNickname(n);
-                        tipo = "Proponente";
-                    } catch (Exception ex) {
-                        tipo = "Colaborador";
-                    }
                     ListaStrings nicks2WS = ICU.devolverUsuariosSeguidores(n);
                     if (nicks2WS == null) continue; //voy al siguiente usuario (n)
                     List<String> followers = nicks2WS.getItem();
                     Integer cantFollowers = followers.size();
-
-
 
                     Map<String, Object> row = new HashMap<>();
                     row.put("id", u.getId());
                     row.put("cantFollowers", cantFollowers);
                     row.put("nick", u.getNickname());
                     row.put("nombre", u.getNombre());
-                    row.put ("imagen", u.getImagen());
+                    row.put("imagen", imagen); // Usar la imagen obtenida específicamente
                     row.put("apellido", u.getApellido());
                     row.put("tipo", tipo);
                     usuariosCombo.add(row);

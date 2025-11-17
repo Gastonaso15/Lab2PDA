@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="java.util.List, culturarte.servicios.cliente.propuestas.DtPropuesta, culturarte.servicios.cliente.propuestas.DtCategoria" %>
+<%@ page import="java.util.List, culturarte.servicios.cliente.propuestas.DtPropuesta, culturarte.servicios.cliente.propuestas.DtCategoria, culturarte.servicios.cliente.imagenes.*" %>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -131,13 +131,12 @@
                                         
                                         <% if (tieneImagen) { %>
                                             <%
-                                            String contextPath = request.getContextPath();
-                                            String imagenUrl = contextPath + "/" + imagenPropuesta;
-                                            System.out.println("Context Path: " + contextPath);
-                                            System.out.println("Imagen Propuesta: " + imagenPropuesta);
-                                            System.out.println("URL Final: " + imagenUrl);
+                                            // Llamar al Web Service SOAP para obtener la imagen en Base64
+                                            ImagenWSEndpointService imagenServicio = new ImagenWSEndpointService();
+                                            IImagenControllerWS imagenWS = imagenServicio.getImagenWSEndpointPort();
+                                            String imagenDataUri = imagenWS.obtenerImagenBase64(imagenPropuesta);
                                             %>
-                                            <img src="<%= imagenUrl %>" 
+                                            <img src="<%= imagenDataUri %>" 
                                                  class="card-img-top" style="height: 200px; object-fit: cover; width: 100%;" 
                                                  alt="Imagen de <%= propuesta.getTitulo() %>"
                                                  onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">

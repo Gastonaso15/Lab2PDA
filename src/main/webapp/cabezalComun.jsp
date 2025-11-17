@@ -1,4 +1,4 @@
-<%@ page import="culturarte.servicios.cliente.usuario.DtUsuario" %>
+<%@ page import="culturarte.servicios.cliente.usuario.DtUsuario, culturarte.servicios.cliente.imagenes.*" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <header>
     <div class="menu-hamburguesa">
@@ -93,7 +93,10 @@
                    if (rutaImagen == null || rutaImagen.isEmpty()) {
                        rutaImagen = request.getContextPath() + "/imagenes/usuarioDefault.png";
                    } else {
-                       rutaImagen = request.getContextPath() + "/" + rutaImagen;
+                       // Llamar al Web Service SOAP para obtener la imagen en Base64
+                       ImagenWSEndpointService imagenServicio = new ImagenWSEndpointService();
+                       IImagenControllerWS imagenWS = imagenServicio.getImagenWSEndpointPort();
+                       rutaImagen = imagenWS.obtenerImagenBase64(rutaImagen);
                    }
                %>
                <img src="<%= rutaImagen %>" alt="Imagen de Usuario" style="width:40px; height:40px; border-radius:50%;">

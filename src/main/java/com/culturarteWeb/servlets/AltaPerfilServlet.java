@@ -94,12 +94,26 @@ public class AltaPerfilServlet extends HttpServlet {
                     }
                     
                     String nombreArchivo = "ImagenUP" + System.currentTimeMillis() + extension;
-                    String rutaRelativa = "uploads/usuarios/" + nombreArchivo;
 
-                    String rutaCompleta = getServletContext().getRealPath("/") + rutaRelativa;
-                    imagenPart.write(rutaCompleta);
+                    // Leer los bytes de la imagen
+                    byte[] imagenBytes;
+                    try (java.io.InputStream is = imagenPart.getInputStream();
+                         java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream()) {
+                        byte[] buffer = new byte[8192];
+                        int bytesRead;
+                        while ((bytesRead = is.read(buffer)) != -1) {
+                            baos.write(buffer, 0, bytesRead);
+                        }
+                        imagenBytes = baos.toByteArray();
+                    }
                     
-                    imagenBase64 = rutaRelativa; // Ahora guardamos la ruta, no Base64
+                    // Subir la imagen al servidor central usando el Web Service
+                    culturarte.servicios.cliente.imagenes.ImagenWSEndpointService imagenServicio = 
+                        new culturarte.servicios.cliente.imagenes.ImagenWSEndpointService();
+                    culturarte.servicios.cliente.imagenes.IImagenControllerWS imagenWS = 
+                        imagenServicio.getImagenWSEndpointPort();
+                    
+                    imagenBase64 = imagenWS.subirImagen(imagenBytes, nombreArchivo, "usuario");
                 } else {
                     request.setAttribute("error", "El archivo seleccionado no es una imagen válida");
                     request.setAttribute("nickname", nickname);
@@ -116,6 +130,15 @@ public class AltaPerfilServlet extends HttpServlet {
                 }
             } catch (Exception e) {
                 request.setAttribute("error", "Error al procesar la imagen: " + e.getMessage());
+                request.setAttribute("nickname", nickname);
+                request.setAttribute("nombre", nombre);
+                request.setAttribute("apellido", apellido);
+                request.setAttribute("email", email);
+                request.setAttribute("fechaNacimiento", fechaNacimiento);
+                request.setAttribute("tipoUsuario", tipoUsuario);
+                request.setAttribute("direccion", direccion);
+                request.setAttribute("biografia", biografia);
+                request.setAttribute("sitioWeb", sitioWeb);
                 request.getRequestDispatcher("/altaPerfil.jsp").forward(request, response);
                 return;
             }

@@ -1,3 +1,5 @@
+<%@ page import="culturarte.servicios.cliente.propuestas.DtTipoRetorno" %>
+<%@ page import="java.util.List" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
@@ -94,7 +96,13 @@
                                 <label for="monto" class="form-label">Monto a Colaborar ($):</label>
                                 <input type="number" name="monto" id="monto" class="form-control" min="1" required/>
                             </div>
-
+<%
+    List<DtTipoRetorno> listaTipoRet = propuesta.getTiposRetorno();
+    String tipoRetornoString = "";
+    for (DtTipoRetorno i :listaTipoRet){
+        tipoRetornoString = tipoRetornoString + i.value();
+    }
+%>
                             <div class="mb-3">
                                 <label for="tipoRetorno" class="form-label">Tipo de Retorno:</label>
                                 <select name="tipoRetorno" id="tipoRetorno" class="form-select" required>

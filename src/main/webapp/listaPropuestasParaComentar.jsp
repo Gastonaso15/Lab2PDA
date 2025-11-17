@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="java.util.List, culturarte.servicios.cliente.propuestas.DtPropuesta, culturarte.servicios.cliente.usuario.DtUsuario" %>
+<%@ page import="java.util.List, culturarte.servicios.cliente.propuestas.DtPropuesta, culturarte.servicios.cliente.usuario.DtUsuario, culturarte.servicios.cliente.imagenes.*" %>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -71,7 +71,13 @@
                                             %>
                                             
                                             <% if (tieneImagen) { %>
-                                                <img src="<%= request.getContextPath() %>/<%= imagenPropuesta %>" 
+                                                <%
+                                                // Llamar al Web Service SOAP para obtener la imagen en Base64
+                                                ImagenWSEndpointService imagenServicio = new ImagenWSEndpointService();
+                                                IImagenControllerWS imagenWS = imagenServicio.getImagenWSEndpointPort();
+                                                String imagenDataUri = imagenWS.obtenerImagenBase64(imagenPropuesta);
+                                                %>
+                                                <img src="<%= imagenDataUri %>" 
                                                      class="card-img-top" style="height: 400px; object-fit: cover;"
                                                      alt="Imagen de <%= propuesta.getTitulo() %>"
                                                      onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
