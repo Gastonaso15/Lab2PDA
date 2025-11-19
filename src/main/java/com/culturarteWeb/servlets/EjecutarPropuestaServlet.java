@@ -3,6 +3,8 @@ package com.culturarteWeb.servlets;
 import com.culturarteWeb.util.WSFechaPropuesta;
 import culturarte.servicios.cliente.propuestas.*;
 import culturarte.servicios.cliente.usuario.DtUsuario;
+import culturarte.servicios.cliente.usuario.IUsuarioControllerWS;
+import culturarte.servicios.cliente.usuario.UsuarioWSEndpointService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -20,6 +22,7 @@ import java.util.stream.Collectors;
 public class EjecutarPropuestaServlet extends HttpServlet {
 
     private IPropuestaControllerWS IPC;
+    private IUsuarioControllerWS ICU;
 
     @Override
     public void init() throws ServletException {
@@ -28,6 +31,8 @@ public class EjecutarPropuestaServlet extends HttpServlet {
             PropuestaWSEndpointService propuestaServicio = new PropuestaWSEndpointService();
             IPC = propuestaServicio.getPropuestaWSEndpointPort();
 
+            UsuarioWSEndpointService usuarioServicio = new UsuarioWSEndpointService();
+            ICU = usuarioServicio.getUsuarioWSEndpointPort();
         } catch (Exception e) {
             throw new ServletException("Error al inicializar Web Services", e);
         }
@@ -61,6 +66,17 @@ public class EjecutarPropuestaServlet extends HttpServlet {
                 .map(p -> IPC.getDTPropuesta(p.getTitulo()))
                 .filter(p -> p != null)
                 .collect(Collectors.toList());
+
+        boolean esColaboradorActual = false;
+        boolean esProponenteActual = true;
+        try {
+            ICU.devolverColaboradorPorNickname(usuarioActual.getNickname());
+            esColaboradorActual = true;
+        } catch (Exception e) {
+            esColaboradorActual = false;
+        }
+        request.setAttribute("esProponente", esProponenteActual);
+        request.setAttribute("esColaborador", esColaboradorActual);
 
         request.setAttribute("propuestas", propuestasFinanciadas);
         request.getRequestDispatcher("/ejecutarPropuesta.jsp").forward(request, response);

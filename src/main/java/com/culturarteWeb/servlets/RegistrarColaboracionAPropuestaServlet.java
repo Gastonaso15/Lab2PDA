@@ -3,6 +3,8 @@ package com.culturarteWeb.servlets;
 import com.culturarteWeb.util.WSFechaPropuesta;
 import culturarte.servicios.cliente.propuestas.*;
 import culturarte.servicios.cliente.usuario.DtUsuario;
+import culturarte.servicios.cliente.usuario.IUsuarioControllerWS;
+import culturarte.servicios.cliente.usuario.UsuarioWSEndpointService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -22,6 +24,7 @@ import static java.net.URLEncoder.encode;
 public class RegistrarColaboracionAPropuestaServlet extends HttpServlet {
 
     private IPropuestaControllerWS IPC;
+    private IUsuarioControllerWS ICU;
 
     @Override
     public void init() throws ServletException {
@@ -30,6 +33,8 @@ public class RegistrarColaboracionAPropuestaServlet extends HttpServlet {
             PropuestaWSEndpointService propuestaServicio = new PropuestaWSEndpointService();
             IPC = propuestaServicio.getPropuestaWSEndpointPort();
 
+            UsuarioWSEndpointService usuarioServicio = new UsuarioWSEndpointService();
+            ICU = usuarioServicio.getUsuarioWSEndpointPort();
         } catch (Exception e) {
             throw new ServletException("Error al inicializar Web Services", e);
         }
@@ -39,6 +44,29 @@ public class RegistrarColaboracionAPropuestaServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         cargarDatosParaLaVista(request, request.getParameter("titulo"));
+
+
+        HttpSession session = request.getSession();
+        DtUsuario usuarioActual = (DtUsuario) session.getAttribute("usuarioLogueado");
+
+        if (usuarioActual == null) {
+            request.setAttribute("error", "Debes iniciar sesión para registrar una colaboración.");
+            request.getRequestDispatcher("/inicioDeSesion.jsp").forward(request, response);
+            return;
+        }
+
+        boolean esColaboradorActual = true;
+        boolean esProponenteActual = false;
+        try {
+            ICU.devolverProponentePorNickname(usuarioActual.getNickname());
+            esProponenteActual = true;
+        } catch (Exception e) {
+            esProponenteActual = false;
+        }
+
+        request.setAttribute("esProponente", esProponenteActual);
+        request.setAttribute("esColaborador", esColaboradorActual);
+
         request.getRequestDispatcher("/registrarColaboracionAPropuesta.jsp").forward(request, response);
     }
 

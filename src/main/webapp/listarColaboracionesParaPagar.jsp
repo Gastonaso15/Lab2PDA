@@ -1,12 +1,13 @@
-<%@ page import="java.util.*, culturarte.servicios.cliente.usuario.DtColaboracion, culturarte.servicios.cliente.usuario.DtColaborador, com.culturarteWeb.util.WSFechaUsuario, java.time.format.DateTimeFormatter, culturarte.servicios.cliente.imagenes.*" %>
+<%@ page import="java.util.*, culturarte.servicios.cliente.propuestas.DtColaboracion, com.culturarteWeb.util.WSFechaPropuesta, java.time.format.DateTimeFormatter, culturarte.servicios.cliente.imagenes.*" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Constancias de Pago - Culturarte</title>
+    <title>Pagar Colaboración - Culturarte</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <jsp:include page="estiloCabezalComun.jsp"/>
     <style>
         body {
@@ -37,11 +38,11 @@
 </head>
 <body>
     <div class="container">
-            <jsp:include page="cabezalComun.jsp"/>
-        </div>
+        <jsp:include page="cabezalComun.jsp"/>
+    </div>
 
     <div class="container mt-4">
-        <h1 class="mb-4">Constancias de Pago de Colaboración</h1>
+        <h1 class="mb-4"><i class="bi bi-credit-card"></i> Pagar Colaboración</h1>
 
         <% String error = (String) request.getAttribute("error"); %>
         <% if (error != null) { %>
@@ -59,16 +60,16 @@
 
         <% if (colaboraciones.isEmpty()) { %>
             <div class="alert alert-info" role="alert">
-                <h4>No hay colaboraciones con pago asociado</h4>
-                <p>No se encontraron colaboraciones que tengan un pago asociado para las cuales pueda generar una constancia.</p>
+                <h4>No hay colaboraciones pendientes de pago</h4>
+                <p>No se encontraron colaboraciones sin pago asociado.</p>
             </div>
         <% } else { %>
             <div class="card">
                 <div class="card-header">
-                    <h5 class="mb-0">Colaboraciones Disponibles para Constancia</h5>
+                    <h5 class="mb-0">Colaboraciones Pendientes de Pago</h5>
                 </div>
                 <div class="card-body">
-                    <p class="text-muted">Seleccione una colaboración para generar su constancia de pago:</p>
+                    <p class="text-muted">Seleccione una colaboración para realizar el pago:</p>
                     
                     <% for (DtColaboracion colab : colaboraciones) { 
                         String tituloPropuesta = colab.getPropuesta() != null ? colab.getPropuesta().getTitulo() : "Sin título";
@@ -86,7 +87,7 @@
                         
                         if (colab.getFechaHora() != null) {
                             try {
-                                java.time.LocalDateTime fechaHora = WSFechaUsuario.toJavaLocalDateTime(colab.getFechaHora());
+                                java.time.LocalDateTime fechaHora = WSFechaPropuesta.toJavaLocalDateTime(colab.getFechaHora());
                                 if (fechaHora != null) {
                                     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
                                     fechaHoraStr = fechaHora.format(formatter);
@@ -111,9 +112,9 @@
                                     </p>
                                 </div>
                                 <div class="col-md-4 text-end">
-                                    <a href="<%= request.getContextPath() %>/emitirConstanciaPago?tituloPropuesta=<%= java.net.URLEncoder.encode(tituloPropuesta, "UTF-8") %>" 
-                                       class="btn btn-primary">
-                                        Generar Constancia
+                                    <a href="<%= request.getContextPath() %>/pagarColaboracion?idColaboracion=<%= colab.getId() %>" 
+                                       class="btn btn-success">
+                                        <i class="bi bi-credit-card"></i> Pagar
                                     </a>
                                 </div>
                             </div>
@@ -124,8 +125,8 @@
         <% } %>
 
         <div class="mt-3">
-            <a href="<%= request.getContextPath() %>/consultaPerfilUsuario" class="btn btn-secondary">
-                Volver al Perfil
+            <a href="<%= request.getContextPath() %>/principal" class="btn btn-secondary">
+                Volver
             </a>
         </div>
     </div>

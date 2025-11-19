@@ -2,11 +2,14 @@ culturarte\servicios\cliente\propuestas\DtTipoTarjeta.class
 com\culturarteWeb\servlets\CierreDeSesionServlet.class
 culturarte\servicios\cliente\propuestas\PropuestaWSEndpointService.class
 culturarte\servicios\cliente\usuario\DtSeguimiento.class
+com\culturarteWeb\servlets\ListarColaboracionesParaPagarServlet.class
 culturarte\servicios\cliente\usuario\IUsuarioControllerWS_UsuarioWSEndpointPort_Client.class
+com\culturarteWeb\servlets\PagarColaboracionServlet.class
 culturarte\servicios\cliente\propuestas\DtPago.class
 culturarte\servicios\cliente\usuario\LocalDateTimeWS.class
 culturarte\servicios\cliente\usuario\package-info.class
 culturarte\servicios\cliente\propuestas\DtEstadoPropuesta.class
+com\culturarteWeb\util\EmailService$1.class
 com\culturarteWeb\util\WSFechaPropuesta.class
 culturarte\servicios\cliente\usuario\DtProponente.class
 culturarte\servicios\cliente\usuario\UsuarioWSEndpointService.class
@@ -15,6 +18,7 @@ culturarte\servicios\cliente\propuestas\DtColaborador.class
 culturarte\servicios\cliente\propuestas\DtSeguimiento.class
 culturarte\servicios\cliente\propuestas\ListaDTCategoria.class
 culturarte\servicios\cliente\usuario\IUsuarioControllerWS.class
+com\culturarteWeb\util\EmailService.class
 culturarte\servicios\cliente\propuestas\DtColaboracion.class
 com\culturarteWeb\servlets\BajaProponenteServlet.class
 com\culturarteWeb\servlets\PrincipalServlet.class
@@ -50,6 +54,7 @@ culturarte\servicios\cliente\propuestas\ListaDTColaboracion.class
 com\culturarteWeb\servlets\AltaPropuestaServlet.class
 com\culturarteWeb\servlets\InicioDeSesionServlet.class
 com\culturarteWeb\servlets\VerificarDisponibilidadServlet.class
+com\culturarteWeb\util\RegistroAccesoFilter.class
 culturarte\servicios\cliente\propuestas\DtTipoFormaPago.class
 com\culturarteWeb\servlets\ConsultaPropuestaPorCategoriaServlet.class
 culturarte\servicios\cliente\propuestas\LocalDate.class
@@ -83,4 +88,3 @@ culturarte\servicios\cliente\usuario\LocalDateTime.class
 culturarte\servicios\cliente\propuestas\DtCategoria.class
 culturarte\servicios\cliente\propuestas\DtTipoRetorno.class
 culturarte\servicios\cliente\propuestas\package-info.class
-com\culturarteWeb\RegistroAccesoFilter.class

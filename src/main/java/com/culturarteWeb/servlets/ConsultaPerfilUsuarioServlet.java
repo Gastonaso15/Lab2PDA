@@ -9,6 +9,7 @@ import culturarte.servicios.cliente.usuario.*;
 import culturarte.servicios.cliente.usuario.DtColaborador;
 import culturarte.servicios.cliente.usuario.DtProponente;
 import culturarte.servicios.cliente.usuario.DtUsuario;
+import culturarte.servicios.cliente.usuario.ListaDTProponente;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
@@ -60,21 +61,40 @@ public class ConsultaPerfilUsuarioServlet extends HttpServlet {
 
 
                 for (String n : nicks) {
-                    DtUsuario u = ICU.getDTUsuario(n);
-                    if (u == null) continue;
+                    DtUsuario u = null;
                     String tipo;
+                    String imagen = null;
+
+                    // Intentar obtener como proponente primero
                     try {
-                        ICU.devolverProponentePorNickname(n);
+                        DtProponente prop = ICU.devolverProponentePorNickname(n);
                         tipo = "Proponente";
+                        u = prop;
+                        imagen = prop.getImagen(); // Obtener imagen del proponente
                     } catch (Exception ex) {
-                        tipo = "Colaborador";
+                        // No es proponente, intentar como colaborador
+                        try {
+                            DtColaborador colab = ICU.devolverColaboradorPorNickname(n);
+                            tipo = "Colaborador";
+                            u = colab;
+                            imagen = colab.getImagen(); // Obtener imagen del colaborador
+                        } catch (Exception ex2) {
+                            // Si no es ni proponente ni colaborador, usar getDTUsuario como fallback
+                            u = ICU.getDTUsuario(n);
+                            tipo = "Usuario";
+                            if (u != null) {
+                                imagen = u.getImagen();
+                            }
+                        }
                     }
+
+                    if (u == null) continue;
 
                     Map<String, Object> row = new HashMap<>();
                     Long id = u.getId();
                     row.put("id", id != null ? id : 0L);
                     row.put("nick", u.getNickname());
-                    row.put("imagen", u.getImagen());
+                    row.put("imagen", imagen); // Usar la imagen obtenida específicamente
                     row.put("nombre", u.getNombre());
                     row.put("apellido", u.getApellido());
                     row.put("tipo", tipo);
@@ -94,11 +114,11 @@ public class ConsultaPerfilUsuarioServlet extends HttpServlet {
             } catch (Exception e) {
                 req.setAttribute("error", "No se pudo listar usuarios: " + e.getMessage());
             }
-            
+
             // Establecer atributos del usuario actual para el menú lateral
             HttpSession ses = req.getSession(false);
             DtUsuario actual = (ses != null) ? (DtUsuario) ses.getAttribute("usuarioLogueado") : null;
-            
+
             boolean esProponenteActual = false;
             boolean esColaboradorActual = false;
             if (actual != null) {
@@ -108,7 +128,7 @@ public class ConsultaPerfilUsuarioServlet extends HttpServlet {
                 } catch (Exception e) {
                     esProponenteActual = false;
                 }
-                
+
                 try {
                     ICU.devolverColaboradorPorNickname(actual.getNickname());
                     esColaboradorActual = true;
@@ -118,7 +138,7 @@ public class ConsultaPerfilUsuarioServlet extends HttpServlet {
             }
             req.setAttribute("esProponente", esProponenteActual);
             req.setAttribute("esColaborador", esColaboradorActual);
-            
+
             //envio los datos ya cargados al jsp con el Dispatcher (si hasta parece despachador en español ahora que veo)
             req.getRequestDispatcher("/consultaPerfilUsuario.jsp").forward(req, resp);
             return;
@@ -217,13 +237,35 @@ public class ConsultaPerfilUsuarioServlet extends HttpServlet {
             }
 
             //  <-- 5: Armo lista de Propuestas en que el Colaborador colaboró -->
+            Set<String> proponentesEliminados = new HashSet<>();
+            try {
+                ListaDTProponente listaEliminados = ICU.devolverProponentesEliminados();
+                if (listaEliminados != null && listaEliminados.getProponente() != null) {
+                    for (DtProponente propEliminado : listaEliminados.getProponente()) {
+                        if (propEliminado != null && propEliminado.getNickname() != null) {
+                            proponentesEliminados.add(propEliminado.getNickname());
+                        }
+                    }
+                }
+            } catch (Exception e) {
+            }
+
             List<culturarte.servicios.cliente.usuario.DtPropuesta> colaboradas = new ArrayList<>();
             List<DtColaboracion> misColaboraciones = new ArrayList<>();
             if (colaborador != null && colaborador.getColaboraciones() != null) {
-                misColaboraciones = colaborador.getColaboraciones();
-                for (DtColaboracion c : misColaboraciones) {
+                for (DtColaboracion c : colaborador.getColaboraciones()) {
                     if (c.getPropuesta() != null) {
-                        colaboradas.add(c.getPropuesta());
+                        culturarte.servicios.cliente.usuario.DtPropuesta prop = c.getPropuesta();
+                        if (prop.getDTProponente() != null && prop.getDTProponente().getNickname() != null) {
+                            String nicknameProponente = prop.getDTProponente().getNickname();
+                            if (!proponentesEliminados.contains(nicknameProponente)) {
+                                colaboradas.add(prop);
+                                misColaboraciones.add(c);
+                            }
+                        } else {
+                            colaboradas.add(prop);
+                            misColaboraciones.add(c);
+                        }
                     }
                 }
             }
@@ -236,6 +278,15 @@ public class ConsultaPerfilUsuarioServlet extends HttpServlet {
                 loSigo = usuariosSeguidos.contains(usuarioConsultado.getNickname());
             }
             req.setAttribute("loSigo", loSigo);
+
+            String bio = null;
+            String sitioWeb = null;
+            if (proponente != null) {
+                bio = proponente.getBio();
+                sitioWeb = proponente.getSitioWeb();
+            }
+            req.setAttribute("bio", bio);
+            req.setAttribute("sitioWeb", sitioWeb);
 
 
             // Seteo los atributos que mando al jsp
@@ -250,11 +301,11 @@ public class ConsultaPerfilUsuarioServlet extends HttpServlet {
             req.setAttribute("colaboradas", colaboradas);
             req.setAttribute("creadasIngresadas", creadasIngresadas);
             req.setAttribute("misColaboraciones", misColaboraciones);
-            
+
             // Atributos del usuario CONSULTADO (para mostrar información del perfil)
-            req.setAttribute("esProponente", proponente != null);
-            req.setAttribute("esColaborador", colaborador != null);
-            
+            req.setAttribute("esProponenteC", proponente != null);
+            req.setAttribute("esColaboradorC", colaborador != null);
+
             // Atributos del usuario ACTUAL logueado (para el menú lateral)
             boolean esProponenteActual = false;
             boolean esColaboradorActual = false;
@@ -265,7 +316,7 @@ public class ConsultaPerfilUsuarioServlet extends HttpServlet {
                 } catch (Exception e) {
                     esProponenteActual = false;
                 }
-                
+
                 try {
                     ICU.devolverColaboradorPorNickname(actual.getNickname());
                     esColaboradorActual = true;
@@ -273,14 +324,14 @@ public class ConsultaPerfilUsuarioServlet extends HttpServlet {
                     esColaboradorActual = false;
                 }
             }
-            req.setAttribute("esProponenteActual", esProponenteActual);
-            req.setAttribute("esColaboradorActual", esColaboradorActual);
+            req.setAttribute("esProponente", esProponenteActual);
+            req.setAttribute("esColaborador", esColaboradorActual);
 
 
             req.getRequestDispatcher("/consultaPerfilUsuario.jsp").forward(req, resp);
 
         } catch (Exception e) {
-        e.printStackTrace();
+            e.printStackTrace();
             req.setAttribute("error", "Error al consultar perfil: " + e.getMessage());
             req.getRequestDispatcher("/consultaPerfilUsuario.jsp").forward(req, resp);
         }

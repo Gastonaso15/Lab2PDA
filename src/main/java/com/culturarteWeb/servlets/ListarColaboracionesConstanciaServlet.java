@@ -1,8 +1,7 @@
 package com.culturarteWeb.servlets;
 
-import culturarte.servicios.cliente.propuestas.IPropuestaControllerWS;
-import culturarte.servicios.cliente.propuestas.PropuestaWSEndpointService;
 import culturarte.servicios.cliente.usuario.DtColaboracion;
+import culturarte.servicios.cliente.usuario.ListaDTColaboracion;
 import culturarte.servicios.cliente.usuario.DtColaborador;
 import culturarte.servicios.cliente.usuario.DtUsuario;
 import culturarte.servicios.cliente.usuario.IUsuarioControllerWS;
@@ -47,6 +46,7 @@ public class ListarColaboracionesConstanciaServlet extends HttpServlet {
         DtUsuario usuarioActual = (DtUsuario) session.getAttribute("usuarioLogueado");
         
         try {
+            // Verificar que sea colaborador
             DtColaborador colaborador;
             try {
                 colaborador = ICU.devolverColaboradorPorNickname(usuarioActual.getNickname());
@@ -56,19 +56,17 @@ public class ListarColaboracionesConstanciaServlet extends HttpServlet {
                 return;
             }
 
-            List<DtColaboracion> todasLasColaboraciones = new ArrayList<>();
-            if (colaborador != null && colaborador.getColaboraciones() != null) {
-                todasLasColaboraciones = colaborador.getColaboraciones();
-            }
+            // Obtener solo colaboraciones con pago asociado del colaborador
+            ListaDTColaboracion listaColaboraciones = 
+                ICU.devolverColaboracionesConPagoPorNickname(usuarioActual.getNickname());
+            List<DtColaboracion> todasLasColaboraciones = listaColaboraciones != null && listaColaboraciones.getColaboracion() != null 
+                ? listaColaboraciones.getColaboracion() 
+                : new ArrayList<>();
 
-            // Filtrar colaboraciones: solo las que tienen pago asociado (monto > 0)
-            // y no tienen constancia emitida (simulado con una estructura simple)
+            // Filtrar solo las que no tienen constancia emitida
             List<DtColaboracion> colaboracionesConPago = new ArrayList<>();
             for (DtColaboracion colab : todasLasColaboraciones) {
-                // Asumimos que todas las colaboraciones con monto > 0 tienen pago asociado
-                if (colab.getMonto() != null && colab.getMonto() > 0) {
-                    // TODO: Verificar si ya se emitió constancia (requiere persistencia)
-                    // Por ahora, todas las que tienen pago pueden generar constancia
+                if (colab.isConstanciaEmitida() == null || !colab.isConstanciaEmitida()) {
                     colaboracionesConPago.add(colab);
                 }
             }

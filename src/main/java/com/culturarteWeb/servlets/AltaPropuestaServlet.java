@@ -6,6 +6,8 @@ import culturarte.servicios.cliente.propuestas.ListaDTCategoria;
 import culturarte.servicios.cliente.propuestas.ListaStrings;
 import culturarte.servicios.cliente.propuestas.PropuestaWSEndpointService;
 import culturarte.servicios.cliente.usuario.DtUsuario;
+import culturarte.servicios.cliente.usuario.IUsuarioControllerWS;
+import culturarte.servicios.cliente.usuario.UsuarioWSEndpointService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
@@ -15,10 +17,11 @@ import java.util.*;
 
 @WebServlet("/altaPropuesta")
 
-@MultipartConfig // necesario para req.getPart(...)
+@MultipartConfig
 public class AltaPropuestaServlet extends HttpServlet {
 
     private IPropuestaControllerWS IPC;
+    private IUsuarioControllerWS ICU;
 
     @Override
     public void init() throws ServletException {
@@ -29,13 +32,15 @@ public class AltaPropuestaServlet extends HttpServlet {
 
             PropuestaWSEndpointService servicio = new PropuestaWSEndpointService();
             IPC = servicio.getPropuestaWSEndpointPort();
+
+            UsuarioWSEndpointService usuarioServicio = new UsuarioWSEndpointService();
+            ICU = usuarioServicio.getUsuarioWSEndpointPort();
         } catch (Exception e) {
             throw new ServletException("Error al inicializar Web Services", e);
         }
     }
 
     @Override
-    //pido los datos a altaPropuesta.jsp con el doGet
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
@@ -52,6 +57,17 @@ public class AltaPropuestaServlet extends HttpServlet {
         } catch (Exception e) {
             throw new ServletException("No se pudieron obtener las categorías", e);
         }
+
+        boolean esColaboradorActual = false;
+        boolean esProponenteActual = true;
+        try {
+            ICU.devolverColaboradorPorNickname(u.getNickname());
+            esColaboradorActual = true;
+        } catch (Exception e) {
+            esColaboradorActual = false;
+        }
+        req.setAttribute("esProponente", esProponenteActual);
+        req.setAttribute("esColaborador", esColaboradorActual);
 
         req.getRequestDispatcher("/altaPropuesta.jsp").forward(req, resp);
     }
@@ -89,18 +105,31 @@ public class AltaPropuestaServlet extends HttpServlet {
             else if (type.contains("jpeg")) ext = ".jpeg";
             else                            ext = ".jpg";
 
-            String relDir = "uploads/propuestas";
             String fileName = "ImagenProp" + System.currentTimeMillis() + ext;
 
-            File base = new File(getServletContext().getRealPath("/"), relDir);
-            if (!base.exists() && !base.mkdirs()) {
-                throw new IOException("No se pudo crear el directorio de subida.");
+            // Leer los bytes de la imagen
+            byte[] imagenBytes;
+            try (InputStream is = part.getInputStream();
+                 ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+                byte[] buffer = new byte[8192];
+                int bytesRead;
+                while ((bytesRead = is.read(buffer)) != -1) {
+                    baos.write(buffer, 0, bytesRead);
+                }
+                imagenBytes = baos.toByteArray();
             }
-
-            File dest = new File(base, fileName);
-            part.write(dest.getAbsolutePath());
-
-            imagen = relDir + "/" + fileName;
+            
+            // Subir la imagen al servidor central usando el Web Service
+            try {
+                culturarte.servicios.cliente.imagenes.ImagenWSEndpointService imagenServicio = 
+                    new culturarte.servicios.cliente.imagenes.ImagenWSEndpointService();
+                culturarte.servicios.cliente.imagenes.IImagenControllerWS imagenWS = 
+                    imagenServicio.getImagenWSEndpointPort();
+                
+                imagen = imagenWS.subirImagen(imagenBytes, fileName, "propuesta");
+            } catch (Exception e) {
+                throw new IOException("Error al subir la imagen al servidor central: " + e.getMessage(), e);
+            }
         }
 
         String categoria     = req.getParameter("categoria");

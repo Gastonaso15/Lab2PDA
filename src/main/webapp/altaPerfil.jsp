@@ -2,6 +2,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro - Culturarte</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <jsp:include page="estiloCabezalComun.jsp"/>
@@ -45,7 +46,7 @@
     <jsp:include page="cabezalComun.jsp"/>
 </div>
 <div class="container d-flex justify-content-center py-5">
-    <div class="card shadow-sm p-4" style="width: 450px;">
+    <div class="card shadow-sm p-4" style="max-width: 450px; width: 100%;">
         <h3 class="text-center mb-3">Registro</h3>
 
         <form method="post" action="<%= request.getContextPath() %>/altaPerfil" enctype="multipart/form-data" id="formAltaPerfil" novalidate>
@@ -76,14 +77,14 @@
 
             <div class="mb-3">
                 <label class="form-label">Contraseña</label>
-                <input type="password" name="password" id="password" class="form-control" 
+                <input type="password" name="password" id="password" class="form-control"
                        placeholder="Ingrese su contraseña" required>
                 <div class="invalid-feedback"></div>
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Confirmar Contraseña</label>
-                <input type="password" name="confirmPassword" id="confirmPassword" class="form-control" 
+                <input type="password" name="confirmPassword" id="confirmPassword" class="form-control"
                        placeholder="Confirme su contraseña" required>
                 <div class="invalid-feedback"></div>
             </div>
@@ -153,13 +154,13 @@
             </div>
 
             <button type="submit" class="btn btn-primary w-100" id="submitBtn">Crear Usuario</button>
-             <a href="<%= request.getContextPath() %>/principal" class="btn btn-outline-secondary w-100 mt-2">
-                                        Ir al Inicio
-                                    </a>
+            <a href="<%= request.getContextPath() %>/principal" class="btn btn-outline-secondary w-100 mt-2">
+                                         Ir al Inicio
+                                     </a>
         </form>
 
         <%String error = (String) request.getAttribute("error");
-         if (error != null && !error.isEmpty()) {%>
+          if (error != null && !error.isEmpty()) {%>
             <div class="alert alert-danger mt-3" role="alert">
                 <%=error%>
             </div>

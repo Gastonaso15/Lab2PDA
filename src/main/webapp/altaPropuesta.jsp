@@ -15,8 +15,6 @@
 </head>
 <body class="bg-light">
 
-<%-- Comentario #1: MIRA BRO; ACA LO RESIVO, fijate en ese request.getAttribute, viste que se llama "categorias" tambien
- tremenda casualidad no?...o quizas no sea casualidad...--%>
 <% List<DtCategoria> categorias = (List<DtCategoria>) request.getAttribute("categororias"); %>
 <% categorias = (categorias == null) ? (List<DtCategoria>) request.getAttribute("categorias") : categorias; %>
 
@@ -37,7 +35,6 @@
                     <form method="post" action="<%=request.getContextPath()%>/altaPropuesta" enctype="multipart/form-data" class="needs-validation" novalidate>
                         <div class="row g-3">
 
-                            <!-- Categoría / Título -->
                             <div class="col-12 col-md-6">
                                 <label class="form-label">Categoría</label>
                                 <select name="categoria" class="form-select" required>
@@ -61,7 +58,6 @@
                                 <div class="invalid-feedback">Ingresá un título.</div>
                             </div>
 
-                            <!-- Descripción -->
                             <div class="col-12">
                                 <label class="form-label">Descripción</label>
                                 <textarea name="descripcion" rows="4" required class="form-control"
@@ -69,7 +65,6 @@
                                 <div class="invalid-feedback">Ingresá una descripción.</div>
                             </div>
 
-                            <!-- Lugar / Fecha -->
                             <div class="col-12 col-md-6">
                                 <label class="form-label">Lugar</label>
                                 <input name="lugar" required class="form-control" placeholder="Ej: Teatro Unión"
@@ -84,7 +79,6 @@
                                 <div class="invalid-feedback">Seleccioná una fecha.</div>
                             </div>
 
-                            <!-- Precios -->
                             <div class="col-12 col-md-6">
                                 <label class="form-label">Precio de entrada</label>
                                 <input type="number" name="precioEntrada" min="1" step="0.01" required class="form-control"
@@ -101,7 +95,6 @@
                                 <div class="invalid-feedback">Ingresá un monto válido.</div>
                             </div>
 
-                            <!-- Retornos -->
                             <div class="col-12">
                                 <label class="form-label d-block">Tipos de retorno</label>
                                 <div class="form-check form-check-inline">
@@ -116,13 +109,11 @@
                                 </div>
                             </div>
 
-                            <!-- Imagen -->
                             <div class="col-12">
                                 <label class="form-label">Imagen (opcional)</label>
                                 <input type="file" name="imagen" class="form-control" accept="image/*">
                             </div>
 
-                            <!-- Acciones -->
                             <div class="col-12 d-flex gap-2 mt-2">
                                 <a href="<%=request.getContextPath()%>/" class="btn btn-outline-secondary">Volver al inicio</a>
                                 <button type="submit" class="btn btn-primary">Crear propuesta</button>
@@ -136,10 +127,8 @@
     </div>
 </div>
 
-<!-- Bootstrap JS (opcional, para validación visual) -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    // Validación Bootstrap-> Simplemente recumpero los required que puse con html y mando mensajes con bootstrap bonitos
     (function () {
         'use strict';
         const forms = document.querySelectorAll('.needs-validation');

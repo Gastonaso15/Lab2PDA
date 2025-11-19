@@ -68,11 +68,17 @@
             color: #666;
         }
         @media print {
-            .no-print {
-                display: none;
+            body * {
+                visibility: hidden !important;
+            }
+            .constancia-container, .constancia-container * {
+                visibility: visible !important;
             }
             .constancia-container {
-                box-shadow: none;
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
             }
         }
     </style>
@@ -106,18 +112,15 @@
             %>
 
             <div class="constancia-container">
-                <!-- Encabezado -->
                 <div class="constancia-header">
                     <div class="constancia-title">CONSTANCIA DE PAGO DE COLABORACIÓN</div>
                     <div class="constancia-platform">Plataforma Culturarte</div>
                 </div>
 
-                <!-- Fecha de emisión -->
                 <div class="text-end mb-4">
                     <strong>Fecha de emisión:</strong> <%= fechaEmisionStr %>
                 </div>
 
-                <!-- Datos del Colaborador -->
                 <div class="constancia-section">
                     <div class="constancia-section-title">Datos del Colaborador</div>
                     <div class="constancia-row">
@@ -142,11 +145,10 @@
                         <div class="constancia-value"><%= fechaNac.format(dateFormatter) %></div>
                     </div>
                     <%      }
-                        } catch (Exception e) { }
+                        } catch (java.lang.Exception e) { }
                     } %>
                 </div>
 
-                <!-- Datos de la Colaboración -->
                 <div class="constancia-section">
                     <div class="constancia-section-title">Datos de la Colaboración</div>
                     <div class="constancia-row">
@@ -169,7 +171,6 @@
                     <% } %>
                 </div>
 
-                <!-- Datos del Pago -->
                 <div class="constancia-section">
                     <div class="constancia-section-title">Datos del Pago</div>
                     <div class="constancia-row">
@@ -186,13 +187,11 @@
                     </div>
                 </div>
 
-                <!-- Pie de página -->
                 <div class="constancia-footer">
                     Este documento es una constancia oficial emitida por la plataforma Culturarte.
                 </div>
             </div>
 
-            <!-- Botones de acción -->
             <div class="text-center mt-4 no-print">
                 <a href="<%= request.getContextPath() %>/generarPDFConstancia?tituloPropuesta=<%= java.net.URLEncoder.encode(tituloPropuesta, "UTF-8") %>" 
                    class="btn btn-primary btn-lg me-2" target="_blank">

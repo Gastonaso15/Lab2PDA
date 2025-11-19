@@ -79,6 +79,18 @@ public class GenerarPDFConstanciaServlet extends HttpServlet {
                 return;
             }
 
+            // Verificar que la constancia ya esté emitida (solo se puede generar PDF de constancias ya emitidas)
+            if (colaboracionSeleccionada.isConstanciaEmitida() == null || !colaboracionSeleccionada.isConstanciaEmitida()) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Esta constancia aún no ha sido emitida. Debe emitirla primero desde el listado de constancias.");
+                return;
+            }
+
+            // Verificar que tenga un ID válido
+            if (colaboracionSeleccionada.getId() == null) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "La colaboración no tiene un ID válido.");
+                return;
+            }
+
             response.setContentType("application/pdf");
             response.setHeader("Content-Disposition", 
                 "attachment; filename=\"constancia_pago_" + 

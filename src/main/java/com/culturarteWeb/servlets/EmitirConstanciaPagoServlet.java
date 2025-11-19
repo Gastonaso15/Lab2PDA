@@ -18,7 +18,6 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @WebServlet("/emitirConstanciaPago")
 public class EmitirConstanciaPagoServlet extends HttpServlet {
@@ -87,7 +86,30 @@ public class EmitirConstanciaPagoServlet extends HttpServlet {
                 return;
             }
 
-            String titulo = colaboracionSeleccionada.getPropuesta().getTitulo();
+            // Verificar que la constancia no esté ya emitida
+            if (colaboracionSeleccionada.isConstanciaEmitida() != null && colaboracionSeleccionada.isConstanciaEmitida()) {
+                request.setAttribute("error", "Esta constancia ya ha sido emitida anteriormente y no puede volver a emitirse.");
+                request.getRequestDispatcher("/listarColaboracionesConstancia").forward(request, response);
+                return;
+            }
+
+            // Verificar que tenga un ID válido
+            if (colaboracionSeleccionada.getId() == null) {
+                request.setAttribute("error", "La colaboración no tiene un ID válido.");
+                request.getRequestDispatcher("/listarColaboracionesConstancia").forward(request, response);
+                return;
+            }
+
+            // Marcar la constancia como emitida al mostrar la vista previa
+            try {
+                IPC.marcarConstanciaEmitida(colaboracionSeleccionada.getId());
+            } catch (Exception e) {
+                e.printStackTrace();
+                request.setAttribute("error", "Error al marcar la constancia como emitida: " + e.getMessage());
+                request.getRequestDispatcher("/listarColaboracionesConstancia").forward(request, response);
+                return;
+            }
+
             LocalDate fechaEmision = LocalDate.now();
             LocalDateTime fechaHoraColaboracion = null;
             if (colaboracionSeleccionada.getFechaHora() != null) {

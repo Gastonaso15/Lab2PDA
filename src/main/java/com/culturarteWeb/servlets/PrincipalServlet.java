@@ -8,7 +8,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import java.io.IOException;
-import java.lang.Exception;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +26,7 @@ public class PrincipalServlet extends HttpServlet {
             UsuarioWSEndpointService usuarioServicio = new UsuarioWSEndpointService();
             ICU = usuarioServicio.getUsuarioWSEndpointPort();
 
-        } catch (Exception e) {
+        } catch (java.lang.Exception e) {
             throw new ServletException("Error al inicializar Web Services", e);
         }
     }
@@ -86,7 +85,7 @@ public class PrincipalServlet extends HttpServlet {
                 try {
                     ICU.devolverProponentePorNickname(usuarioLogueado.getNickname());
                     esProponente = true;
-                } catch (Exception e) {
+                } catch (java.lang.Exception e) {
                     esProponente = false;
                 }
             }
@@ -97,7 +96,7 @@ public class PrincipalServlet extends HttpServlet {
                 try {
                     ICU.devolverProponentePorNickname(usuarioLogueado.getNickname());
                     esColaborador = false;
-                } catch (Exception e) {
+                } catch (java.lang.Exception e) {
                     esColaborador = true;
                 }
             }
@@ -117,7 +116,7 @@ public class PrincipalServlet extends HttpServlet {
             request.setAttribute("esProponente", esProponente);
             request.setAttribute("esColaborador", esColaborador);
             request.getRequestDispatcher("/principal.jsp").forward(request, response);
-        } catch (Exception e) {
+        } catch (java.lang.Exception e) {
             request.setAttribute("error", "Error al cargar la página principal: " + e.getMessage());
             request.getRequestDispatcher("/principal.jsp").forward(request, response);
         }
@@ -143,7 +142,7 @@ public class PrincipalServlet extends HttpServlet {
                         categoriasMap.put(nombreCategoria, categoria);
                     }
                 }
-            } catch (Exception e) {
+            } catch (java.lang.Exception e) {
                 System.out.println("Error al obtener categoría de propuesta: " + e.getMessage());
             }
         }
@@ -284,7 +283,7 @@ public class PrincipalServlet extends HttpServlet {
                     }
                 }
             }
-        } catch (Exception e) {
+        } catch (java.lang.Exception e) {
             System.out.println("Error al calcular días restantes: " + e.getMessage());
             diasRestantes = 0;
         }
@@ -370,7 +369,7 @@ public class PrincipalServlet extends HttpServlet {
                 }
             }
             
-        } catch (Exception e) {
+        } catch (java.lang.Exception e) {
             System.err.println("Error al verificar vencimientos automáticamente: " + e.getMessage());
             e.printStackTrace();
         }

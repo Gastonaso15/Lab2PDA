@@ -6,7 +6,6 @@ import culturarte.servicios.cliente.usuario.LocalDateTime;
 import culturarte.servicios.cliente.usuario.LocalDateTimeWS;
 
 public class WSFechaUsuario {
-    // Conversión a LocalDateWS (nuevo tipo generado desde el adaptador)
     public static LocalDateWS toWSLocalDateWS(java.time.LocalDate fecha) {
         if (fecha == null) return null;
         LocalDateWS wsFecha = new LocalDateWS();
@@ -15,8 +14,7 @@ public class WSFechaUsuario {
         wsFecha.setDia(fecha.getDayOfMonth());
         return wsFecha;
     }
-    
-    // Conversión desde LocalDateWS
+
     public static java.time.LocalDate toJavaLocalDate(LocalDateWS wsFecha) {
         if (wsFecha == null) return null;
         try {
@@ -38,8 +36,7 @@ public class WSFechaUsuario {
             return null;
         }
     }
-    
-    // Método legacy para LocalDate (mantener compatibilidad)
+
     public static LocalDate toWSLocalDate(java.time.LocalDate fecha) {
         if (fecha == null) return null;
         LocalDate wsFecha = new LocalDate();
@@ -48,8 +45,7 @@ public class WSFechaUsuario {
         wsFecha.dia = fecha.getDayOfMonth();
         return wsFecha;
     }
-    
-    // Conversión a LocalDateTimeWS (nuevo tipo generado desde el adaptador)
+
     public static LocalDateTimeWS toWSLocalDateTimeWS(java.time.LocalDateTime fecha) {
         if (fecha == null) return null;
         LocalDateTimeWS wsFecha = new LocalDateTimeWS();
@@ -62,8 +58,7 @@ public class WSFechaUsuario {
         wsFecha.setNanosegundo(fecha.getNano());
         return wsFecha;
     }
-    
-    // Conversión desde LocalDateTimeWS
+
     public static java.time.LocalDateTime toJavaLocalDateTime(LocalDateTimeWS wsFecha) {
         if (wsFecha == null) return null;
         try {
@@ -76,8 +71,7 @@ public class WSFechaUsuario {
             throw new RuntimeException("Error convirtiendo WS LocalDateTimeWS a java.time.LocalDateTime: " + e.getMessage(), e);
         }
     }
-    
-    // Método legacy para LocalDateTime (mantener compatibilidad)
+
     public static LocalDateTime toWSLocalDateTime(java.time.LocalDateTime fecha) {
         if (fecha == null) return null;
         LocalDateTime wsFecha = new LocalDateTime();
@@ -90,8 +84,7 @@ public class WSFechaUsuario {
         wsFecha.nanosegundo = fecha.getNano();
         return wsFecha;
     }
-
-    // Método legacy para LocalDateTime (mantener compatibilidad)
+    
     public static java.time.LocalDateTime toJavaLocalDateTime(LocalDateTime wsFecha) {
         if (wsFecha == null) return null;
         try {

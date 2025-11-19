@@ -59,7 +59,7 @@ public class AltaPerfilServlet extends HttpServlet {
         String biografia = request.getParameter("biografia");
         String sitioWeb = request.getParameter("sitioWeb");
         Part imagenPart = request.getPart("imagen");
-        String imagenBase64 = null;
+        String rutaImagen = null;
 
         String error = validarCampos(nickname, nombre, apellido, password, confirmPassword, 
                                    email, fechaNacimiento, tipoUsuario, direccion);
@@ -94,12 +94,25 @@ public class AltaPerfilServlet extends HttpServlet {
                     }
                     
                     String nombreArchivo = "ImagenUP" + System.currentTimeMillis() + extension;
-                    String rutaRelativa = "uploads/usuarios/" + nombreArchivo;
 
-                    String rutaCompleta = getServletContext().getRealPath("/") + rutaRelativa;
-                    imagenPart.write(rutaCompleta);
+                    byte[] imagenBytes;
+                    try (java.io.InputStream is = imagenPart.getInputStream();
+                         java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream()) {
+                        byte[] buffer = new byte[8192];
+                        int bytesRead;
+                        while ((bytesRead = is.read(buffer)) != -1) {
+                            baos.write(buffer, 0, bytesRead);
+                        }
+                        imagenBytes = baos.toByteArray();
+                    }
                     
-                    imagenBase64 = rutaRelativa; // Ahora guardamos la ruta, no Base64
+
+                    culturarte.servicios.cliente.imagenes.ImagenWSEndpointService imagenServicio = 
+                        new culturarte.servicios.cliente.imagenes.ImagenWSEndpointService();
+                    culturarte.servicios.cliente.imagenes.IImagenControllerWS imagenWS = 
+                        imagenServicio.getImagenWSEndpointPort();
+
+                    rutaImagen = imagenWS.subirImagen(imagenBytes, nombreArchivo, "usuario");
                 } else {
                     request.setAttribute("error", "El archivo seleccionado no es una imagen válida");
                     request.setAttribute("nickname", nickname);
@@ -116,6 +129,15 @@ public class AltaPerfilServlet extends HttpServlet {
                 }
             } catch (Exception e) {
                 request.setAttribute("error", "Error al procesar la imagen: " + e.getMessage());
+                request.setAttribute("nickname", nickname);
+                request.setAttribute("nombre", nombre);
+                request.setAttribute("apellido", apellido);
+                request.setAttribute("email", email);
+                request.setAttribute("fechaNacimiento", fechaNacimiento);
+                request.setAttribute("tipoUsuario", tipoUsuario);
+                request.setAttribute("direccion", direccion);
+                request.setAttribute("biografia", biografia);
+                request.setAttribute("sitioWeb", sitioWeb);
                 request.getRequestDispatcher("/altaPerfil.jsp").forward(request, response);
                 return;
             }
@@ -135,7 +157,7 @@ public class AltaPerfilServlet extends HttpServlet {
                 usuario.setPassword(password);
                 usuario.setCorreo(email);
                 usuario.setFechaNacimiento(WSFechaUsuario.toWSLocalDateWS(fechaNac));
-                usuario.setImagen(imagenBase64);
+                usuario.setImagen(rutaImagen);
                 ((DtProponente) usuario).setDireccion(direccion);
                 ((DtProponente) usuario).setBio(biografia);
                 ((DtProponente) usuario).setSitioWeb(sitioWeb);
@@ -147,7 +169,7 @@ public class AltaPerfilServlet extends HttpServlet {
                 usuario.setPassword(password);
                 usuario.setCorreo(email);
                 usuario.setFechaNacimiento(WSFechaUsuario.toWSLocalDateWS(fechaNac));
-                usuario.setImagen(imagenBase64);
+                usuario.setImagen(rutaImagen);
             }
 
             IUC.crearUsuario(usuario);

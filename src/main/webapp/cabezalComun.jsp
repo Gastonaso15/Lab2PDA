@@ -1,4 +1,4 @@
-<%@ page import="culturarte.servicios.cliente.usuario.DtUsuario" %>
+<%@ page import="culturarte.servicios.cliente.usuario.DtUsuario, culturarte.servicios.cliente.imagenes.*" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <header>
     <div class="menu-hamburguesa">
@@ -47,6 +47,9 @@
                 <a href="<%= request.getContextPath() %>/listarColaboracionesConstancia" class="sidebar-item">
                     <span>📄</span> Constancias de Pago
                 </a>
+                <a href="<%= request.getContextPath() %>/listarColaboracionesParaPagar" class="sidebar-item">
+                    <span>💳</span> Pagar Colaboración
+                </a>
             <%
                 }
             %>
@@ -90,7 +93,10 @@
                    if (rutaImagen == null || rutaImagen.isEmpty()) {
                        rutaImagen = request.getContextPath() + "/imagenes/usuarioDefault.png";
                    } else {
-                       rutaImagen = request.getContextPath() + "/" + rutaImagen;
+                       // Llamar al Web Service SOAP para obtener la imagen en Base64
+                       ImagenWSEndpointService imagenServicio = new ImagenWSEndpointService();
+                       IImagenControllerWS imagenWS = imagenServicio.getImagenWSEndpointPort();
+                       rutaImagen = imagenWS.obtenerImagenBase64(rutaImagen);
                    }
                %>
                <img src="<%= rutaImagen %>" alt="Imagen de Usuario" style="width:40px; height:40px; border-radius:50%;">
@@ -110,7 +116,6 @@
 </header>
 
 <script>
-    // Control del menú desplegable
     document.addEventListener('DOMContentLoaded', function() {
         const menuToggle = document.getElementById('menuToggle');
         const sidebarMenu = document.getElementById('sidebarMenu');
@@ -135,7 +140,6 @@
         if (sidebarClose) sidebarClose.addEventListener('click', closeMenu);
         if (sidebarOverlay) sidebarOverlay.addEventListener('click', closeMenu);
 
-        // Cerrar con tecla ESC
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape' && sidebarMenu.classList.contains('active')) {
                 closeMenu();

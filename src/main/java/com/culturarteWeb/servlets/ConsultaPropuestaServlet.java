@@ -184,6 +184,7 @@ public class ConsultaPropuestaServlet extends HttpServlet {
             HttpSession sesion = request.getSession(false);
             DtUsuario usuarioActual = null;
             boolean esProponente = false;
+            boolean esColaborador = false;
             boolean esProponenteDeEstaPropuesta = false;
             boolean haColaborado = false;
             boolean esFavorita = false;
@@ -201,6 +202,13 @@ public class ConsultaPropuestaServlet extends HttpServlet {
                 } catch (Exception e) {
                     esProponente = false;
                 }
+
+                try {
+                    ICU.devolverColaboradorPorNickname(usuarioActual.getNickname());
+                    esColaborador = true;
+                } catch (Exception e) {
+                    esColaborador = false;
+                }
                 
                 if (nicknamesColaboradores.contains(usuarioActual.getNickname())) {
                     haColaborado = true;
@@ -213,15 +221,30 @@ public class ConsultaPropuestaServlet extends HttpServlet {
             ListaDTComentario comentariosWS = IPC.obtenerComentariosPropuesta(propuestaSeleccionada.getTitulo());
             List<DtComentario> comentarios = comentariosWS.getComentario();
 
+            // Verificar si el usuario actual ya comentó esta propuesta
+            boolean yaComento = false;
+            if (usuarioActual != null && comentarios != null) {
+                for (DtComentario comentario : comentarios) {
+                    if (comentario.getUsuario() != null && 
+                        comentario.getUsuario().getNickname() != null &&
+                        comentario.getUsuario().getNickname().equals(usuarioActual.getNickname())) {
+                        yaComento = true;
+                        break;
+                    }
+                }
+            }
+
             request.setAttribute("propuesta", propuestaSeleccionada);
             request.setAttribute("montoRecaudado", montoRecaudado);
             request.setAttribute("nicknamesColaboradores", nicknamesColaboradores);
             request.setAttribute("esProponente", esProponente);
+            request.setAttribute("esColaborador", esColaborador);
             request.setAttribute("esProponenteDeEstaPropuesta", esProponenteDeEstaPropuesta);
             request.setAttribute("haColaborado", haColaborado);
             request.setAttribute("usuarioActual", usuarioActual);
             request.setAttribute("esFavorita", esFavorita);
             request.setAttribute("comentarios", comentarios);
+            request.setAttribute("yaComento", yaComento);
             
             request.getRequestDispatcher("/detallePropuesta.jsp").forward(request, response);
             
