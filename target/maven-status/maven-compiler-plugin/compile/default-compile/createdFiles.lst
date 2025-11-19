@@ -1,7 +1,9 @@
+culturarte\servicios\cliente\propuestas\DtTipoTarjeta.class
 com\culturarteWeb\servlets\CierreDeSesionServlet.class
 culturarte\servicios\cliente\propuestas\PropuestaWSEndpointService.class
 culturarte\servicios\cliente\usuario\DtSeguimiento.class
 culturarte\servicios\cliente\usuario\IUsuarioControllerWS_UsuarioWSEndpointPort_Client.class
+culturarte\servicios\cliente\propuestas\DtPago.class
 culturarte\servicios\cliente\usuario\LocalDateTimeWS.class
 culturarte\servicios\cliente\usuario\package-info.class
 culturarte\servicios\cliente\propuestas\DtEstadoPropuesta.class
@@ -48,6 +50,7 @@ culturarte\servicios\cliente\propuestas\ListaDTColaboracion.class
 com\culturarteWeb\servlets\AltaPropuestaServlet.class
 com\culturarteWeb\servlets\InicioDeSesionServlet.class
 com\culturarteWeb\servlets\VerificarDisponibilidadServlet.class
+culturarte\servicios\cliente\propuestas\DtTipoFormaPago.class
 com\culturarteWeb\servlets\ConsultaPropuestaPorCategoriaServlet.class
 culturarte\servicios\cliente\propuestas\LocalDate.class
 com\culturarteWeb\servlets\VerRankingDeUsuariosServlet.class
@@ -66,8 +69,10 @@ culturarte\servicios\cliente\propuestas\LocalDateTimeWS.class
 com\culturarteWeb\servlets\ConsultaPerfilUsuarioServlet.class
 com\culturarteWeb\servlets\ListarColaboracionesConstanciaServlet.class
 culturarte\servicios\cliente\propuestas\ListaDTPropuesta.class
+culturarte\servicios\cliente\usuario\ListaDTColaboracion.class
 culturarte\servicios\cliente\propuestas\ListaDTComentario.class
 com\culturarteWeb\servlets\CancelarPropuestaServlet.class
+com\culturarteWeb\servlets\RecomendacionPropuestasServlet.class
 com\culturarteWeb\servlets\MarcarPropuestaFavorita.class
 culturarte\servicios\cliente\propuestas\DtPropuestaEstado.class
 com\culturarteWeb\servlets\ExtenderFinanciacionServlet.class

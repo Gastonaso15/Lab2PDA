@@ -98,9 +98,21 @@
                             <div class="mb-3">
                                 <label for="tipoRetorno" class="form-label">Tipo de Retorno:</label>
                                 <select name="tipoRetorno" id="tipoRetorno" class="form-select" required>
-                                    <option value="ENTRADAS_GRATIS">Entradas Gratis</option>
-                                    <option value="PORCENTAJE_GANANCIAS">Porcentaje de Ganancia</option>
-                                    <option value="AMBOS">Ambos</option>
+                                    <option value="" disabled selected>-- Seleccione un tipo de retorno --</option>
+                                    <c:if test="${not empty tiposRetorno}">
+                                        <c:forEach var="tipoRetorno" items="${tiposRetorno}">
+                                            <option value="${tipoRetorno}">
+                                                <c:choose>
+                                                    <c:when test="${tipoRetorno == 'ENTRADAS_GRATIS'}">Entradas Gratis</c:when>
+                                                    <c:when test="${tipoRetorno == 'PORCENTAJE_GANANCIAS'}">Porcentaje de Ganancia</c:when>
+                                                    <c:otherwise>${tipoRetorno}</c:otherwise>
+                                                </c:choose>
+                                            </option>
+                                        </c:forEach>
+                                    </c:if>
+                                    <c:if test="${empty tiposRetorno}">
+                                        <option value="" disabled>Esta propuesta no ofrece tipos de retorno</option>
+                                    </c:if>
                                 </select>
                             </div>
 

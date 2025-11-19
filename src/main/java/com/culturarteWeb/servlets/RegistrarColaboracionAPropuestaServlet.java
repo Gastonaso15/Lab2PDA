@@ -91,7 +91,6 @@ public class RegistrarColaboracionAPropuestaServlet extends HttpServlet {
                     propuesta.setEstadoActual(DtEstadoPropuesta.EN_FINANCIACION);
 
                     DtPropuestaEstado propEstado = new DtPropuestaEstado();
-                    propEstado.setPropuesta(propuesta);
                     propEstado.setEstado(DtEstadoPropuesta.EN_FINANCIACION);
                     propEstado.setFechaCambio(WSFechaPropuesta.toWSLocalDateWS(java.time.LocalDate.now()));
 
@@ -124,11 +123,65 @@ public class RegistrarColaboracionAPropuestaServlet extends HttpServlet {
         request.setAttribute("propuestas", propuestas);
 
         if (tituloSeleccionado != null && !tituloSeleccionado.isEmpty()) {
-            DtPropuesta propuesta = IPC.getDTPropuesta(tituloSeleccionado);
+            // Obtener la propuesta de la lista de todas las propuestas
+            // (igual que en el servidor central que usa devolverTodasLasPropuestas)
+            DtPropuesta propuesta = null;
+            
+            // Buscar la propuesta en la lista de todas las propuestas (viene de la base de datos)
+            for (DtPropuesta p : propuestas) {
+                if (p.getTitulo() != null && p.getTitulo().equals(tituloSeleccionado)) {
+                    propuesta = p;
+                    break;
+                }
+            }
+            
+            // Si no se encontró en la lista, intentar con getDTPropuesta
+            if (propuesta == null) {
+                propuesta = IPC.getDTPropuesta(tituloSeleccionado);
+            }
 
             if (propuesta != null) {
                 request.setAttribute("propuestaSeleccionada", propuesta);
+                
+                // Obtener los tipos de retorno directamente de la propuesta (vienen de la base de datos)
+                // Igual que en el servidor central: propuesta.getTiposRetorno()
+                List<DtTipoRetorno> tiposRetorno = propuesta.getTiposRetorno();
+                
+                // El método getTiposRetorno() inicializa lista vacía si es null, pero verificamos por si acaso
+                if (tiposRetorno == null) {
+                    tiposRetorno = new java.util.ArrayList<DtTipoRetorno>();
+                }
+                
+                // Filtrar valores nulos y crear lista válida
+                List<DtTipoRetorno> tiposRetornoValidos = new java.util.ArrayList<DtTipoRetorno>();
+                for (DtTipoRetorno tipo : tiposRetorno) {
+                    if (tipo != null) {
+                        tiposRetornoValidos.add(tipo);
+                    }
+                }
+                
+                // SIEMPRE establecer tiposRetorno en el request para que el JSP pueda mostrarlos
+                request.setAttribute("tiposRetorno", tiposRetornoValidos);
+                
+                // Debug para verificar qué viene de la base de datos
+                System.out.println("=== Tipos de Retorno desde BD para '" + propuesta.getTitulo() + "' ===");
+                System.out.println("Total en lista: " + tiposRetorno.size());
+                System.out.println("Total válidos: " + tiposRetornoValidos.size());
+                if (tiposRetornoValidos.isEmpty()) {
+                    System.err.println("⚠ ADVERTENCIA: La propuesta no tiene tipos de retorno en la lista");
+                } else {
+                    for (DtTipoRetorno tr : tiposRetornoValidos) {
+                        System.out.println("  ✓ " + tr.toString());
+                    }
+                }
+                System.out.println("=========================================");
+            } else {
+                // Si no se encontró la propuesta, establecer lista vacía
+                request.setAttribute("tiposRetorno", new java.util.ArrayList<DtTipoRetorno>());
             }
+        } else {
+            // Si no hay propuesta seleccionada, establecer lista vacía
+            request.setAttribute("tiposRetorno", new java.util.ArrayList<DtTipoRetorno>());
         }
     }
 }
