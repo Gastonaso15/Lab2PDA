@@ -1,4 +1,4 @@
-<%@ page import="java.util.*, culturarte.servicios.cliente.propuestas.DtPropuesta, culturarte.servicios.cliente.propuestas.DtCategoria, culturarte.servicios.cliente.propuestas.DtUsuario, com.culturarteWeb.util.WSFechaPropuesta, culturarte.servicios.cliente.imagenes.*" %>
+<%@ page import="java.util.*, culturarte.servicios.cliente.propuestas.DtPropuesta, culturarte.servicios.cliente.propuestas.DtCategoria, culturarte.servicios.cliente.usuario.DtUsuario, com.culturarteWeb.util.WSFechaPropuesta, culturarte.servicios.cliente.imagenes.*" %>
 <%--
     Quitamos la importación de 'PropuestaConDatos' para evitar problemas de visibilidad
     si es una clase interna no pública.
