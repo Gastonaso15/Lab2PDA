@@ -378,7 +378,7 @@
                             <td class="text-center"><a class="btn btn-link btn-sm" href="<%=ctx%>/consultaPropuesta?accion=detalle&titulo=<%=prop.getTitulo()%>">Ver detalle</a></td>
                         </tr>
                         <% }}  else { %>
-                        <tr><td colspan="2" class="text-center text-muted">(sin colaboraciones)</td></tr>
+                        <tr><td colspan="4" class="text-center text-muted">(sin colaboraciones)</td></tr>
                         <% } %>
                         </tbody>
                     </table>

@@ -9,6 +9,7 @@ import culturarte.servicios.cliente.usuario.*;
 import culturarte.servicios.cliente.usuario.DtColaborador;
 import culturarte.servicios.cliente.usuario.DtProponente;
 import culturarte.servicios.cliente.usuario.DtUsuario;
+import culturarte.servicios.cliente.usuario.ListaDTProponente;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
@@ -236,13 +237,35 @@ public class ConsultaPerfilUsuarioServlet extends HttpServlet {
             }
 
             //  <-- 5: Armo lista de Propuestas en que el Colaborador colaboró -->
+            Set<String> proponentesEliminados = new HashSet<>();
+            try {
+                ListaDTProponente listaEliminados = ICU.devolverProponentesEliminados();
+                if (listaEliminados != null && listaEliminados.getProponente() != null) {
+                    for (DtProponente propEliminado : listaEliminados.getProponente()) {
+                        if (propEliminado != null && propEliminado.getNickname() != null) {
+                            proponentesEliminados.add(propEliminado.getNickname());
+                        }
+                    }
+                }
+            } catch (Exception e) {
+            }
+
             List<culturarte.servicios.cliente.usuario.DtPropuesta> colaboradas = new ArrayList<>();
             List<DtColaboracion> misColaboraciones = new ArrayList<>();
             if (colaborador != null && colaborador.getColaboraciones() != null) {
-                misColaboraciones = colaborador.getColaboraciones();
-                for (DtColaboracion c : misColaboraciones) {
+                for (DtColaboracion c : colaborador.getColaboraciones()) {
                     if (c.getPropuesta() != null) {
-                        colaboradas.add(c.getPropuesta());
+                        culturarte.servicios.cliente.usuario.DtPropuesta prop = c.getPropuesta();
+                        if (prop.getDTProponente() != null && prop.getDTProponente().getNickname() != null) {
+                            String nicknameProponente = prop.getDTProponente().getNickname();
+                            if (!proponentesEliminados.contains(nicknameProponente)) {
+                                colaboradas.add(prop);
+                                misColaboraciones.add(c);
+                            }
+                        } else {
+                            colaboradas.add(prop);
+                            misColaboraciones.add(c);
+                        }
                     }
                 }
             }
