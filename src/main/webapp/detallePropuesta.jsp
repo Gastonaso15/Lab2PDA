@@ -48,6 +48,7 @@
 
                         <% if (tieneImagen) { %>
                             <%
+                            // Llamar al Web Service SOAP para obtener la imagen en Base64
                             ImagenWSEndpointService imagenServicio = new ImagenWSEndpointService();
                             IImagenControllerWS imagenWS = imagenServicio.getImagenWSEndpointPort();
                             String imagenDataUri = imagenWS.obtenerImagenBase64(imagenPropuesta);
@@ -203,19 +204,7 @@
                                                             <% 
                                                                 if (comentario.getFechaHora() != null) {
                                                                     try {
-                                                                        java.time.LocalDateTime fechaHora = null;
-                                                                        if (comentario.getFechaHora() instanceof culturarte.servicios.cliente.propuestas.LocalDateTimeWS) {
-                                                                            culturarte.servicios.cliente.propuestas.LocalDateTimeWS wsFecha = 
-                                                                                (culturarte.servicios.cliente.propuestas.LocalDateTimeWS) comentario.getFechaHora();
-                                                                            fechaHora = java.time.LocalDateTime.of(
-                                                                                wsFecha.getAnio(), wsFecha.getMes(), wsFecha.getDia(),
-                                                                                wsFecha.getHora(), wsFecha.getMinuto(), wsFecha.getSegundo(),
-                                                                                wsFecha.getNanosegundo()
-                                                                            );
-                                                                        } else {
-                                                                            fechaHora = WSFechaPropuesta.toJavaLocalDateTime(comentario.getFechaHora());
-                                                                        }
-                                                                        
+                                                                        java.time.LocalDateTime fechaHora = WSFechaPropuesta.toJavaLocalDateTime(comentario.getFechaHora());
                                                                         if (fechaHora != null) {
                                                                             out.print(fechaHora.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
                                                                         } else {
