@@ -154,8 +154,22 @@
                                             </p>
                                             
                                             <div class="mb-2">
-                                                <strong>Estado:</strong> 
-                                                <span class="badge bg-primary"><%= propuesta.getEstadoActual() %></span>
+                                                <strong>Estado:</strong>
+                                                 <%
+                                                 String estado = propuesta.getEstadoActual().toString();
+                                                 String estadoFormateado;
+
+                                                 switch (estado) {
+                                                    case "INGRESADA": estadoFormateado = "Ingresada"; break;
+                                                    case "PUBLICADA": estadoFormateado = "Publicada"; break;
+                                                    case "EN_FINANCIACION": estadoFormateado = "En Financiación"; break;
+                                                    case "FINANCIADA": estadoFormateado = "Financiada"; break;
+                                                    case "NO_FINANCIADA": estadoFormateado = "No Financiada"; break;
+                                                    case "CANCELADA": estadoFormateado = "Cancelada"; break;
+                                                    default: estadoFormateado = estado;
+                                                 }
+                                                 %>
+                                                <span class="badge bg-primary"><%= estadoFormateado %></span>
                                             </div>
                                             
                                             <div class="mb-2">

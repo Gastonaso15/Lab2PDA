@@ -3,6 +3,8 @@
 <%@ page import="culturarte.servicios.cliente.usuario.*" %>
 <%@ page import="culturarte.servicios.cliente.propuestas.DtPropuesta" %>
 <%@ page import="culturarte.servicios.cliente.imagenes.*" %>
+<%@ page import="com.culturarteWeb.util.WSFechaUsuario" %>
+<%@ page import="java.time.format.DateTimeFormatter" %>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -369,10 +371,24 @@
                             <td><%=prop.getTitulo()%></td>
                             <%--si esta en su propio perfil es la unica manera de que vea el monto y fecha--%>
                             <% if (esPropio != null && esPropio ){%>
-                            <td><%m.getFechaHora();%></td>
-                            <td><%=m.getMonto()%></td>
+                            <td><%
+                                String fechaHoraStr = "Fecha no disponible";
+                                if (m.getFechaHora() != null) {
+                                    try {
+                                        java.time.LocalDateTime fechaHora = WSFechaUsuario.toJavaLocalDateTime(m.getFechaHora());
+                                        if (fechaHora != null) {
+                                            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+                                            fechaHoraStr = fechaHora.format(formatter);
+                                        }
+                                    } catch (java.lang.Exception e) {
+                                        fechaHoraStr = "Fecha no disponible";
+                                    }
+                                }
+                                out.print(fechaHoraStr);
+                            %></td>
+                            <td>$<%= String.format("%.2f", m.getMonto()) %></td>
                             <%}else{%>
-                            <td>- </td>
+                            <td>-</td>
                             <td>-</td>
                             <%}%>
                             <td class="text-center"><a class="btn btn-link btn-sm" href="<%=ctx%>/consultaPropuesta?accion=detalle&titulo=<%=prop.getTitulo()%>">Ver detalle</a></td>
