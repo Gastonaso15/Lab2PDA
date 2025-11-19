@@ -59,7 +59,7 @@ public class AltaPerfilServlet extends HttpServlet {
         String biografia = request.getParameter("biografia");
         String sitioWeb = request.getParameter("sitioWeb");
         Part imagenPart = request.getPart("imagen");
-        String imagenBase64 = null;
+        String rutaImagen = null;
 
         String error = validarCampos(nickname, nombre, apellido, password, confirmPassword, 
                                    email, fechaNacimiento, tipoUsuario, direccion);
@@ -95,7 +95,6 @@ public class AltaPerfilServlet extends HttpServlet {
                     
                     String nombreArchivo = "ImagenUP" + System.currentTimeMillis() + extension;
 
-                    // Leer los bytes de la imagen
                     byte[] imagenBytes;
                     try (java.io.InputStream is = imagenPart.getInputStream();
                          java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream()) {
@@ -107,13 +106,13 @@ public class AltaPerfilServlet extends HttpServlet {
                         imagenBytes = baos.toByteArray();
                     }
                     
-                    // Subir la imagen al servidor central usando el Web Service
+
                     culturarte.servicios.cliente.imagenes.ImagenWSEndpointService imagenServicio = 
                         new culturarte.servicios.cliente.imagenes.ImagenWSEndpointService();
                     culturarte.servicios.cliente.imagenes.IImagenControllerWS imagenWS = 
                         imagenServicio.getImagenWSEndpointPort();
-                    
-                    imagenBase64 = imagenWS.subirImagen(imagenBytes, nombreArchivo, "usuario");
+
+                    rutaImagen = imagenWS.subirImagen(imagenBytes, nombreArchivo, "usuario");
                 } else {
                     request.setAttribute("error", "El archivo seleccionado no es una imagen válida");
                     request.setAttribute("nickname", nickname);
@@ -158,7 +157,7 @@ public class AltaPerfilServlet extends HttpServlet {
                 usuario.setPassword(password);
                 usuario.setCorreo(email);
                 usuario.setFechaNacimiento(WSFechaUsuario.toWSLocalDateWS(fechaNac));
-                usuario.setImagen(imagenBase64);
+                usuario.setImagen(rutaImagen);
                 ((DtProponente) usuario).setDireccion(direccion);
                 ((DtProponente) usuario).setBio(biografia);
                 ((DtProponente) usuario).setSitioWeb(sitioWeb);
@@ -170,7 +169,7 @@ public class AltaPerfilServlet extends HttpServlet {
                 usuario.setPassword(password);
                 usuario.setCorreo(email);
                 usuario.setFechaNacimiento(WSFechaUsuario.toWSLocalDateWS(fechaNac));
-                usuario.setImagen(imagenBase64);
+                usuario.setImagen(rutaImagen);
             }
 
             IUC.crearUsuario(usuario);
