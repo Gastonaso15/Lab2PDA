@@ -37,6 +37,8 @@
                         DtUsuario usuarioActual = (DtUsuario) request.getAttribute("usuarioActual");
                         Boolean esFavorita = (Boolean) request.getAttribute("esFavorita");
                         List<DtComentario> comentarios = (List<DtComentario>) request.getAttribute("comentarios");
+                        Boolean yaComento = (Boolean) request.getAttribute("yaComento");
+                        if (yaComento == null) yaComento = false;
                     %>
 
                         <%
@@ -330,7 +332,7 @@
                                                 Nota 2: Solo puedes cancelar propuestas que se encuentren en estado "Financiada".</em>
                                             </p>
 
-                                <% } else if (haColaborado) { %>
+                                <% } else if (haColaborado && !yaComento) { %>
                                     <div class="d-flex flex-column flex-sm-row gap-2 mb-3">
                                         <a href="<%= request.getContextPath() %>/comentario?titulo=<%=
                                             java.net.URLEncoder.encode(propuesta.getTitulo(), "UTF-8") %>"
@@ -341,6 +343,10 @@
                                     <p class="text-muted small">
                                         <em>Como colaborador de esta propuesta, puedes agregar un comentario sobre tu experiencia.</em>
                                     </p>
+                                <% } else if (haColaborado && yaComento) { %>
+                                    <div class="alert alert-info mb-3">
+                                        <i class="bi bi-check-circle"></i> Ya has comentado esta propuesta.
+                                    </div>
 
                                 <% } else if (!esProponente) { %>
                                     <div class="d-flex flex-column flex-sm-row gap-2 mb-3">

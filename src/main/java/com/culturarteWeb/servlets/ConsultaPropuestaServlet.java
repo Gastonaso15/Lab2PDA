@@ -221,6 +221,19 @@ public class ConsultaPropuestaServlet extends HttpServlet {
             ListaDTComentario comentariosWS = IPC.obtenerComentariosPropuesta(propuestaSeleccionada.getTitulo());
             List<DtComentario> comentarios = comentariosWS.getComentario();
 
+            // Verificar si el usuario actual ya comentó esta propuesta
+            boolean yaComento = false;
+            if (usuarioActual != null && comentarios != null) {
+                for (DtComentario comentario : comentarios) {
+                    if (comentario.getUsuario() != null && 
+                        comentario.getUsuario().getNickname() != null &&
+                        comentario.getUsuario().getNickname().equals(usuarioActual.getNickname())) {
+                        yaComento = true;
+                        break;
+                    }
+                }
+            }
+
             request.setAttribute("propuesta", propuestaSeleccionada);
             request.setAttribute("montoRecaudado", montoRecaudado);
             request.setAttribute("nicknamesColaboradores", nicknamesColaboradores);
@@ -231,6 +244,7 @@ public class ConsultaPropuestaServlet extends HttpServlet {
             request.setAttribute("usuarioActual", usuarioActual);
             request.setAttribute("esFavorita", esFavorita);
             request.setAttribute("comentarios", comentarios);
+            request.setAttribute("yaComento", yaComento);
             
             request.getRequestDispatcher("/detallePropuesta.jsp").forward(request, response);
             

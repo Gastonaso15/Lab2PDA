@@ -60,15 +60,26 @@ public class ListarPropuestasParaComentarServlet extends HttpServlet {
                             }
                         }
                     }
+                    // Verificar si el usuario ya comentó esta propuesta consultando la base de datos
                     boolean yaComento = false;
-                    String claveComentario = usuario.getNickname() + "_" + propuesta.getTitulo();
-
-                    HttpSession sessionComentarios = request.getSession(false);
-                    if (sessionComentarios != null) {
-                        java.util.Set<String> comentariosExistentes = (java.util.Set<String>) sessionComentarios.getAttribute("comentariosAgregados");
-                        if (comentariosExistentes != null && comentariosExistentes.contains(claveComentario)) {
-                            yaComento = true;
+                    try {
+                        ListaDTComentario comentariosWS = IPC.obtenerComentariosPropuesta(propuesta.getTitulo());
+                        List<DtComentario> comentariosExistentes = comentariosWS.getComentario();
+                        
+                        if (comentariosExistentes != null) {
+                            for (DtComentario comentarioExistente : comentariosExistentes) {
+                                if (comentarioExistente.getUsuario() != null && 
+                                    comentarioExistente.getUsuario().getNickname() != null &&
+                                    comentarioExistente.getUsuario().getNickname().equals(usuario.getNickname())) {
+                                    yaComento = true;
+                                    break;
+                                }
+                            }
                         }
+                    } catch (Exception e) {
+                        // Si hay error al obtener comentarios, asumir que no ha comentado para no bloquear
+                        System.err.println("Error al verificar comentarios para propuesta " + propuesta.getTitulo() + ": " + e.getMessage());
+                        yaComento = false;
                     }
                     
                     if (haColaborado && !yaComento) {
