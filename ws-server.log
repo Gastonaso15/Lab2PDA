@@ -1,0 +1,3 @@
+Web Service de usuarios: http://localhost:9128/culturarteWS/usuarios?wsdl
+Web Service de propuestas: http://localhost:9128/culturarteWS/propuestas?wsdl
+Web Service de imágenes: http://localhost:9128/culturarteWS/imagenes?wsdl
